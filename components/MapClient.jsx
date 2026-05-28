@@ -4,13 +4,14 @@ import { MapPin, Navigation, X, Star, Users } from "lucide-react";
 
 const TYPE_EMOJI = {
   tent_site: "⛺", glamping: "🏕️", bungalow: "🏡",
-  house: "🏠", camp: "⛺", water: "💧",
+  camp: "⛺", 
+  house: "🏠", water: "💧",
   parking: "🅿️", entrance: "🚪", other: "📍",
 };
 
 const FILTERS = [
   { value: "", label: "Hamısı" },
-  { value: "tent_site", label: "⛺ Çadır" },
+  { value: "camp", label: "⛺ Kamp" },
   { value: "glamping", label: "🏕️ Glamping" },
   { value: "bungalow", label: "🏡 Bungalo" },
   { value: "house", label: "🏠 Ev" },
