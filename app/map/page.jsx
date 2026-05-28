@@ -1,7 +1,7 @@
 import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import MapClient from "../../components/MapClient";
-import { mapLocations, listings as listingsApi } from "../../lib/api";
+import { mapLocations, getListingsMap } from "../../lib/api";
 
 export const metadata = {
   title: "Xəritə — Kamping.az",
@@ -14,20 +14,18 @@ export const metadata = {
 };
 
 export default async function MapPage() {
-  let adminLocations = [];
-  try {
-    adminLocations = await mapLocations.list();
-  } catch {
-    adminLocations = [];
-  }
+  const [adminLocations, listingMapData] = await Promise.allSettled([
+    mapLocations.list(),
+    getListingsMap(),
+  ]);
 
   return (
     <main className="flex flex-col min-h-screen">
       <Navbar />
       <div className="flex-1 pt-16">
         <MapClient
-          locations={adminLocations}
-          listingLocations={[]}
+          locations={adminLocations.status === "fulfilled" ? adminLocations.value : []}
+          listingLocations={listingMapData.status === "fulfilled" ? listingMapData.value : []}
         />
       </div>
     </main>
