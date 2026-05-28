@@ -3,15 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { MapPin, Navigation, X, Star, Users } from "lucide-react";
 
 const TYPE_EMOJI = {
-  tent_site: "⛺",
-  glamping: "🏕️",
-  bungalow: "🏡",
-  house: "🏠",
-  camp: "⛺",
-  water: "💧",
-  parking: "🅿️",
-  entrance: "🚪",
-  other: "📍",
+  tent_site: "⛺", glamping: "🏕️", bungalow: "🏡",
+  house: "🏠", camp: "⛺", water: "💧",
+  parking: "🅿️", entrance: "🚪", other: "📍",
 };
 
 const FILTERS = [
@@ -30,11 +24,9 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
   const [filter, setFilter] = useState("");
   const [mapReady, setMapReady] = useState(false);
 
-  // Hər iki mənbəyi birləşdir — eyni interfeys
   const allLocations = [
     ...listingLocations.map((l) => ({
-      id: l.id,
-      title: l.title,
+      id: l.id, title: l.title,
       location_type: l.listing_type,
       location_type_display: l.listing_type_display,
       latitude: parseFloat(l.latitude),
@@ -59,15 +51,9 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
     ? allLocations.filter((l) => l.location_type === filter)
     : allLocations;
 
-  // Leaflet yüklənməsi
   useEffect(() => {
     if (mapInstanceRef.current) return;
     if (!mapRef.current) return;
-
-    // Əgər Leaflet artıq bu elementi initialize edibsə təmizlə
-    if (mapRef.current._leaflet_id) {
-      mapRef.current._leaflet_id = null;
-    }
 
     import("leaflet").then((L) => {
       if (!document.getElementById("leaflet-css")) {
@@ -86,21 +72,22 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
       });
 
       if (mapRef.current._leaflet_id) {
-        mapRef.current._leaflet_id = null;
+        return;
       }
 
-      const map = L.map(mapRef.current, {
-        center: [40.4093, 47.5769],
-        zoom: 7,
-      });
+
+      const map = L.map(mapRef.current).setView([40.4093, 47.5769], 7);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+        attribution: '© OpenStreetMap',
         maxZoom: 19,
       }).addTo(map);
 
       mapInstanceRef.current = map;
       setMapReady(true);
+
+      // Render-dən sonra ölçünü təzələ
+      setTimeout(() => map.invalidateSize(), 100);
     });
 
     return () => {
@@ -111,13 +98,11 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
     };
   }, []);
 
-  // Markerlər
   useEffect(() => {
     if (!mapReady || !mapInstanceRef.current) return;
 
     import("leaflet").then((L) => {
       const map = mapInstanceRef.current;
-
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
 
@@ -127,23 +112,10 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
         if (!lat || !lng || isNaN(lat) || isNaN(lng)) return;
 
         const emoji = TYPE_EMOJI[loc.location_type] || "📍";
-        // Listing mənbəyi amber, admin mənbəyi yaşıl
         const borderColor = loc.source === "listing" ? "#f59e0b" : "#4ade80";
 
         const icon = L.divIcon({
-          html: `
-            <div style="
-              background: #1B4332;
-              border: 2.5px solid ${borderColor};
-              border-radius: 50% 50% 50% 0;
-              width: 38px; height: 38px;
-              transform: rotate(-45deg);
-              display: flex; align-items: center; justify-content: center;
-              box-shadow: 0 3px 10px rgba(0,0,0,0.25);
-            ">
-              <span style="transform: rotate(45deg); font-size: 17px; line-height:1;">${emoji}</span>
-            </div>
-          `,
+          html: `<div style="background:#1B4332;border:2.5px solid ${borderColor};border-radius:50% 50% 50% 0;width:38px;height:38px;transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,0.25);"><span style="transform:rotate(45deg);font-size:17px;line-height:1;">${emoji}</span></div>`,
           className: "",
           iconSize: [38, 38],
           iconAnchor: [19, 38],
@@ -164,10 +136,31 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
   };
 
   return (
-    <div className="relative w-full h-[calc(100vh-64px)]">
+    <>
+      {/* Xəritə — birbaşa body səviyyəsində, heç bir wrapper yox */}
+      <div
+        ref={mapRef}
+        style={{
+          position: "fixed",
+          top: 64,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: "100%",
+        }}
+      />
 
-      {/* Filter bar */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[999] flex gap-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-2 border border-forest-100 overflow-x-auto max-w-[95vw]">
+      {/* Filter bar — xəritənin üstündə */}
+      <div
+        style={{
+          position: "fixed",
+          top: 80,
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 1000,
+        }}
+        className="flex gap-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-2 border border-forest-100"
+      >
         {FILTERS.map((f) => (
           <button
             key={f.value}
@@ -183,18 +176,21 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
       </div>
 
       {/* Məkan sayı */}
-      <div className="absolute top-20 left-4 z-[999] bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-forest-100">
+      <div
+        style={{ position: "fixed", top: 140, left: 16, zIndex: 1000 }}
+        className="bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-forest-100"
+      >
         <span className="text-xs font-semibold text-forest-700">
           {filtered.length} məkan
         </span>
       </div>
 
-      {/* Xəritə */}
-      <div ref={mapRef} className="w-full h-full z-0" />
-
       {/* Seçilmiş məkan paneli */}
       {selected && (
-        <div className="absolute top-4 right-4 z-[999] w-80 bg-white rounded-2xl shadow-2xl border border-forest-100 overflow-hidden">
+        <div
+          style={{ position: "fixed", top: 80, right: 16, zIndex: 1000, width: 320 }}
+          className="bg-white rounded-2xl shadow-2xl border border-forest-100 overflow-hidden"
+        >
           {selected.cover_image_url ? (
             <div className="relative h-44 overflow-hidden">
               <img
@@ -221,25 +217,20 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
             <span className="inline-block bg-forest-50 text-forest-700 text-xs font-semibold px-2.5 py-1 rounded-full mb-2">
               {selected.location_type_display || selected.location_type}
             </span>
-
             <h3 className="font-display text-lg font-bold text-forest-900 mb-1 leading-tight">
               {selected.title}
             </h3>
-
             {selected.city && (
               <div className="flex items-center gap-1 text-forest-500 text-sm mb-3">
                 <MapPin className="w-3.5 h-3.5" />
                 <span>{selected.city}</span>
               </div>
             )}
-
             <div className="flex flex-wrap gap-3 mb-4">
               {selected.listing_rating > 0 && (
                 <div className="flex items-center gap-1 text-sm">
                   <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                  <span className="font-semibold text-forest-800">
-                    {selected.listing_rating}
-                  </span>
+                  <span className="font-semibold text-forest-800">{selected.listing_rating}</span>
                 </div>
               )}
               {selected.listing_price && (
@@ -255,7 +246,6 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
                 </div>
               )}
             </div>
-
             <div className="flex gap-2">
               <button
                 onClick={() => handleNavigate(selected)}
@@ -264,7 +254,6 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
                 <Navigation className="w-4 h-4" />
                 Naviqasiya
               </button>
-
               {selected.listing_id && selected.source === "listing" && (
                 <a
                   href={`/listings/${selected.listing_id}`}
@@ -277,12 +266,6 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
           </div>
         </div>
       )}
-
-      {mapReady && filtered.length === 0 && (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[999] bg-white rounded-2xl shadow-lg px-6 py-4">
-          <p className="text-forest-600 text-sm font-medium">Məkan tapılmadı</p>
-        </div>
-      )}
-    </div>
+    </>
   );
 }

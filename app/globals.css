@@ -115,3 +115,11 @@ body {
 .img-zoom:hover img {
   transform: scale(1.07);
 }
+
+.leaflet-container {
+  cursor: grab !important;
+}
+
+.leaflet-grab {
+  cursor: grab !important;
+}
