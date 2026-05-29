@@ -3,6 +3,7 @@ import "./globals.css";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageLoader from "../components/PageLoader";
+import RecaptchaProvider from "../components/RecaptchaProvider";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -49,10 +50,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="az" className={`${fraunces.variable} ${plusJakarta.variable}`}>
       <body className="font-body bg-cream antialiased">
+        <RecaptchaProvider>
         {/* <PageLoader /> */}
         <Navbar />
         {children}
         <Footer />
+        </RecaptchaProvider>
       </body>
 
     </html>

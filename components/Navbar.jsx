@@ -38,6 +38,7 @@ export default function Navbar() {
             { label: "Elanlar", href: "/listings" },
             { label: "Xəritə", href: "/map" },
             { label: "Haqqımızda", href: "/about" },
+            { label: "Əlaqə", href: "/contact" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -86,6 +87,7 @@ export default function Navbar() {
             { label: "Elanlar", href: "/listings" },
             { label: "Xəritə", href: "/map" },
             { label: "Haqqımızda", href: "/about" },
+            { label: "Əlaqə", href: "/contact" },
           ].map((item) => (
             <Link
               key={item.href}
