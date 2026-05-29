@@ -88,6 +88,62 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
       mapInstanceRef.current = map;
       setMapReady(true);
 
+      // İstifadəçinin canlı məkanı
+if (navigator.geolocation) {
+  navigator.geolocation.watchPosition(
+    (pos) => {
+      const { latitude: lat, longitude: lng } = pos.coords;
+
+      // Əgər artıq marker varsa — yerini yenilə
+      if (map._userMarker) {
+        map._userMarker.setLatLng([lat, lng]);
+        map._userCircle.setLatLng([lat, lng]);
+      } else {
+        // Mavi nöqtə — istifadəçi
+        map._userMarker = L.marker([lat, lng], {
+          icon: L.divIcon({
+            html: `
+              <div style="position:relative;width:20px;height:20px;">
+                <div style="
+                  position:absolute;inset:0;
+                  background:#3b82f6;
+                  border:3px solid white;
+                  border-radius:50%;
+                  box-shadow:0 0 10px rgba(59,130,246,0.5);
+                "></div>
+                <div style="
+                  position:absolute;inset:-8px;
+                  background:rgba(59,130,246,0.15);
+                  border-radius:50%;
+                  animation:livePulse 2s ease-out infinite;
+                "></div>
+              </div>
+            `,
+            className: "",
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+          }),
+          zIndexOffset: 1000,
+        }).addTo(map);
+
+        // Dəqiqlik dairəsi
+        map._userCircle = L.circle([lat, lng], {
+          radius: pos.coords.accuracy,
+          color: "#3b82f6",
+          fillColor: "#3b82f6",
+          fillOpacity: 0.08,
+          weight: 1,
+        }).addTo(map);
+
+        map._userMarker.bindPopup("📍 Siz buradasınız").openPopup();
+      }
+    },
+    () => {}, // xəta — sessiz keç
+    { enableHighAccuracy: true, maximumAge: 10000 }
+  );
+}
+
+
       // Render-dən sonra ölçünü təzələ
       setTimeout(() => map.invalidateSize(), 100);
     });
