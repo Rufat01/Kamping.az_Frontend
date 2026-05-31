@@ -73,12 +73,14 @@ export default async function ListingDetailPage({ params }) {
                                     {listing.city}, {listing.address}
                                 </p>
                             </div>
-                            <div className="text-right shrink-0">
-                                <p className="text-2xl font-bold">
-                                    {Number(listing.price_per_night).toLocaleString()} ₼
-                                </p>
-                                <p className="text-sm text-muted-foreground">/ gecə</p>
-                            </div>
+                            {!listing.is_free && listing.price_per_night && (
+                                <div className="text-right shrink-0">
+                                    <p className="text-2xl font-bold">
+                                        {Number(listing.price_per_night).toLocaleString()} ₼
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">/ gecə</p>
+                                </div>
+                            )}
                         </div>
 
                         {/* Reytinq */}
@@ -136,47 +138,102 @@ export default async function ListingDetailPage({ params }) {
                 {/* Sağ — sahibkar kartı (sticky) */}
                 <aside className="lg:sticky lg:top-24 h-fit space-y-4">
 
-                    {/* Sahibkar */}
-                    <div className="rounded-2xl border p-5 space-y-4">
-                        <h2 className="font-semibold">Sahibkar</h2>
-                        <div className="flex items-center gap-3">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
-                                {listing.owner_name?.charAt(0).toUpperCase()}
-                            </div>
-                            <div>
-                                <p className="font-medium">{listing.owner_name}</p>
-                                <p className="text-sm text-muted-foreground">Sahibkar</p>
-                            </div>
-                        </div>
+    {/* Sahibkar — yalnız adi elanda */}
+    {!listing.is_free && !listing.entry_fee && listing.owner_name && (
+        <div className="rounded-2xl border p-5 space-y-4">
+            <h2 className="font-semibold">Sahibkar</h2>
+            <div className="flex items-center gap-3">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-lg font-bold text-primary">
+                    {listing.owner_name?.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                    <p className="font-medium">{listing.owner_name}</p>
+                    <p className="text-sm text-muted-foreground">Sahibkar</p>
+                </div>
+            </div>
+            <a
+                href={`tel:${listing.owner_phone}`}
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+            >
+                📞 {listing.owner_phone}
+            </a>
+        </div>
+    )}
 
+    {/* KART 1 — Adi elan: gecəlik qiymət */}
+    {!listing.is_free && !listing.entry_fee && listing.price_per_night && (
+        <div className="rounded-2xl border p-5 space-y-3 text-sm">
+            <div className="flex justify-between">
+                <span className="text-muted-foreground">Gecəlik qiymət</span>
+                <span className="font-medium">
+                    {Number(listing.price_per_night).toLocaleString()} ₼
+                </span>
+            </div>
+            <div className="flex justify-between">
+                <span className="text-muted-foreground">Maksimum qonaq</span>
+                <span className="font-medium">{listing.max_guests} nəfər</span>
+            </div>
+            <div className="flex justify-between">
+                <span className="text-muted-foreground">Şəhər</span>
+                <span className="font-medium">{listing.city}</span>
+            </div>
+        </div>
+    )}
 
-                        <a
-                            href={`tel:${listing.owner_phone}`}
-                            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
-                        >
-                            📞 {listing.owner_phone}
-                        </a>
-                    </div>
+    {/* KART 2 — Giriş haqqı olan elan */}
+    {listing.entry_fee && (
+        <div className="rounded-2xl border bg-muted/40 p-5 text-sm space-y-3">
+            <div className="flex items-center gap-2 font-semibold text-foreground">
+                <span>🎟️</span>
+                <span>Girişi ödənişli məkan</span>
+            </div>
+            <p className="text-muted-foreground leading-relaxed">
+                Bu məkana giriş üçün bir dəfəlik ödəniş tələb olunur. Əlavə rezervasiya tələb olunmur.
+            </p>
+            <div className="space-y-2 pt-1 border-t">
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Giriş haqqı</span>
+                    <span className="font-semibold">
+                        {Number(listing.entry_fee).toLocaleString()} ₼
+                        <span className="font-normal text-muted-foreground ml-1">(bir dəfəlik)</span>
+                    </span>
+                </div>
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Maksimum qonaq</span>
+                    <span className="font-medium">{listing.max_guests} nəfər</span>
+                </div>
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Şəhər</span>
+                    <span className="font-medium">{listing.city}</span>
+                </div>
+            </div>
+        </div>
+    )}
 
-                    {/* Qiymət xülasəsi */}
-                    <div className="rounded-2xl border p-5 space-y-3 text-sm">
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">Gecəlik qiymət</span>
-                            <span className="font-medium">
-                                {Number(listing.price_per_night).toLocaleString()} ₼
-                            </span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">Maksimum qonaq</span>
-                            <span className="font-medium">{listing.max_guests} nəfər</span>
-                        </div>
-                        <div className="flex justify-between">
-                            <span className="text-muted-foreground">Şəhər</span>
-                            <span className="font-medium">{listing.city}</span>
-                        </div>
-                    </div>
+    {/* KART 3 — Tamamilə pulsuz elan */}
+    {listing.is_free && !listing.entry_fee && (
+        <div className="rounded-2xl border bg-muted/40 p-5 text-sm space-y-3">
+            <div className="flex items-center gap-2 font-semibold text-foreground">
+                <span>🌿</span>
+                <span>Pulsuz kamp məkanı</span>
+            </div>
+            <p className="text-muted-foreground leading-relaxed">
+                Bu məkan ictimai kamp yeridir. Rezervasiya tələb olunmur.
+            </p>
+            <div className="space-y-2 pt-1 border-t">
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Maksimum qonaq</span>
+                    <span className="font-medium">{listing.max_guests} nəfər</span>
+                </div>
+                <div className="flex justify-between">
+                    <span className="text-muted-foreground">Şəhər</span>
+                    <span className="font-medium">{listing.city}</span>
+                </div>
+            </div>
+        </div>
+    )}
 
-                </aside>
+</aside>
             </div>
         </main>
     );

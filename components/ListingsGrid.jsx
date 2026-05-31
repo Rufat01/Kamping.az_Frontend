@@ -69,12 +69,28 @@ export default function ListingsGrid({ listings }) {
                     <Users className="w-3.5 h-3.5" />
                     <span>Maks. {item.max_guests} nəfər</span>
                   </div>
-                  <div className="text-right">
-                    <span className="font-display text-xl font-bold text-forest-900">
-                      ₼{item.price_per_night}
-                    </span>
-                    <span className="text-forest-400 text-xs"> / gecə</span>
-                  </div>
+                  {item.is_free ? (
+                    <div className="text-right">
+                      <span className="font-display text-xl font-bold text-forest-900">
+                        Ödənişsiz 
+                      </span>
+                    </div>
+                  ) : item.entry_fee ? (
+                    <div className="text-right">
+                      <span className="font-display text-xl font-bold text-forest-900">
+                        ₼{item.entry_fee}
+                      </span>
+                      <span className="text-forest-400 text-xs"> / giriş</span>
+                    </div>
+                  ) : (
+                    <div className="text-right">
+                      <span className="font-display text-xl font-bold text-forest-900">
+                        ₼{item.price_per_night}
+                      </span>
+                      <span className="text-forest-400 text-xs"> / gecə</span>
+                    </div>
+                  )}
+
                 </div>
               </div>
             </Link>
