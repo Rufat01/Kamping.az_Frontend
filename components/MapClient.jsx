@@ -11,7 +11,6 @@ const TYPE_EMOJI = {
 
 const FILTERS = [
   { value: "", label: "Hamısı" },
-  { value: "camp", label: "⛺ Kamp" },
   { value: "tent_site", label: "⛺ Çadır yeri" },
   { value: "glamping", label: "🏕️ Glamping" },
   { value: "bungalow", label: "🏡 Bungalo" },

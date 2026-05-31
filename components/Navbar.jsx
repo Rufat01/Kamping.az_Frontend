@@ -8,7 +8,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -16,7 +16,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Dropdown-u kənara klikləndikdə bağla
   useEffect(() => {
     const handleClick = (e) => {
       if (!e.target.closest("#user-dropdown")) setDropdownOpen(false);
@@ -25,10 +24,12 @@ export default function Navbar() {
     return () => document.removeEventListener("click", handleClick);
   }, []);
 
-  // İstifadəçi adının baş hərfləri
   const getInitials = (name) => {
-    if (!name) return "U";
-    return name.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase();
+    if (!name || typeof name !== "string") return "?";
+    const parts = name.trim().split(" ").filter(Boolean);
+    if (parts.length === 0) return "?";
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   };
 
   return (
@@ -55,9 +56,9 @@ export default function Navbar() {
         <nav className="hidden md:flex items-center gap-8">
           {[
             { label: "Elanlar", href: "/listings" },
-            { label: "Xəritə", href: "/map" },
-            { label: "Haqqımızda", href: "/about" },
-            { label: "Əlaqə", href: "/contact" },
+            { label: "Xerite", href: "/map" },
+            { label: "Haqqimizda", href: "/about" },
+            { label: "Elaqe", href: "/contact" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -71,19 +72,18 @@ export default function Navbar() {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          {session ? (
-            // Giriş edilib — avatar dropdown
+          {status === "authenticated" ? (
             <div id="user-dropdown" className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-full pl-2 pr-3 py-1.5 transition-all"
               >
-                {/* Avatar */}
                 {session.user?.image ? (
                   <img
                     src={session.user.image}
                     alt={session.user.name}
                     className="w-7 h-7 rounded-full object-cover"
+                    referrerPolicy="no-referrer"
                   />
                 ) : (
                   <div className="w-7 h-7 rounded-full bg-amber-500 flex items-center justify-center text-forest-900 text-xs font-bold">
@@ -91,15 +91,13 @@ export default function Navbar() {
                   </div>
                 )}
                 <span className="text-white text-sm font-medium max-w-[120px] truncate">
-                  {session.user?.name?.split(" ")[0] || "Hesabım"}
+                  {session.user?.name?.split(" ")[0] || "Hesabim"}
                 </span>
                 <ChevronDown className={`w-3.5 h-3.5 text-white/60 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
 
-              {/* Dropdown menyusu */}
               {dropdownOpen && (
                 <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-2xl shadow-2xl shadow-forest-900/15 border border-forest-100 overflow-hidden z-50">
-                  {/* İstifadəçi məlumatı */}
                   <div className="px-4 py-3 border-b border-forest-100 bg-forest-50/50">
                     <p className="text-sm font-semibold text-forest-900 truncate">
                       {session.user?.name}
@@ -108,8 +106,6 @@ export default function Navbar() {
                       {session.user?.email}
                     </p>
                   </div>
-
-                  {/* Menyu elementləri */}
                   <div className="py-1.5">
                     <Link
                       href="/dashboard"
@@ -117,7 +113,7 @@ export default function Navbar() {
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
                     >
                       <User className="w-4 h-4 text-forest-400" />
-                      Hesabım
+                      Hesabim
                     </Link>
                     <Link
                       href="/dashboard/reservations"
@@ -125,36 +121,27 @@ export default function Navbar() {
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
                     >
                       <Settings className="w-4 h-4 text-forest-400" />
-                      Rezervasiyalarım
+                      Rezervasiyalarim
                     </Link>
                   </div>
-
-                  {/* Çıxış */}
                   <div className="border-t border-forest-100 py-1.5">
                     <button
                       onClick={() => { signOut({ callbackUrl: "/" }); setDropdownOpen(false); }}
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
                     >
                       <LogOut className="w-4 h-4" />
-                      Çıxış
+                      Cixis
                     </button>
                   </div>
                 </div>
               )}
             </div>
           ) : (
-            // Giriş edilməyib
             <>
-              <Link
-                href="/login"
-                className="text-white/80 hover:text-white text-sm font-medium transition-colors"
-              >
+              <Link href="/login" className="text-white/80 hover:text-white text-sm font-medium transition-colors">
                 Daxil ol
               </Link>
-              <Link
-                href="/register"
-                className="bg-amber-500 hover:bg-amber-400 text-forest-900 text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25 active:scale-95"
-              >
+              <Link href="/register" className="bg-amber-500 hover:bg-amber-400 text-forest-900 text-sm font-semibold px-5 py-2.5 rounded-full transition-all duration-200 hover:shadow-lg hover:shadow-amber-500/25 active:scale-95">
                 Qeydiyyat
               </Link>
             </>
@@ -165,7 +152,7 @@ export default function Navbar() {
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
           className="md:hidden text-white p-1"
-          aria-label="Menyunu aç/bağla"
+          aria-label="Menyunu ac/bagla"
         >
           {mobileOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -180,9 +167,9 @@ export default function Navbar() {
         <div className="bg-forest-800/98 backdrop-blur-md px-4 pt-4 pb-6 flex flex-col gap-4 border-t border-white/10">
           {[
             { label: "Elanlar", href: "/listings" },
-            { label: "Xəritə", href: "/map" },
-            { label: "Haqqımızda", href: "/about" },
-            { label: "Əlaqə", href: "/contact" },  
+            { label: "Xerite", href: "/map" },
+            { label: "Haqqimizda", href: "/about" },
+            { label: "Elaqe", href: "/contact" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -195,11 +182,16 @@ export default function Navbar() {
           ))}
 
           <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-            {session ? (
+            {status === "authenticated" ? (
               <>
                 <div className="flex items-center gap-3 py-2">
                   {session.user?.image ? (
-                    <img src={session.user.image} alt="" className="w-9 h-9 rounded-full" />
+                    <img
+                      src={session.user.image}
+                      alt=""
+                      className="w-9 h-9 rounded-full object-cover"
+                      referrerPolicy="no-referrer"
+                    />
                   ) : (
                     <div className="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-forest-900 text-sm font-bold">
                       {getInitials(session.user?.name)}
@@ -211,12 +203,12 @@ export default function Navbar() {
                   </div>
                 </div>
                 <Link href="/dashboard" onClick={() => setMobileOpen(false)}
-                  className="text-white/80 text-sm py-2">Hesabım</Link>
+                  className="text-white/80 text-sm py-2">Hesabim</Link>
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="text-red-400 text-sm py-2 text-left"
                 >
-                  Çıxış
+                  Cixis
                 </button>
               </>
             ) : (
