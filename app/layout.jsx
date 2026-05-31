@@ -4,6 +4,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import PageLoader from "../components/PageLoader";
 import RecaptchaProvider from "../components/RecaptchaProvider";
+import AuthSessionProvider from "../components/SessionProvider";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -18,15 +19,12 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata = {
-  title: "Kamping.az — Azərbaycanda Ən Yaxşı Kamp Yerləri",
-  description:
-    "Azərbaycanda ən gözəl kamp, glamping, bungalo və çadır yerlərini kəşf edin. Təbiətin qoynunda unudulmaz bir istirahət üçün indi rezervasiya edin.",
-  keywords:
-    "kamp, camping, glamping, Azərbaycan, çadır, bungalo, təbiət, istirahət, kamp yeri",
+  title: "Kamping.az",
+  description: "Azerbaycanda en gozal kamp, glamping, bungalo ve cadir yerlerini kesf edin.",
+  keywords: "kamp, camping, glamping, Azerbaijan, cadir, bungalo, tebit, istirahет, kamp yeri",
   openGraph: {
-    title: "Kamping.az — Azərbaycanda Ən Yaxşı Kamp Yerləri",
-    description:
-      "Azərbaycanda ən gözəl kamp, glamping, bungalo və çadır yerlərini kəşf edin.",
+    title: "Kamping.az",
+    description: "Azerbaycanda en gozal kamp yerlerini kesf edin.",
     url: "https://kamping.az",
     siteName: "Kamping.az",
     locale: "az_AZ",
@@ -35,7 +33,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Kamping.az",
-    description: "Azərbaycanda ən yaxşı kamp yerləri",
+    description: "Azerbaycanda en yaxsi kamp yerleri",
   },
   alternates: {
     canonical: "https://kamping.az",
@@ -50,14 +48,15 @@ export default function RootLayout({ children }) {
   return (
     <html lang="az" className={`${fraunces.variable} ${plusJakarta.variable}`}>
       <body className="font-body bg-cream antialiased">
-        <RecaptchaProvider>
         {/* <PageLoader /> */}
-        <Navbar />
-        {children}
-        <Footer />
-        </RecaptchaProvider>
+        <AuthSessionProvider>
+          <RecaptchaProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </RecaptchaProvider>
+        </AuthSessionProvider>
       </body>
-
     </html>
   );
 }

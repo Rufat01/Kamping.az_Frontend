@@ -1,4 +1,3 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
     remotePatterns: [
@@ -10,7 +9,14 @@ const nextConfig = {
         protocol: "http",
         hostname: "localhost",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
     ],
+  },
+  experimental: {
+    optimizePackageImports: ["lucide-react"],
   },
   webpack: (config) => {
     config.resolve.fallback = { fs: false };

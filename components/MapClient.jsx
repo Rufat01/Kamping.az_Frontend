@@ -4,7 +4,7 @@ import { MapPin, Navigation, X, Star, Users } from "lucide-react";
 
 const TYPE_EMOJI = {
   tent_site: "⛺", glamping: "🏕️", bungalow: "🏡",
-  camp: "⛺", 
+  camp: "⛺",
   house: "🏠", water: "💧",
   parking: "🅿️", entrance: "🚪", other: "📍",
 };
@@ -53,6 +53,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
     ? allLocations.filter((l) => l.location_type === filter)
     : allLocations;
 
+  // 1. Xəritəni qur
   useEffect(() => {
     if (mapInstanceRef.current) return;
     if (!mapRef.current) return;
@@ -73,79 +74,18 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
         shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
       });
 
-      if (mapRef.current._leaflet_id) {
-        return;
-      }
-
+      if (mapRef.current._leaflet_id) return;
 
       const map = L.map(mapRef.current).setView([40.4093, 47.5769], 7);
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: '© OpenStreetMap',
+        attribution: "© OpenStreetMap",
         maxZoom: 19,
       }).addTo(map);
 
       mapInstanceRef.current = map;
-      setMapReady(true);
-
-      // İstifadəçinin canlı məkanı
-if (navigator.geolocation) {
-  navigator.geolocation.watchPosition(
-    (pos) => {
-      const { latitude: lat, longitude: lng } = pos.coords;
-
-      // Əgər artıq marker varsa — yerini yenilə
-      if (map._userMarker) {
-        map._userMarker.setLatLng([lat, lng]);
-        map._userCircle.setLatLng([lat, lng]);
-      } else {
-        // Mavi nöqtə — istifadəçi
-        map._userMarker = L.marker([lat, lng], {
-          icon: L.divIcon({
-            html: `
-              <div style="position:relative;width:20px;height:20px;">
-                <div style="
-                  position:absolute;inset:0;
-                  background:#3b82f6;
-                  border:3px solid white;
-                  border-radius:50%;
-                  box-shadow:0 0 10px rgba(59,130,246,0.5);
-                "></div>
-                <div style="
-                  position:absolute;inset:-8px;
-                  background:rgba(59,130,246,0.15);
-                  border-radius:50%;
-                  animation:livePulse 2s ease-out infinite;
-                "></div>
-              </div>
-            `,
-            className: "",
-            iconSize: [20, 20],
-            iconAnchor: [10, 10],
-          }),
-          zIndexOffset: 1000,
-        }).addTo(map);
-
-        // Dəqiqlik dairəsi
-        map._userCircle = L.circle([lat, lng], {
-          radius: pos.coords.accuracy,
-          color: "#3b82f6",
-          fillColor: "#3b82f6",
-          fillOpacity: 0.08,
-          weight: 1,
-        }).addTo(map);
-
-        map._userMarker.bindPopup("📍 Siz buradasınız").openPopup();
-      }
-    },
-    () => {}, // xəta — sessiz keç
-    { enableHighAccuracy: true, maximumAge: 10000 }
-  );
-}
-
-
-      // Render-dən sonra ölçünü təzələ
       setTimeout(() => map.invalidateSize(), 100);
+      setMapReady(true); // ← Xəritə hazır olduqdan SONRA
     });
 
     return () => {
@@ -156,6 +96,7 @@ if (navigator.geolocation) {
     };
   }, []);
 
+  // 2. Markerlər — mapReady olanda
   useEffect(() => {
     if (!mapReady || !mapInstanceRef.current) return;
 
@@ -186,6 +127,57 @@ if (navigator.geolocation) {
     });
   }, [mapReady, filtered]);
 
+  // 3. Live location — mapReady olanda ayrıca useEffect
+  useEffect(() => {
+    if (!mapReady || !mapInstanceRef.current) return;
+    if (!navigator.geolocation) return;
+
+    import("leaflet").then((L) => {
+      const map = mapInstanceRef.current;
+
+      const watchId = navigator.geolocation.watchPosition(
+        (pos) => {
+          const { latitude: lat, longitude: lng } = pos.coords;
+
+          if (map._userMarker) {
+            map._userMarker.setLatLng([lat, lng]);
+            map._userCircle.setLatLng([lat, lng]);
+          } else {
+            map._userMarker = L.marker([lat, lng], {
+              icon: L.divIcon({
+                html: `
+                  <div style="position:relative;width:20px;height:20px;">
+                    <div style="position:absolute;inset:0;background:#3b82f6;border:3px solid white;border-radius:50%;box-shadow:0 0 10px rgba(59,130,246,0.5);"></div>
+                    <div style="position:absolute;inset:-8px;background:rgba(59,130,246,0.15);border-radius:50%;animation:livePulse 2s ease-out infinite;"></div>
+                  </div>
+                `,
+                className: "",
+                iconSize: [20, 20],
+                iconAnchor: [10, 10],
+              }),
+              zIndexOffset: 1000,
+            }).addTo(map);
+
+            map._userCircle = L.circle([lat, lng], {
+              radius: pos.coords.accuracy,
+              color: "#3b82f6",
+              fillColor: "#3b82f6",
+              fillOpacity: 0.08,
+              weight: 1,
+            }).addTo(map);
+
+            map._userMarker.bindPopup("📍 Siz buradasınız").openPopup();
+          }
+        },
+        () => {},
+        { enableHighAccuracy: true, maximumAge: 10000 }
+      );
+
+      // Cleanup
+      return () => navigator.geolocation.clearWatch(watchId);
+    });
+  }, [mapReady]); // ← yalnız mapReady dəyişəndə
+
   const handleNavigate = (loc) => {
     window.open(
       `https://www.google.com/maps/dir/?api=1&destination=${loc.latitude},${loc.longitude}`,
@@ -195,38 +187,23 @@ if (navigator.geolocation) {
 
   return (
     <>
-      {/* Xəritə — birbaşa body səviyyəsində, heç bir wrapper yox */}
       <div
         ref={mapRef}
-        style={{
-          position: "fixed",
-          top: 64,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          width: "100%",
-        }}
+        style={{ position: "fixed", top: 64, left: 0, right: 0, bottom: 0, width: "100%" }}
       />
 
-      {/* Filter bar — xəritənin üstündə */}
+      {/* Filter bar */}
       <div
-        style={{
-          position: "fixed",
-          top: 80,
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 1000,
-        }}
+        style={{ position: "fixed", top: 80, left: "50%", transform: "translateX(-50%)", zIndex: 1000 }}
         className="flex gap-2 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg p-2 border border-forest-100"
       >
         {FILTERS.map((f) => (
           <button
             key={f.value}
             onClick={() => setFilter(f.value)}
-            className={`whitespace-nowrap text-xs font-semibold px-4 py-2 rounded-xl transition-all ${filter === f.value
-                ? "bg-forest-800 text-white"
-                : "text-forest-600 hover:bg-forest-50"
-              }`}
+            className={`whitespace-nowrap text-xs font-semibold px-4 py-2 rounded-xl transition-all ${
+              filter === f.value ? "bg-forest-800 text-white" : "text-forest-600 hover:bg-forest-50"
+            }`}
           >
             {f.label}
           </button>
@@ -238,9 +215,7 @@ if (navigator.geolocation) {
         style={{ position: "fixed", top: 140, left: 16, zIndex: 1000 }}
         className="bg-white/90 backdrop-blur-sm rounded-xl px-3 py-2 shadow-md border border-forest-100"
       >
-        <span className="text-xs font-semibold text-forest-700">
-          {filtered.length} məkan
-        </span>
+        <span className="text-xs font-semibold text-forest-700">{filtered.length} məkan</span>
       </div>
 
       {/* Seçilmiş məkan paneli */}
@@ -251,11 +226,7 @@ if (navigator.geolocation) {
         >
           {selected.cover_image_url ? (
             <div className="relative h-44 overflow-hidden">
-              <img
-                src={selected.cover_image_url}
-                alt={selected.title}
-                className="w-full h-full object-cover"
-              />
+              <img src={selected.cover_image_url} alt={selected.title} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-forest-950/40 to-transparent" />
             </div>
           ) : (
@@ -275,9 +246,7 @@ if (navigator.geolocation) {
             <span className="inline-block bg-forest-50 text-forest-700 text-xs font-semibold px-2.5 py-1 rounded-full mb-2">
               {selected.location_type_display || selected.location_type}
             </span>
-            <h3 className="font-display text-lg font-bold text-forest-900 mb-1 leading-tight">
-              {selected.title}
-            </h3>
+            <h3 className="font-display text-lg font-bold text-forest-900 mb-1 leading-tight">{selected.title}</h3>
             {selected.city && (
               <div className="flex items-center gap-1 text-forest-500 text-sm mb-3">
                 <MapPin className="w-3.5 h-3.5" />
