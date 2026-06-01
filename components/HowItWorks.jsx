@@ -1,76 +1,74 @@
 import { Search, CalendarCheck, Tent, Smile } from "lucide-react";
 
 const STEPS = [
-  {
-    icon: Search,
-    number: "01",
-    title: "Axtar",
-    desc: "Şəhər, tarix və qonaq sayına görə uyğun kamp yerini tap. Xəritə və ya siyahı görünüşündən istifadə et.",
-  },
-  {
-    icon: CalendarCheck,
-    number: "02",
-    title: "Rezervasiya et",
-    desc: "Bəyəndiyini seç, tarixi müəyyənləşdir, təhlükəsiz ödəniş et. Sahibkar 24 saat ərzində təsdiq edəcək.",
-  },
-  {
-    icon: Tent,
-    number: "03",
-    title: "Hazırlaş",
-    desc: "Rezervasiya təsdiqləndi. İndi sadəcə çantanı götür, yola düş. Bütün detallar emaildə olacaq.",
-  },
-  {
-    icon: Smile,
-    number: "04",
-    title: "Zövq al",
-    desc: "Unudulmaz bir təcrübə yaşa. Geri qayıdanda rəyini paylaş, başqalarına da kömək et.",
-  },
+  { icon: Search, num: "01", title: "Macərani Tap", desc: "Seher, tarix ve qrup sayina gore uygun yerini sec." },
+  { icon: CalendarCheck, num: "02", title: "Yerini Saxla", desc: "Tehlukesiz odenis et, sahibkar 24 saat erzinde tesdiq edir." },
+  { icon: Tent, num: "03", title: "Hazirla", desc: "Cantani gotur, yola dus. Butun detallar sənin emailində olacaq." },
+  { icon: Smile, num: "04", title: "Yashayis", desc: "Tebietin qoynunda unudulmaz vaxt kecir. Reyini paylas." },
 ];
 
 export default function HowItWorks() {
   return (
-    <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="text-center max-w-2xl mx-auto mb-16">
-        <span className="text-amber-600 text-sm font-semibold uppercase tracking-widest">
-          Necə işləyir?
-        </span>
-        <h2 className="font-display text-4xl sm:text-5xl font-bold text-forest-900 mt-2 leading-tight">
-          4 addımda kamp macərası
-        </h2>
-      </div>
+    <section className="relative py-20 lg:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ background: "#FAF6F0" }}>
 
-      {/* Steps */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {STEPS.map((step, i) => {
-          const Icon = step.icon;
-          return (
-            <div key={i} className="relative group">
-              {/* Connector line */}
-              {i < STEPS.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-[calc(50%+32px)] right-[-calc(50%-32px)] h-px bg-forest-200 z-0" />
-              )}
+      {/* Background mountain silhouette */}
+      <svg className="absolute bottom-0 left-0 w-full opacity-[0.04] pointer-events-none" viewBox="0 0 1440 200" preserveAspectRatio="none">
+        <path d="M0,200 L0,140 L150,80 L300,120 L450,40 L600,90 L750,30 L900,100 L1050,60 L1200,110 L1440,50 L1440,200 Z" fill="#2D4A33" />
+      </svg>
 
-              <div className="relative z-10 flex flex-col items-center text-center">
-                {/* Icon circle */}
-                <div className="w-20 h-20 rounded-2xl bg-forest-50 border-2 border-forest-100 group-hover:border-forest-300 group-hover:bg-forest-100 transition-all duration-300 flex items-center justify-center mb-5 relative">
-                  <Icon className="w-8 h-8 text-forest-700" strokeWidth={1.5} />
-                  {/* Number badge */}
-                  <span className="absolute -top-2.5 -right-2.5 w-6 h-6 bg-amber-500 text-forest-900 text-xs font-bold rounded-full flex items-center justify-center">
-                    {i + 1}
-                  </span>
+      <div className="relative max-w-7xl mx-auto">
+
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto mb-16">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <div className="w-8 h-px bg-[#D4A574]" />
+            <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
+              Yol Qaydalari
+            </span>
+            <div className="w-8 h-px bg-[#D4A574]" />
+          </div>
+          <h2 className="font-display font-bold text-[#1F2D24] leading-[0.92]"
+            style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
+            4 addimda <em className="text-[#4A6B4F]">macera</em>
+          </h2>
+        </div>
+
+        {/* Steps — winding trail layout */}
+        <div className="relative">
+          {/* Dotted trail line — desktop only */}
+          <svg className="hidden lg:block absolute top-12 left-0 w-full pointer-events-none" viewBox="0 0 1200 100" preserveAspectRatio="none" style={{ height: "80px" }}>
+            <path d="M100,40 Q300,80 500,30 T900,50 T1100,40"
+              stroke="#D4A574" strokeWidth="2" strokeDasharray="6 6" fill="none" opacity="0.5" />
+          </svg>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 relative">
+            {STEPS.map((step, i) => {
+              const Icon = step.icon;
+              return (
+                <div key={i} className="relative group text-center lg:text-left">
+
+                  {/* Number circle */}
+                  <div className="relative inline-flex mb-6">
+                    <div className="absolute inset-0 rounded-full opacity-20 group-hover:opacity-40 transition-opacity blur-md"
+                      style={{ background: "#D4A574" }} />
+                    <div className="relative w-20 h-20 rounded-full flex items-center justify-center transition-all group-hover:scale-110"
+                      style={{ background: "#FAF6F0", border: "2px solid #4A6B4F" }}>
+                      <Icon className="w-7 h-7 text-[#2D4A33]" strokeWidth={1.5} />
+                    </div>
+                    {/* Number badge */}
+                    <div className="absolute -top-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md"
+                      style={{ background: "#A0613B" }}>
+                      {i + 1}
+                    </div>
+                  </div>
+
+                  <h3 className="font-display text-xl font-bold text-[#1F2D24] mb-2">{step.title}</h3>
+                  <p className="text-[#4A6B4F]/70 text-sm leading-relaxed">{step.desc}</p>
                 </div>
-
-                <h3 className="font-display text-xl font-bold text-forest-900 mb-3">
-                  {step.title}
-                </h3>
-                <p className="text-forest-500 text-sm leading-relaxed">
-                  {step.desc}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        </div>
       </div>
     </section>
   );
