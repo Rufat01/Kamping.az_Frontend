@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import ListingsFilterBar from "../../components/ListingsFilterBar";
 import ListingCard from "../../components/ListingCard";
 import { MapPin, Star, Users, Heart, ArrowUpRight, Compass } from "lucide-react";
+import Navbar from "../../components/Navbar";
 
 export const metadata = {
   title: "Kamp Yerleri — Kamping.az",
@@ -169,6 +170,8 @@ export default async function ListingsPage({ searchParams }) {
   const listings = await fetchListings(searchParams);
 
   return (
+     <>
+    <Navbar />
     <main style={{ background: "#FAF6F0" }}>
 
       {/* Hero — forest journal header */}
@@ -255,5 +258,6 @@ export default async function ListingsPage({ searchParams }) {
         )}
       </div>
     </main>
+    </>
   );
 }

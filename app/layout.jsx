@@ -51,7 +51,6 @@ export default function RootLayout({ children }) {
         {/* <PageLoader /> */}
         <AuthSessionProvider>
           <RecaptchaProvider>
-            <Navbar />
             {children}
             <Footer />
           </RecaptchaProvider>

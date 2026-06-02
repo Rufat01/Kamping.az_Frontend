@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Tent, ArrowRight, Mail } from "lucide-react";
 import { auth } from "../../lib/api";
+import Navbar from "../../components/Navbar";
 
 const INITIAL_FORM = {
   full_name: "",
@@ -89,6 +90,8 @@ export default function RegisterPage() {
   };
 
   return (
+    <>
+    <Navbar forceScrolled />
     <div className="min-h-screen bg-[#F9F5EE] flex">
 
       {/* Sol — dekorativ panel (desktop) */}
@@ -129,7 +132,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Sağ — form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-10 lg:pt-[100px]">
         <div className="w-full max-w-md">
 
           {/* Logo — mobile */}
@@ -351,5 +354,6 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { sendContactMessage } from "../../lib/api";
 import { Mail, Phone, MapPin, Send, CheckCircle, AlertCircle, Compass, Instagram, Facebook, Youtube, MessageCircle, ArrowUpRight } from "lucide-react";
+import Navbar from "../../components/Navbar";
 
 const INITIAL_FORM = { name: "", email: "", subject: "", message: "" };
 
@@ -72,6 +73,8 @@ export default function ContactPage() {
   };
 
   return (
+     <>
+    <Navbar />
     <main style={{ background: "#FAF6F0" }} className="relative overflow-hidden">
 
       {/* ── HERO ── */}
@@ -381,5 +384,6 @@ export default function ContactPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Compass, Heart, Leaf, Mountain, Tent, Users, MapPin, Sparkles, ArrowUpRight } from "lucide-react";
+import Navbar from "../../components/Navbar";
 
 export const metadata = {
   title: "Haqqimizda — Kamping.az",
@@ -70,6 +71,8 @@ const TEAM = [
 
 export default function AboutPage() {
   return (
+     <>
+    <Navbar />
     <main style={{ background: "#FAF6F0" }} className="relative overflow-hidden">
 
       {/* ── HERO ── */}
@@ -439,5 +442,6 @@ export default function AboutPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }

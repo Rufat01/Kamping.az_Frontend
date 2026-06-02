@@ -6,10 +6,12 @@ import MapTeaser from "../components/MapTeaser";
 import HowItWorks from "../components/HowItWorks";
 import Testimonials from "../components/Testimonials";
 import CTA from "../components/CTA";
+import Navbar from "../components/Navbar";
 
 export default function HomePage() {
   return (
     <main className="grain">
+      <Navbar />
       <Hero />
       <Marquee />
       <Categories />

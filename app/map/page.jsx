@@ -21,7 +21,7 @@ export default async function MapPage() {
 
   return (
     <main className="flex flex-col min-h-screen">
-      <Navbar />
+      <Navbar forceScrolled />
       <div className="flex-1 pt-16">
         <MapClient
           locations={adminLocations.status === "fulfilled" ? adminLocations.value : []}

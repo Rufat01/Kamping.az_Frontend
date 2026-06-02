@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Tent, ArrowRight } from "lucide-react";
+import Navbar from "../../components/Navbar";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -59,6 +60,8 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+    <Navbar forceScrolled />
     <div className="min-h-screen bg-[#F9F5EE] flex">
 
       {/* Sol — dekorativ panel */}
@@ -228,5 +231,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }
