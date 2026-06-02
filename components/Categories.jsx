@@ -9,7 +9,7 @@ const CATEGORIES = [
   {
     type: "glamping", label: "Glamping", desc: "Luxs cadir macerasi",
     count: "42", emoji: "🏕️",
-    img: "https://images.unsplash.com/photo-1516967124798-10656f7dca28?w=600&q=80",
+    img: "https://images.unsplash.com/photo-1593053272490-e0ed6d6a42c5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z2xhbXBpbmd8ZW58MHx8MHx8fDA%3D",
   },
   {
     type: "bungalow", label: "Bungalo", desc: "Mese icherisinde",

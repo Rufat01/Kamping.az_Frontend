@@ -1,8 +1,8 @@
 import Link from "next/link";
-import ListingsFilterBar from "../../components/ListingsFilterBar";
-import { MapPin, Star, Users, Heart } from "lucide-react";
 import { Suspense } from "react";
-
+import ListingsFilterBar from "../../components/ListingsFilterBar";
+import ListingCard from "../../components/ListingCard";
+import { MapPin, Star, Users, Heart, ArrowUpRight, Compass } from "lucide-react";
 
 export const metadata = {
   title: "Kamp Yerleri — Kamping.az",
@@ -31,95 +31,136 @@ async function fetchListings(searchParams) {
   }
 }
 
-function ListingCard({ listing }) {
-  return (
-    <Link
-      href={`/listings/${listing.id}`}
-      className="listing-card bg-white rounded-2xl overflow-hidden border border-forest-100 block group"
-    >
-      <div className="relative aspect-[4/3] overflow-hidden">
-        {listing.cover_image ? (
-          <img
-            src={listing.cover_image}
-            alt={listing.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
-        ) : (
-          <div className="w-full h-full bg-forest-100 flex items-center justify-center">
-            <span className="text-4xl">⛺</span>
-          </div>
-        )}
-        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-forest-800 text-xs font-semibold px-3 py-1.5 rounded-full">
-          {listing.listing_type_display}
-        </div>
-        {listing.is_free && (
-          <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
-            Pulsuz
-          </div>
-        )}
-      </div>
+// function ListingCard({ listing, index }) {
+//   // Scattered postcard rotation
+//   const rotations = [-0.6, 0.5, -0.3, 0.7, -0.5, 0.4];
+//   const rotate = rotations[index % rotations.length];
 
-      <div className="p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h2 className="font-display text-lg font-bold text-forest-900 leading-tight line-clamp-2">
-            {listing.title}
-          </h2>
-          {listing.rating > 0 && (
-            <div className="flex items-center gap-1 shrink-0">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="text-sm font-semibold text-forest-800">{listing.rating}</span>
-              {listing.review_count > 0 && (
-                <span className="text-xs text-forest-400">({listing.review_count})</span>
-              )}
-            </div>
-          )}
-        </div>
+//   return (
+//     <Link
+//       href={`/listings/${listing.id}`}
+//       className="group block transition-all duration-300 hover:!rotate-0 hover:-translate-y-2"
+//       style={{ transform: `rotate(${rotate}deg)` }}
+//     >
+//       <div className="bg-white rounded-2xl overflow-hidden"
+//         style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08), 0 12px 30px -6px rgba(45,74,51,0.12)" }}>
 
-        <div className="flex items-center gap-1 text-forest-500 text-sm mb-4">
-          <MapPin className="w-3.5 h-3.5 shrink-0" />
-          <span>{listing.city}</span>
-        </div>
+//         {/* Image */}
+//         <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
+//           {listing.cover_image ? (
+//             <img
+//               src={listing.cover_image}
+//               alt={listing.title}
+//               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+//             />
+//           ) : (
+//             <div className="w-full h-full flex items-center justify-center" style={{ background: "#E8E5D8" }}>
+//               <span className="text-5xl">⛺</span>
+//             </div>
+//           )}
 
-        <div className="flex items-center justify-between pt-3 border-t border-forest-100">
-          <div className="flex items-center gap-1 text-forest-400 text-sm">
-            <Users className="w-3.5 h-3.5" />
-            <span>Maks. {listing.max_guests} nəfər</span>
-          </div>
-          <div className="text-right">
-            {listing.is_free ? (
-              <span className="font-display text-lg font-bold text-green-600">Pulsuz</span>
-            ) : listing.entry_fee ? (
-              <div>
-                <span className="font-display text-xl font-bold text-forest-900">
-                  ₼{listing.entry_fee}
-                </span>
-                <span className="text-forest-400 text-xs"> giriş</span>
-              </div>
-            ) : (
-              <div>
-                <span className="font-display text-xl font-bold text-forest-900">
-                  ₼{listing.price_per_night}
-                </span>
-                <span className="text-forest-400 text-xs"> / gecə</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </Link>
-  );
-}
+//           {/* Type stamp */}
+//           <div className="absolute top-4 left-4 bg-[#FAF6F0]/95 backdrop-blur text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30">
+//             {listing.listing_type_display}
+//           </div>
+
+//           {/* Free / Entry fee badges */}
+//           {listing.is_free && !listing.entry_fee && (
+//             <div className="absolute top-4 right-4 px-3 py-1.5 rounded-md text-xs font-bold text-white shadow-md"
+//               style={{ background: "#4A6B4F" }}>
+//               🌿 Pulsuz
+//             </div>
+//           )}
+//           {listing.entry_fee && (
+//             <div className="absolute top-4 right-4 px-3 py-1.5 rounded-md text-xs font-bold text-white shadow-md"
+//               style={{ background: "#A0613B" }}>
+//               🎟️ Girişli
+//             </div>
+//           )}
+
+//           {/* Heart — bottom-left, doesn't conflict with badges */}
+//           <button onClick={e => e.preventDefault()}
+//             className="absolute bottom-4 left-4 w-9 h-9 bg-white/95 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm">
+//             <Heart className="w-4 h-4 text-[#4A6B4F] hover:text-red-400 hover:fill-red-400 transition-colors" />
+//           </button>
+
+//           {/* Price tag */}
+//           {!listing.is_free && (
+//             <div className="absolute bottom-4 right-4 bg-[#2D4A33] text-[#FAF6F0] px-3 py-2 rounded-xl shadow-lg">
+//               <div className="flex items-baseline gap-1">
+//                 <span className="font-display text-xl font-bold">
+//                   {listing.entry_fee || listing.price_per_night}
+//                 </span>
+//                 <span className="text-[#D4A574] text-xs">
+//                   ₼{listing.entry_fee ? "" : "/gece"}
+//                 </span>
+//               </div>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Body */}
+//         <div className="p-5">
+//           <div className="flex items-start justify-between gap-2 mb-2">
+//             <h3 className="font-display text-lg font-bold text-[#1F2D24] leading-tight line-clamp-2 flex-1">
+//               {listing.title}
+//             </h3>
+//             <ArrowUpRight className="w-4 h-4 text-[#4A6B4F] shrink-0 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+//           </div>
+
+//           <div className="flex items-center gap-1.5 text-[#4A6B4F]/70 text-sm mb-4">
+//             <MapPin className="w-3.5 h-3.5" />
+//             {listing.city}
+//           </div>
+
+//           <div className="flex items-center justify-between pt-4 border-t border-dashed border-[#E8E5D8]">
+//             {listing.rating > 0 ? (
+//               <div className="flex items-center gap-1.5">
+//                 <Star className="w-3.5 h-3.5 fill-[#D4A574] text-[#D4A574]" />
+//                 <span className="text-sm font-bold text-[#1F2D24]">{listing.rating}</span>
+//                 {listing.review_count > 0 && (
+//                   <span className="text-[#4A6B4F]/50 text-xs">({listing.review_count})</span>
+//                 )}
+//               </div>
+//             ) : (
+//               <span className="text-[#4A6B4F]/50 text-xs italic">Yeni elan</span>
+//             )}
+//             <div className="flex items-center gap-1 text-[#4A6B4F]/70 text-xs">
+//               <Users className="w-3.5 h-3.5" />
+//               {listing.max_guests} nefer
+//             </div>
+//           </div>
+//         </div>
+//       </div>
+//     </Link>
+//   );
+// }
 
 function EmptyState() {
   return (
     <div className="col-span-full flex flex-col items-center justify-center py-24 text-center">
-      <span className="text-6xl mb-4">🏕️</span>
-      <h3 className="font-display text-2xl font-bold text-forest-900 mb-2">
-        Nəticə tapılmadı
+      {/* Tent illustration */}
+      <div className="relative mb-8">
+        <svg className="absolute -top-2 -left-8 w-12 h-12 opacity-30 animate-float-slow" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#D4A574" />
+        </svg>
+        <svg className="absolute -bottom-2 -right-6 w-10 h-10 opacity-25 animate-float" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#4A6B4F" />
+        </svg>
+        <span className="text-7xl block">🏕️</span>
+      </div>
+
+      <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#1F2D24] mb-3">
+        Heç bir mekan tapilmadi
       </h3>
-      <p className="text-forest-500 text-sm max-w-xs">
-        Axtarış parametrlərini dəyişdirərək yenidən cəhd edin.
+      <p className="text-[#4A6B4F]/70 text-sm max-w-xs leading-relaxed mb-6">
+        Cigir burda bitir... Filterleri deyisib yeniden cəhd et və ya butun mekanlara bax.
       </p>
+      <Link href="/listings"
+        className="inline-flex items-center gap-2 text-[#FAF6F0] font-bold text-sm px-6 py-3 rounded-2xl transition-all active:scale-95 hover:shadow-xl"
+        style={{ background: "#2D4A33" }}>
+        Filterleri sifirla
+      </Link>
     </div>
   );
 }
@@ -128,37 +169,91 @@ export default async function ListingsPage({ searchParams }) {
   const listings = await fetchListings(searchParams);
 
   return (
-    <main>
+    <main style={{ background: "#FAF6F0" }}>
 
-      {/* Header */}
-      <section className="bg-forest-900 pt-28 pb-10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-2">
-            Kamp Yerleri
-          </h1>
-          <p className="text-white/60">
-            {listings.length > 0 ? `${listings.length} mekan tapildi` : "Azerbaycanda en gozal kamp mecanlari"}
-          </p>
+      {/* Hero — forest journal header */}
+      <section className="relative overflow-hidden pt-28 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8" style={{ background: "#1A3A2E" }}>
+
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <img
+            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85"
+            alt=""
+            className="w-full h-full object-cover opacity-25"
+          />
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(180deg, rgba(26,58,46,0.7) 0%, rgba(26,58,46,0.95) 100%)"
+          }} />
+          <div className="absolute inset-0" style={{
+            background: "radial-gradient(ellipse at 20% 30%, rgba(212,165,116,0.15) 0%, transparent 50%)"
+          }} />
         </div>
+
+        {/* Floating leaves */}
+        <svg className="absolute top-32 right-12 w-14 h-14 opacity-25 animate-float-slow" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#D4A574" />
+        </svg>
+        <svg className="absolute bottom-20 left-16 w-10 h-10 opacity-20 animate-float" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#FAF6F0" />
+        </svg>
+
+        <div className="relative max-w-7xl mx-auto">
+
+          {/* Breadcrumb / location */}
+          <div className="flex items-center gap-3 mb-4">
+            <Compass className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
+            <Link href="/" className="text-[#D4A574]/80 hover:text-[#D4A574] text-xs font-semibold tracking-[0.25em] uppercase transition-colors">
+              Ana sehife
+            </Link>
+            <span className="text-[#FAF6F0]/30">/</span>
+            <span className="text-[#FAF6F0]/60 text-xs font-semibold tracking-[0.25em] uppercase">
+              Kamp Yerleri
+            </span>
+          </div>
+
+          {/* Title */}
+          <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-5"
+            style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}>
+            <em className="text-[#D4A574]">Mekanlar</em><br />
+            kataloqu
+          </h1>
+
+          {/* Results count */}
+          <div className="flex items-center gap-4 mb-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#D4A574] animate-pulse" />
+              <p className="text-[#FAF6F0]/60 text-sm sm:text-base">
+                {listings.length > 0
+                  ? <><span className="font-bold text-[#FAF6F0]">{listings.length}</span> mekan tapildi</>
+                  : "Filterlerle uygun macera tap"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom curve */}
+        <svg className="absolute bottom-0 left-0 w-full pointer-events-none" viewBox="0 0 1440 60" preserveAspectRatio="none" style={{ height: "40px" }}>
+          <path d="M0,40 Q360,5 720,30 T1440,25 L1440,60 L0,60 Z" fill="#FAF6F0" />
+        </svg>
       </section>
 
-      {/* Filter bar — Navbar-dan sonra sticky */}
+      {/* Filter bar */}
       <Suspense fallback={null}>
         <ListingsFilterBar />
       </Suspense>
 
-      {/* Elanlar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {listings.length > 0
-            ? listings.map((listing) => (
-              <ListingCard key={listing.id} listing={listing} />
-            ))
-            : <EmptyState />
-          }
-        </div>
+      {/* Listings grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        {listings.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-7">
+            {listings.map((listing, i) => (
+              <ListingCard key={listing.id} listing={listing} index={i} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState />
+        )}
       </div>
-
     </main>
   );
 }

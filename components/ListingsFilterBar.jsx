@@ -1,14 +1,14 @@
 "use client";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useEffect, useState, useRef } from "react";
-import { Search, X } from "lucide-react";
+import { Search, X, SlidersHorizontal } from "lucide-react";
 
 const TYPES = [
-  { value: "", label: "Hamısı" },
-  { value: "tent_site", label: "⛺ Çadır" },
-  { value: "glamping", label: "🏕️ Glamping" },
-  { value: "bungalow", label: "🏡 Bungalo" },
-  { value: "house", label: "🏠 Ev" },
+  { value: "", label: "Hamısı", emoji: "✦" },
+  { value: "tent_site", label: "Cadir", emoji: "⛺" },
+  { value: "glamping", label: "Glamping", emoji: "🏕️" },
+  { value: "bungalow", label: "Bungalo", emoji: "🏡" },
+  { value: "house", label: "Ev", emoji: "🏠" },
 ];
 
 const CITIES = [
@@ -31,18 +31,13 @@ export default function ListingsFilterBar() {
   const [searchInput, setSearchInput] = useState(currentSearch);
   const debounceRef = useRef(null);
 
-  // URL-i yenilə
   const updateFilter = useCallback((key, value) => {
     const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
+    if (value) params.set(key, value);
+    else params.delete(key);
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }, [searchParams, router, pathname]);
 
-  // Axtarış — real-time debounce (400ms)
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
@@ -51,13 +46,11 @@ export default function ListingsFilterBar() {
     return () => clearTimeout(debounceRef.current);
   }, [searchInput]);
 
-  // Axtarış düyməsi — dərhal
   const handleSearchSubmit = () => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     updateFilter("search", searchInput);
   };
 
-  // Bütün filterləri sıfırla
   const clearAll = useCallback(() => {
     setSearchInput("");
     router.push(pathname, { scroll: false });
@@ -67,112 +60,118 @@ export default function ListingsFilterBar() {
     .filter(Boolean).length;
 
   return (
-    <div className="bg-white border-b border-forest-100 sticky top-16 z-40 shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <div className="sticky top-16 z-40 border-b" style={{ background: "#FAF6F0", borderColor: "#E8E5D8" }}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 
-        {/* Axtarış — tam genişlik, üstdə */}
+        {/* Search row */}
         <div className="flex gap-2 mb-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-forest-400" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A6B4F]" strokeWidth={1.5} />
             <input
               type="text"
-              placeholder="Elan axtar..."
+              placeholder="Mekan adi, seher və ya açar söz..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
-              className="w-full pl-10 pr-4 py-2.5 text-sm border border-forest-200 rounded-xl focus:outline-none focus:border-forest-400 bg-forest-50/50"
+              className="w-full pl-11 pr-10 py-3 text-sm rounded-2xl bg-white border border-[#E8E5D8] focus:outline-none focus:border-[#4A6B4F] text-[#1F2D24] placeholder:text-[#4A6B4F]/50 transition-colors"
             />
             {searchInput && (
               <button
                 onClick={() => setSearchInput("")}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-forest-300 hover:text-forest-600"
+                className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-[#E8E5D8] hover:bg-[#D4A574]/30 flex items-center justify-center transition-colors"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3 text-[#4A6B4F]" />
               </button>
             )}
           </div>
-          {/* Axtarış düyməsi */}
+
           <button
             onClick={handleSearchSubmit}
-            className="flex items-center gap-2 bg-forest-800 hover:bg-forest-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-all active:scale-95"
+            className="flex items-center gap-2 text-white font-bold text-sm px-5 sm:px-6 py-3 rounded-2xl transition-all active:scale-95 hover:shadow-lg"
+            style={{ background: "#2D4A33" }}
           >
             <Search className="w-4 h-4" />
             <span className="hidden sm:inline">Axtar</span>
           </button>
         </div>
 
-        {/* Filterlər — horizontal scroll mobiledə */}
+        {/* Filter chips row */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
 
-          {/* Növ */}
-          <div className="flex items-center gap-1 shrink-0">
+          {/* Type chips */}
+          <div className="flex items-center gap-1.5 shrink-0">
             {TYPES.map((t) => (
               <button
                 key={t.value}
                 onClick={() => updateFilter("listing_type", t.value)}
-                className={`whitespace-nowrap text-xs font-semibold px-3 py-1.5 rounded-xl transition-all ${
+                className={`flex items-center gap-1.5 whitespace-nowrap text-xs font-bold px-3.5 py-2 rounded-full transition-all ${
                   currentType === t.value
-                    ? "bg-forest-800 text-white shadow-sm"
-                    : "bg-forest-50 text-forest-600 hover:bg-forest-100 border border-forest-200"
+                    ? "text-white shadow-md"
+                    : "bg-white text-[#4A6B4F] border border-[#E8E5D8] hover:border-[#4A6B4F]"
                 }`}
+                style={currentType === t.value ? { background: "#2D4A33" } : {}}
               >
+                <span>{t.emoji}</span>
                 {t.label}
               </button>
             ))}
           </div>
 
-          <div className="w-px h-5 bg-forest-200 shrink-0" />
+          {/* Divider */}
+          <div className="w-px h-6 bg-[#E8E5D8] shrink-0 mx-1" />
 
-          {/* Şəhər */}
+          {/* City */}
           <select
             value={currentCity}
             onChange={(e) => updateFilter("city", e.target.value)}
-            className="shrink-0 text-xs border border-forest-200 rounded-xl px-3 py-1.5 bg-forest-50/50 focus:outline-none focus:border-forest-400 text-forest-700 cursor-pointer"
+            className="shrink-0 text-xs font-semibold border border-[#E8E5D8] rounded-full px-4 py-2 bg-white focus:outline-none focus:border-[#4A6B4F] text-[#4A6B4F] cursor-pointer hover:border-[#4A6B4F] transition-colors"
           >
-            <option value="">Bütün şəhərlər</option>
+            <option value="">📍 Bütün şəhərlər</option>
             {CITIES.map((c) => (
               <option key={c} value={c}>{c}</option>
             ))}
           </select>
 
-          {/* Qiymət */}
-          <div className="flex items-center gap-1 shrink-0">
+          {/* Price */}
+          <div className="flex items-center gap-1 shrink-0 bg-white border border-[#E8E5D8] rounded-full px-3 py-1.5 hover:border-[#4A6B4F] transition-colors">
+            <span className="text-[10px] font-bold text-[#4A6B4F]/60 uppercase tracking-wider pr-1">₼</span>
             <input
               type="number"
-              placeholder="Min ₼"
+              placeholder="Min"
               defaultValue={currentMinPrice}
               onBlur={(e) => updateFilter("min_price", e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && updateFilter("min_price", e.target.value)}
-              className="w-20 text-xs border border-forest-200 rounded-xl px-3 py-1.5 bg-forest-50/50 focus:outline-none focus:border-forest-400"
+              className="w-14 text-xs font-semibold bg-transparent focus:outline-none text-[#1F2D24]"
             />
-            <span className="text-forest-300 text-xs shrink-0">—</span>
+            <span className="text-[#4A6B4F]/30 text-xs">—</span>
             <input
               type="number"
-              placeholder="Max ₼"
+              placeholder="Max"
               defaultValue={currentMaxPrice}
               onBlur={(e) => updateFilter("max_price", e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && updateFilter("max_price", e.target.value)}
-              className="w-20 text-xs border border-forest-200 rounded-xl px-3 py-1.5 bg-forest-50/50 focus:outline-none focus:border-forest-400"
+              className="w-14 text-xs font-semibold bg-transparent focus:outline-none text-[#1F2D24]"
             />
           </div>
 
-          {/* Qonaq */}
+          {/* Guests */}
           <select
             value={currentGuests}
             onChange={(e) => updateFilter("guests", e.target.value)}
-            className="shrink-0 text-xs border border-forest-200 rounded-xl px-3 py-1.5 bg-forest-50/50 focus:outline-none focus:border-forest-400 text-forest-700 cursor-pointer"
+            className="shrink-0 text-xs font-semibold border border-[#E8E5D8] rounded-full px-4 py-2 bg-white focus:outline-none focus:border-[#4A6B4F] text-[#4A6B4F] cursor-pointer hover:border-[#4A6B4F] transition-colors"
           >
-            <option value="">Qonaq sayı</option>
+            <option value="">👥 Qonaq sayı</option>
             {["1","2","3","4","5","6","8","10"].map((g) => (
               <option key={g} value={g}>{g}+ nəfər</option>
             ))}
           </select>
 
-          {/* Sıfırla */}
+          {/* Clear */}
           {activeCount > 0 && (
             <button
               onClick={clearAll}
-              className="shrink-0 flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-xl transition-all border border-red-100"
+              className="shrink-0 flex items-center gap-1.5 text-xs font-bold text-white px-4 py-2 rounded-full transition-all hover:shadow-md"
+              style={{ background: "#A0613B" }}
             >
               <X className="w-3 h-3" />
               Sıfırla ({activeCount})
