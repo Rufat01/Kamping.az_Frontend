@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ImageGallery from "./ImageGallery";
 import { MapPin, Star, Users, Compass, ArrowUpRight, Phone, Calendar, ChevronRight } from "lucide-react";
+import Navbar from "../../../components/Navbar";
 
 export async function generateMetadata({ params }) {
     try {
@@ -30,6 +31,8 @@ export default async function ListingDetailPage({ params }) {
     }
 
     return (
+        <>
+        <Navbar forceScrolled />
         <main style={{ background: "#FAF6F0" }} className="relative overflow-hidden">
 
             {/* Decorative floating leaves — global background */}
@@ -384,5 +387,6 @@ export default async function ListingDetailPage({ params }) {
                 </div>
             </div>
         </main>
+        </>
     );
 }
