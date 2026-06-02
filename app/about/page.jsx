@@ -1,297 +1,283 @@
-import { Target, Heart, Leaf, Users, MapPin, Star } from "lucide-react";
+import Link from "next/link";
+import { Compass, Heart, Leaf, Mountain, Tent, Users, MapPin, Sparkles, ArrowUpRight } from "lucide-react";
 
-// ── Demo data ──────────────────────────────────────────
-const TEAM = [
-  {
-    name: "Əli Həsənov",
-    role: "Qurucu & CEO",
-    bio: "10 illik turizm təcrübəsi. Azərbaycanın hər guşəsini gəzmiş, kamp mədəniyyətini ölkəyə yaymaq üçün Kamping.az-ı qurub.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
-    socials: { linkedin: "#", instagram: "#" },
-  },
-  {
-    name: "Nigar Quliyeva",
-    role: "Məhsul rəhbəri",
-    bio: "UX dizayn və məhsul strategiyası üzrə mütəxəssis. İstifadəçi təcrübəsini mərkəzə alan platforma qurmağı hədəfləyir.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80",
-    socials: { linkedin: "#", instagram: "#" },
-  },
-  {
-    name: "Rauf Məmmədov",
-    role: "Texniki direktor",
-    bio: "Full-stack mühəndis. Platforma arxitekturasını və API inteqrasiyalarını idarə edir. Boş vaxtlarında dağ turizmini seçir.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
-    socials: { linkedin: "#", instagram: "#" },
-  },
-  {
-    name: "Sevinc Əliyeva",
-    role: "Sahibkar əlaqələri",
-    bio: "200+ kamp sahibi ilə birbaşa əlaqə saxlayır. Onları platforma vasitəsilə daha çox qonağa çatdırmaq üçün çalışır.",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&q=80",
-    socials: { linkedin: "#", instagram: "#" },
-  },
-];
+export const metadata = {
+  title: "Haqqimizda — Kamping.az",
+  description: "Kamping.az hekayemiz, missiyamiz ve Azerbaycanin en gozal kamp yerlerini birlesdiren komanda.",
+};
 
 const VALUES = [
   {
     icon: Leaf,
-    title: "Ekoloji məsuliyyət",
-    desc: "Təbiəti qorumaq prioritetimizdir. Platforma vasitəsilə ekoloji turizmi təşviq edirik.",
+    title: "Təbiətə Hörmət",
+    desc: "Hər mecan ekoloji prinsiplerle idarə olunur. İz buraxma, hər seyi yerinde qoy.",
   },
   {
     icon: Heart,
-    title: "Yerli icmalar",
-    desc: "Kamp sahiblərinin gəlirlərini artıraraq yerli iqtisadiyyata töhfə veririk.",
+    title: "İcma Ruhu",
+    desc: "Sahibkar və qonaq arasinda etibar — bizim ən böyük dəyərimiz. Bir ailəyik.",
   },
   {
-    icon: Target,
-    title: "Keyfiyyətə sadiqlik",
-    desc: "Hər elan yoxlanılır. İstifadəçilər yalnız etibarlı, keyfiyyətli məkanlara çatır.",
+    icon: Mountain,
+    title: "Real Macera",
+    desc: "Otel yox — gerçek tebiet tecrubesi. Tonqalin yanı, ulduzlar altinda yatmaq.",
   },
   {
-    icon: Users,
-    title: "Cəmiyyət ruhu",
-    desc: "Kamp həvəskarlarını bir araya gətirən, təcrübə paylaşımını dəstəkləyən bir platforma.",
+    icon: Sparkles,
+    title: "Keyfiyyət",
+    desc: "Hər mecan komandamiz tərəfindən yoxlanilir. Sənə yaxşilarini təqdim edirik.",
   },
 ];
 
-const STATS = [
-  { value: "2022", label: "Quruluş ili" },
-  { value: "200+", label: "Kamp yeri" },
-  { value: "2,400+", label: "Xoşbəxt qonaq" },
-  { value: "8", label: "Şəhər" },
+const TIMELINE = [
+  {
+    year: "2024",
+    title: "Hekayə basladi",
+    desc: "Bir qrup macəra həvəskari Azerbaycanin gizli kamp guşeleirni daha asan tapilan etmek qerarini verdi.",
+  },
+  {
+    year: "2025",
+    title: "İlk 50 mecan",
+    desc: "Şəki dağlarindan Lənkəran sahillərinə — 50+ unikal mecan platformamiza qosuldu.",
+  },
+  {
+    year: "2026",
+    title: "200+ macera",
+    desc: "Bu gun 200+ kamp yeri, 2400+ qonaq və böyüməyə davam edən bir icma.",
+  },
 ];
 
-// ── Page ───────────────────────────────────────────────
-export const metadata = {
-  title: "Haqqımızda — Kamping.az",
-  description:
-    "Kamping.az komandası, missiyamız və Azərbaycan kamp mədəniyyətinə töhfəmiz haqqında məlumat əldə edin.",
-};
+const TEAM = [
+  {
+    name: "Rufat Mammadov",
+    role: "Banı / CEO",
+    bio: "10+ il IT və 15 il kamp təcrübəsi. Lerikin meşelərini avucu kimi tani.",
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
+  },
+  {
+    name: "Aysel Quliyeva",
+    role: "Məhsul Direktoru",
+    bio: "Dizayn və tebiet arasinda korpu. UX/UI mutexessisi, fotoqraf.",
+    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80",
+  },
+  {
+    name: "Murad Aliyev",
+    role: "Texnoloji Direktor",
+    bio: "Backend ekspertı. Code yazmaq qədər mese cigirlarini da sevir.",
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
+  },
+];
 
 export default function AboutPage() {
   return (
-    <main>
+    <main style={{ background: "#FAF6F0" }} className="relative overflow-hidden">
 
-      {/* ── Hero ── */}
-       
-    <section className="relative min-h-[88vh] flex items-center overflow-hidden bg-[#f0ebe3] pt-24">
+      {/* ── HERO ── */}
+      <section className="relative overflow-hidden pt-28 pb-20 lg:pb-28 px-4 sm:px-6 lg:px-8"
+        style={{ background: "#1A3A2E" }}>
 
-  {/* Yumşaq gradient blob-lar — arxa fon */}
-  <div className="absolute inset-0 pointer-events-none">
-    <div
-      className="absolute top-[-10%] right-[-5%] w-[600px] h-[600px] rounded-full opacity-40"
-      style={{
-        background: "radial-gradient(circle, #d4e8d8 0%, transparent 70%)",
-      }}
-    />
-    <div
-      className="absolute bottom-[-15%] left-[-10%] w-[500px] h-[500px] rounded-full opacity-30"
-      style={{
-        background: "radial-gradient(circle, #c8dfc8 0%, transparent 70%)",
-      }}
-    />
-    <div
-      className="absolute top-[30%] left-[40%] w-[400px] h-[400px] rounded-full opacity-20"
-      style={{
-        background: "radial-gradient(circle, #f5d49a 0%, transparent 70%)",
-      }}
-    />
-  </div>
-
-  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-16">
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-
-      {/* Sol — mətn */}
-      <div>
-        {/* Kiçik etiket */}
-        <div className="inline-flex items-center gap-2 bg-white/70 backdrop-blur-sm border border-forest-100 text-forest-600 text-xs font-semibold px-4 py-2 rounded-full mb-8">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-          Bakı, Azərbaycan · 2022
-        </div>
-
-        <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold text-forest-900 leading-[1.05] mb-6">
-          Təbiəti sevən<br />
-          insanlar üçün<br />
-          <span className="text-forest-600 italic font-normal">qurduq bunu.</span>
-        </h1>
-
-        <p className="text-forest-500 text-lg leading-relaxed max-w-md mb-10">
-          Kamping.az — Azərbaycanın gözəl təbiətini hər kəsə
-          əlçatan etmək üçün yaradılmış bir platformadır.
-          Sadə, etibarlı, səmimi.
-        </p>
-
-        {/* Stats — pill şəklində */}
-        <div className="flex flex-wrap gap-3">
-          {[
-            { n: "200+", l: "Kamp yeri" },
-            { n: "2,400+", l: "Xoşbəxt qonaq" },
-            { n: "4.8★", l: "Ortalama reytinq" },
-          ].map((s) => (
-            <div
-              key={s.l}
-              className="bg-white/80 backdrop-blur-sm border border-forest-100 rounded-2xl px-5 py-3"
-            >
-              <div className="font-display text-xl font-bold text-forest-900">{s.n}</div>
-              <div className="text-forest-400 text-xs mt-0.5">{s.l}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Sağ — yumşaq mozaika */}
-      <div className="hidden lg:grid grid-cols-2 gap-4 h-[480px]">
-
-        {/* Böyük şəkil — sol */}
-        <div className="row-span-2 rounded-3xl overflow-hidden img-zoom shadow-lg shadow-forest-900/8">
+        {/* BG image */}
+        <div className="absolute inset-0">
           <img
-            src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=600&q=80"
-            alt="Kamp"
-            className="w-full h-full object-cover"
+            src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85"
+            alt=""
+            className="w-full h-full object-cover opacity-25"
           />
+          <div className="absolute inset-0" style={{
+            background: "linear-gradient(180deg, rgba(26,58,46,0.6) 0%, rgba(26,58,46,0.92) 100%)"
+          }} />
+          <div className="absolute inset-0" style={{
+            background: "radial-gradient(ellipse at 30% 40%, rgba(212,165,116,0.2) 0%, transparent 60%)"
+          }} />
         </div>
 
-        {/* Kiçik şəkil — sağ yuxarı */}
-        <div className="rounded-3xl overflow-hidden img-zoom shadow-lg shadow-forest-900/8">
-          <img
-            src="https://images.unsplash.com/photo-1533873984035-25970ab07461?w=400&q=80"
-            alt="Glamping"
-            className="w-full h-full object-cover"
-          />
-        </div>
+        {/* Floating leaves */}
+        <svg className="absolute top-32 right-12 w-16 h-16 opacity-30 animate-float-slow" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#D4A574" />
+        </svg>
+        <svg className="absolute bottom-32 left-10 w-12 h-12 opacity-25 animate-float" viewBox="0 0 64 64" fill="none" style={{ transform: "rotate(45deg)" }}>
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#FAF6F0" />
+        </svg>
 
-        {/* Məlumat kartı — sağ aşağı */}
-        <div className="rounded-3xl bg-forest-800 p-6 flex flex-col justify-between shadow-lg">
-          <div className="text-4xl">🌲</div>
-          <div>
-            <div className="font-display text-2xl font-bold text-white mb-1">
-              Azərbaycan
-            </div>
-            <div className="text-white/50 text-sm leading-snug">
-              Hər guşəsindən ən gözəl məkanlar
-            </div>
+        <div className="relative max-w-5xl mx-auto text-center">
+
+          <div className="inline-flex items-center gap-3 mb-6">
+            <div className="h-px w-10 bg-[#D4A574]" />
+            <Compass className="w-5 h-5 text-[#D4A574]" strokeWidth={1.5} />
+            <span className="text-[#D4A574] text-xs font-bold uppercase tracking-[0.25em]">
+              Bizim Hekayəmiz
+            </span>
+            <Compass className="w-5 h-5 text-[#D4A574]" strokeWidth={1.5} />
+            <div className="h-px w-10 bg-[#D4A574]" />
           </div>
-          <div className="flex gap-1 mt-3">
-            {["Şəki","Qəbələ","Lerik"].map(c => (
-              <span key={c} className="text-xs bg-white/10 text-white/70 px-2.5 py-1 rounded-full">
-                {c}
-              </span>
-            ))}
-          </div>
+
+          <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-6"
+            style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}>
+            Tebiet bizim<br />
+            <em className="text-[#D4A574]">ev</em>imizdir
+          </h1>
+
+          <p className="text-[#FAF6F0]/65 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed font-light">
+            Azerbaycanin gizli kamp guselrini sənin macəranla birlesdiririk.
+            Hər mese cigir, hər dağ etəyi, hər gol kenarı — bir hekayə.
+          </p>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
 
+        {/* Bottom curve */}
+        <svg className="absolute bottom-0 left-0 w-full pointer-events-none" viewBox="0 0 1440 60" preserveAspectRatio="none" style={{ height: "50px" }}>
+          <path d="M0,50 Q360,10 720,35 T1440,30 L1440,60 L0,60 Z" fill="#FAF6F0" />
+        </svg>
+      </section>
 
+      {/* ── MISSION ── */}
+      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
 
+        {/* Decorative pine */}
+        <svg className="absolute top-10 right-10 w-32 h-32 opacity-[0.05]" viewBox="0 0 100 100" fill="none">
+          <path d="M50 10 L30 35 L40 35 L20 60 L35 60 L10 90 L90 90 L65 60 L80 60 L60 35 L70 35 Z" fill="#2D4A33" />
+        </svg>
 
+        <div className="relative max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 items-center">
 
-      {/* ── Stats ── */}
-      <section className="bg-amber-500">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8">
-            {STATS.map((s) => (
-              <div key={s.label} className="text-center">
-                <div className="font-display text-4xl sm:text-5xl font-bold text-forest-900 mb-1">
-                  {s.value}
+            {/* Left — image collage */}
+            <div className="lg:col-span-2 relative">
+              <div className="relative aspect-[4/5] rounded-3xl overflow-hidden"
+                style={{ boxShadow: "0 20px 60px -15px rgba(45,74,51,0.25)", transform: "rotate(-1.5deg)" }}>
+                <img
+                  src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=700&q=85"
+                  alt="Azerbaycan tebieti"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Decorative leaf */}
+              <svg className="absolute -top-6 -right-6 w-20 h-20 opacity-60 animate-float-slow" viewBox="0 0 64 64" fill="none">
+                <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#D4A574" />
+              </svg>
+              {/* Small accent card */}
+              <div className="absolute -bottom-6 -right-4 bg-white rounded-2xl p-4 px-5 max-w-[200px]"
+                style={{ boxShadow: "0 10px 30px -5px rgba(45,74,51,0.2)", transform: "rotate(3deg)" }}>
+                <div className="flex items-center gap-2 mb-1">
+                  <Tent className="w-4 h-4 text-[#A0613B]" strokeWidth={1.5} />
+                  <span className="text-[#A0613B] text-xs font-bold uppercase tracking-widest">200+</span>
                 </div>
-                <div className="text-forest-800/70 text-sm font-medium">{s.label}</div>
+                <p className="text-[#1F2D24] text-sm font-display font-bold leading-tight">
+                  Unikal mecan Azərbaycanda
+                </p>
+              </div>
+            </div>
+
+            {/* Right — text */}
+            <div className="lg:col-span-3">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-px bg-[#D4A574]" />
+                <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
+                  Missiyamiz
+                </span>
+              </div>
+
+              <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95] mb-6"
+                style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
+                Tebieti hamı<br />
+                <em className="text-[#4A6B4F]">kesf</em> etsin
+              </h2>
+
+              <div className="space-y-4 text-[#1F2D24]/80 text-base lg:text-lg leading-relaxed">
+                <p>
+                  Kamping.az 2024-cü ildə yaranib — sadə bir məqsədlə: <strong className="text-[#1F2D24]">Azerbaycanin gizli kamp guşelirini hər kəs üçün əlçatan etmək.</strong>
+                </p>
+                <p className="font-light">
+                  Bilirdik ki, ölkəmizdə yüzlərlə möhtəşəm mese, dağ etəyi və gol kenarı var — amma bunlari tapmaq və rezervasiya etmək çətindi. Biz bunu dəyişdik.
+                </p>
+                <p className="font-light">
+                  Bu gun platformamizda hər zovqe uygun seçim var: pulsuz ictimai kamp yerlərindən luxs glamping otaqlarına qədər. Hamısı bir yerdə.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap gap-3 mt-8">
+                <Link href="/listings"
+                  className="inline-flex items-center gap-2 bg-[#2D4A33] hover:bg-[#1A3A2E] text-[#FAF6F0] font-bold text-sm px-6 py-3.5 rounded-2xl transition-all active:scale-95 hover:shadow-xl">
+                  Mecanlara bax
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+                <Link href="/contact"
+                  className="inline-flex items-center gap-2 bg-white border-2 border-dashed border-[#4A6B4F]/30 hover:border-[#2D4A33] text-[#1F2D24] font-bold text-sm px-6 py-3.5 rounded-2xl transition-all">
+                  Bizimle elaqe
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── STATS BAND ── */}
+      <section className="relative overflow-hidden py-14 lg:py-16 px-4 sm:px-6 lg:px-8"
+        style={{ background: "#2D4A33" }}>
+
+        {/* Topography */}
+        <svg className="absolute inset-0 w-full h-full opacity-[0.06]" preserveAspectRatio="none" viewBox="0 0 1200 200">
+          <path d="M0,50 Q300,30 600,60 T1200,50" stroke="#FAF6F0" strokeWidth="1" fill="none" />
+          <path d="M0,90 Q300,70 600,100 T1200,90" stroke="#FAF6F0" strokeWidth="1" fill="none" />
+          <path d="M0,130 Q300,110 600,140 T1200,130" stroke="#FAF6F0" strokeWidth="1" fill="none" />
+        </svg>
+
+        <div className="relative max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 text-center">
+            {[
+              { value: "200+", label: "Kamp mecani", icon: Tent },
+              { value: "2,400+", label: "Macera yasandi", icon: Heart },
+              { value: "8", label: "Region əhatə", icon: MapPin },
+              { value: "4.8", label: "Ortalama reytinq", icon: Sparkles },
+            ].map(({ value, label, icon: Icon }) => (
+              <div key={label}>
+                <Icon className="w-6 h-6 text-[#D4A574] mx-auto mb-3" strokeWidth={1.5} />
+                <div className="font-display text-4xl sm:text-5xl font-bold text-[#FAF6F0] mb-1">{value}</div>
+                <div className="text-[#FAF6F0]/40 text-xs uppercase tracking-widest font-semibold">{label}</div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Mission ── */}
-      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Image */}
-          <div className="relative">
-            <div className="rounded-3xl overflow-hidden aspect-[4/3] img-zoom">
-              <img
-                src="https://images.unsplash.com/photo-1523987355523-c7b5b0dd90a7?w=800&q=80"
-                alt="Kamp atəşi"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            {/* Floating card */}
-            <div className="absolute -bottom-6 -right-6 bg-white rounded-2xl shadow-2xl shadow-forest-900/15 p-5 max-w-[200px]">
-              <div className="flex items-center gap-2 mb-2">
-                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span className="font-bold text-forest-900 text-sm">4.8 / 5</span>
-              </div>
-              <p className="text-forest-500 text-xs leading-snug">
-                2,400+ istifadəçinin ortalama qiymətləndirməsi
-              </p>
-            </div>
-          </div>
+      {/* ── VALUES ── */}
+      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
 
-          {/* Text */}
-          <div>
-            <span className="text-amber-600 text-sm font-semibold uppercase tracking-widest">
-              Missiyamız
-            </span>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-forest-900 mt-3 mb-6 leading-tight">
-              Niyə Kamping.az?
-            </h2>
-            <div className="space-y-4 text-forest-600 text-base leading-relaxed">
-              <p>
-                Azərbaycan qeyri-adi bir coğrafiyaya malikdir — Xəzər sahilindən 
-                tutmuş Böyük Qafqazın zirvələrinə, Talış meşələrindən Naxçıvanın 
-                səhrasına qədər hər guşəsi unikaldır.
-              </p>
-              <p>
-                Amma bu gözəllikləri kəşf etmək həmişə asan olmurdu. Etibarlı 
-                məlumat, keyfiyyətli məkanlar tapmaq çətin idi. Biz bu problemi 
-                həll etmək üçün yola çıxdıq.
-              </p>
-              <p>
-                Kamping.az yalnız bir rezervasiya platforması deyil — bu, 
-                Azərbaycanda kamp mədəniyyətini inkişaf etdirmək üçün qurulan 
-                bir hərəkatdır.
-              </p>
-            </div>
+        <svg className="absolute top-32 left-8 w-14 h-14 opacity-[0.1] animate-float" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#D4A574" />
+        </svg>
 
-            <div className="mt-8 flex items-center gap-3">
-              <MapPin className="w-5 h-5 text-amber-500 shrink-0" />
-              <span className="text-forest-700 font-medium">
-                Bakı, Azərbaycan — 2022-ci ildən
+        <div className="relative max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="w-8 h-px bg-[#D4A574]" />
+              <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
+                Dəyərlərimiz
               </span>
+              <div className="w-8 h-px bg-[#D4A574]" />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Values ── */}
-      <section className="py-20 bg-forest-900/5">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-xl mx-auto mb-14">
-            <span className="text-amber-600 text-sm font-semibold uppercase tracking-widest">
-              Dəyərlərimiz
-            </span>
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-forest-900 mt-2 leading-tight">
-              Bizi irəliyə aparan
+            <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95]"
+              style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
+              Nəyə <em className="text-[#4A6B4F]">inanırıq</em>
             </h2>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {VALUES.map((v) => {
-              const Icon = v.icon;
+            {VALUES.map((value, i) => {
+              const Icon = value.icon;
+              const rotations = [-0.8, 0.6, -0.4, 0.7];
               return (
-                <div
-                  key={v.title}
-                  className="bg-white rounded-2xl p-7 border border-forest-100 hover:border-forest-200 hover:shadow-lg hover:shadow-forest-900/6 transition-all duration-300 group"
-                >
-                  <div className="w-12 h-12 bg-forest-50 group-hover:bg-amber-50 rounded-xl flex items-center justify-center mb-5 transition-colors">
-                    <Icon className="w-6 h-6 text-forest-700 group-hover:text-amber-600 transition-colors" strokeWidth={1.5} />
+                <div key={i}
+                  className="bg-white rounded-2xl p-7 transition-all duration-300 hover:!rotate-0 hover:-translate-y-2 hover:shadow-xl group"
+                  style={{
+                    transform: `rotate(${rotations[i]}deg)`,
+                    boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08)"
+                  }}>
+                  <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-5 transition-colors group-hover:bg-[#D4A574]/20"
+                    style={{ background: "#FAF6F0", border: "2px dashed #4A6B4F33" }}>
+                    <Icon className="w-6 h-6 text-[#2D4A33]" strokeWidth={1.5} />
                   </div>
-                  <h3 className="font-display text-lg font-bold text-forest-900 mb-2">
-                    {v.title}
-                  </h3>
-                  <p className="text-forest-500 text-sm leading-relaxed">{v.desc}</p>
+                  <h3 className="font-display text-xl font-bold text-[#1F2D24] mb-3">{value.title}</h3>
+                  <p className="text-[#4A6B4F]/80 text-sm leading-relaxed">{value.desc}</p>
                 </div>
               );
             })}
@@ -299,68 +285,159 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* ── Team ── */}
-      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-        <div className="text-center max-w-xl mx-auto mb-14">
-          <span className="text-amber-600 text-sm font-semibold uppercase tracking-widest">
-            Komanda
-          </span>
-          <h2 className="font-display text-4xl sm:text-5xl font-bold text-forest-900 mt-2 leading-tight">
-            Arxasındakı insanlar
-          </h2>
-          <p className="text-forest-500 mt-4 text-base leading-relaxed">
-            Kiçik amma güclü bir komanda. Hər birimiz Azərbaycan təbiətini sevir
-            və bu platformaya ürəklə inanırıq.
-          </p>
-        </div>
+      {/* ── TIMELINE ── */}
+      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative" style={{ background: "#1A3A2E" }}>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          {TEAM.map((member) => (
-            <div key={member.name} className="group text-center">
-              {/* Avatar */}
-              <div className="relative w-36 h-36 mx-auto mb-5">
-                <div className="w-full h-full rounded-2xl overflow-hidden img-zoom border-4 border-white shadow-xl shadow-forest-900/10">
-                  <img
-                    src={member.avatar}
-                    alt={member.name}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                {/* Amber accent corner */}
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-amber-500 rounded-lg shadow-md" />
-              </div>
+        {/* Mountain silhouette bottom */}
+        <svg className="absolute bottom-0 left-0 w-full opacity-[0.08] pointer-events-none" viewBox="0 0 1440 120" preserveAspectRatio="none">
+          <path d="M0,120 L0,80 L150,40 L300,70 L450,20 L600,60 L750,15 L900,55 L1050,30 L1200,65 L1440,25 L1440,120 Z" fill="#FAF6F0" />
+        </svg>
 
-              <h3 className="font-display text-xl font-bold text-forest-900 mb-1">
-                {member.name}
-              </h3>
-              <div className="text-amber-600 text-sm font-semibold mb-3">
-                {member.role}
-              </div>
-              <p className="text-forest-500 text-sm leading-relaxed px-2">
-                {member.bio}
-              </p>
+        <div className="relative max-w-7xl mx-auto">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <div className="flex items-center justify-center gap-2 mb-3">
+              <div className="w-8 h-px bg-[#D4A574]" />
+              <span className="text-[#D4A574] text-xs font-bold uppercase tracking-[0.25em]">
+                Yolumuz
+              </span>
+              <div className="w-8 h-px bg-[#D4A574]" />
             </div>
-          ))}
-        </div>
-      </section>
+            <h2 className="font-display font-bold text-[#FAF6F0] leading-[0.95]"
+              style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
+              Hekayəmizin <em className="text-[#D4A574]">addımları</em>
+            </h2>
+          </div>
 
-      {/* ── Join CTA ── */}
-      <section className="py-20 bg-forest-900">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-display text-4xl sm:text-5xl font-bold text-white mb-5 leading-tight">
-            Siz də bu hərəkata qoşulun
-          </h2>
-          <p className="text-white/60 text-lg mb-10 leading-relaxed">
-            İstər kamp həvəskarı, istər kamp sahibi olun — Kamping.az sizin üçün 
-            burada. Qeydiyyatdan keçin, Azərbaycanın gözəlliklərini kəşf edin.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a href="/register?role=visitor" className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200">Məkanları kəşf et</a>
-            <a href="/register?role=owner" className="inline-flex items-center justify-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-200">Sahibkar ol</a>
+          <div className="relative">
+            {/* Dashed connecting line */}
+            <svg className="hidden lg:block absolute top-10 left-[10%] right-[10%] pointer-events-none" viewBox="0 0 1000 50" preserveAspectRatio="none" style={{ height: "50px" }}>
+              <path d="M0,25 Q250,5 500,25 T1000,25"
+                stroke="#D4A574" strokeWidth="2" strokeDasharray="6 6" fill="none" opacity="0.4" />
+            </svg>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-6 relative">
+              {TIMELINE.map((item, i) => (
+                <div key={i} className="text-center">
+                  {/* Year circle */}
+                  <div className="relative inline-block mb-6">
+                    <div className="absolute inset-0 rounded-full blur-md opacity-30"
+                      style={{ background: "#D4A574" }} />
+                    <div className="relative w-20 h-20 rounded-full flex items-center justify-center font-display text-xl font-bold"
+                      style={{ background: "#FAF6F0", color: "#2D4A33" }}>
+                      {item.year}
+                    </div>
+                  </div>
+
+                  <h3 className="font-display text-xl font-bold text-[#FAF6F0] mb-3">{item.title}</h3>
+                  <p className="text-[#FAF6F0]/50 text-sm leading-relaxed max-w-xs mx-auto">{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
+      {/* ── TEAM ── */}
+      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+
+        <svg className="absolute bottom-20 right-10 w-16 h-16 opacity-[0.08] animate-float-slow" viewBox="0 0 64 64" fill="none">
+          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#4A6B4F" />
+        </svg>
+
+        <div className="relative max-w-7xl mx-auto">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-px bg-[#D4A574]" />
+                <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
+                  Komanda
+                </span>
+              </div>
+              <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95]"
+                style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
+                Bu yolu beraber<br />
+                <em className="text-[#4A6B4F]">gedirik</em>
+              </h2>
+            </div>
+            <Link href="/contact"
+              className="text-[#4A6B4F] hover:text-[#2D4A33] text-sm font-bold transition-colors flex items-center gap-2 group whitespace-nowrap">
+              <span className="underline underline-offset-4 decoration-2 decoration-[#D4A574]">Bize qosul</span>
+              <span className="group-hover:translate-x-1 transition-transform">→</span>
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {TEAM.map((person, i) => {
+              const rotations = [-1, 0.8, -0.6];
+              return (
+                <div key={i}
+                  className="bg-white rounded-3xl overflow-hidden transition-all duration-300 hover:!rotate-0 hover:-translate-y-2 group"
+                  style={{
+                    transform: `rotate(${rotations[i]}deg)`,
+                    boxShadow: "0 8px 30px -5px rgba(45,74,51,0.12)"
+                  }}>
+
+                  {/* Photo with sage frame */}
+                  <div className="relative aspect-square overflow-hidden">
+                    <img src={person.avatar} alt={person.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+
+                    {/* Role badge */}
+                    <div className="absolute bottom-4 left-4 bg-[#FAF6F0]/95 backdrop-blur text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30">
+                      {person.role}
+                    </div>
+                  </div>
+
+                  <div className="p-6">
+                    <h3 className="font-display text-xl font-bold text-[#1F2D24] mb-2">{person.name}</h3>
+                    <p className="text-[#4A6B4F]/75 text-sm leading-relaxed italic">"{person.bio}"</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-20 lg:py-24 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="relative rounded-[40px] overflow-hidden p-10 sm:p-16 lg:p-20"
+            style={{ background: "#1A3A2E", minHeight: 320 }}>
+
+            <img
+              src="https://images.unsplash.com/photo-1487730116645-74489c95b41b?w=1600&q=85"
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover opacity-20"
+            />
+            <div className="absolute inset-0" style={{
+              background: "linear-gradient(135deg, rgba(26,58,46,0.95) 0%, rgba(160,97,59,0.3) 100%)"
+            }} />
+
+            <div className="relative z-10 text-center max-w-2xl mx-auto">
+              <div className="inline-flex items-center gap-2 bg-[#FAF6F0]/10 backdrop-blur border border-[#D4A574]/30 text-[#D4A574] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
+                <Compass className="w-3 h-3" />
+                Macera başlayır
+              </div>
+
+              <h2 className="font-display font-bold text-[#FAF6F0] leading-[0.92] mb-5"
+                style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
+                İlk macərana <em className="text-[#D4A574]">başla</em>
+              </h2>
+              <p className="text-[#FAF6F0]/60 text-base sm:text-lg mb-8 max-w-md mx-auto leading-relaxed">
+                Çantani gotur, yola dus. Tebietin qoynunda səni gozləyən hekayələr var.
+              </p>
+
+              <Link href="/listings"
+                className="inline-flex items-center gap-2 bg-[#D4A574] hover:bg-[#C49060] text-[#1F2D24] font-bold text-sm px-8 py-4 rounded-2xl transition-all active:scale-95 hover:shadow-2xl">
+                Mecanlara bax
+                <ArrowUpRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
     </main>
   );
 }
