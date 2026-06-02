@@ -109,7 +109,7 @@ export default function ImageGallery({ images, title }) {
             {/* ── Lightbox ── */}
             {lightbox && (
                 <div
-                    className="fixed inset-0 z-50 flex items-center justify-center"
+                    className="fixed inset-0 z-[1200] flex items-center justify-center"
                     style={{ backgroundColor: "rgba(0,0,0,0.96)" }}
                     onClick={() => setLightbox(false)}
                 >
