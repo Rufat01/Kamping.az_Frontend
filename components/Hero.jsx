@@ -56,16 +56,16 @@ export default function Hero() {
         <div className="flex items-center gap-3 mb-6 animate-fade-in">
           <Compass className="w-5 h-5 text-[#D4A574] animate-rotation" strokeWidth={1.5} />
           <span className="text-[#D4A574] text-xs font-semibold tracking-[0.25em] uppercase">
-            41.3°N · 47.7°E · Azerbaycan
+            41.3°N · 47.7°E · Azərbaycan
           </span>
         </div>
 
         {/* Headline — center stage */}
         <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-6"
           style={{ fontSize: "clamp(3rem, 8.5vw, 8rem)" }}>
-          Tebietin<br />
+          Təbiətin<br />
           <span className="inline-block relative">
-            <span style={{ color: "#D4A574", fontStyle: "italic" }}>nefesini</span>
+            <span style={{ color: "#D4A574", fontStyle: "italic" }}>nəfəsini</span>
             {/* underline swoosh */}
             <svg className="absolute -bottom-2 left-0 w-full h-3" viewBox="0 0 300 12" preserveAspectRatio="none">
               <path d="M0,8 Q75,2 150,6 T300,4" stroke="#D4A574" strokeWidth="2" fill="none" opacity="0.6" />
@@ -75,7 +75,8 @@ export default function Hero() {
         </h1>
 
         <p className="text-[#FAF6F0]/60 text-base sm:text-lg max-w-md leading-relaxed mb-10 font-light">
-          Mese cigirlarinda, dag etekleinde, gole kenarinda... Azerbaycanda 200+ unikal kamp mecani sizi gozləyir.
+        Meşə cığırlarında, dağ ətəklərində, göl kənarında... Azərbaycanda 200+ unikal kamp məkanı sizi gözləyir.
+          
         </p>
 
         {/* Search — organic, paper-like */}
@@ -94,7 +95,7 @@ export default function Hero() {
                   <p className="text-[10px] font-bold text-[#4A6B4F] uppercase tracking-widest mb-0.5">Yer</p>
                   <select value={city} onChange={e => setCity(e.target.value)}
                     className="w-full bg-transparent text-[#1F2D24] text-sm font-semibold focus:outline-none cursor-pointer">
-                    <option value="">Her yer</option>
+                    <option value="">Hər yer</option>
                     {CITIES.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
@@ -109,7 +110,7 @@ export default function Hero() {
               <div className="flex-1 flex items-center gap-2.5 hover:bg-[#E8E5D8]/50 transition-colors rounded-2xl px-4 py-3">
                 <span className="text-base shrink-0">🏕️</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-[10px] font-bold text-[#4A6B4F] uppercase tracking-widest mb-0.5">Tecrube</p>
+                  <p className="text-[10px] font-bold text-[#4A6B4F] uppercase tracking-widest mb-0.5">Təcrübə</p>
                   <select value={type} onChange={e => setType(e.target.value)}
                     className="w-full bg-transparent text-[#1F2D24] text-sm font-semibold focus:outline-none cursor-pointer">
                     {TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
@@ -145,7 +146,7 @@ export default function Hero() {
                 className="flex items-center justify-center gap-2 text-white font-bold px-6 py-3 rounded-2xl transition-all active:scale-95 whitespace-nowrap text-sm shadow-lg"
                 style={{ background: "#2D4A33" }}>
                 <Search className="w-4 h-4" />
-                <span>Macera</span>
+                <span>Macəra</span>
               </Link>
             </div>
           </div>
@@ -154,8 +155,8 @@ export default function Hero() {
         {/* Stats line */}
         <div className="flex flex-wrap items-center gap-6 sm:gap-10 mt-10 text-[#FAF6F0]/40">
           {[
-            ["200+", "mecan"],
-            ["2400+", "macera"],
+            ["200+", "məkan"],
+            ["2400+", "macəra"],
             ["4.8★", "reytinq"],
           ].map(([n, l]) => (
             <div key={l} className="flex items-baseline gap-2">

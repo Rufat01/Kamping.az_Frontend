@@ -152,15 +152,15 @@ function EmptyState() {
       </div>
 
       <h3 className="font-display text-2xl sm:text-3xl font-bold text-[#1F2D24] mb-3">
-        Heç bir mekan tapilmadi
+        Heç bir məkan tapılmadı
       </h3>
       <p className="text-[#4A6B4F]/70 text-sm max-w-xs leading-relaxed mb-6">
-        Cigir burda bitir... Filterleri deyisib yeniden cəhd et və ya butun mekanlara bax.
+        Cığır burada bitir... Filterləri dəyişib yeniden cəhd et və ya bütün məkanlara bax.
       </p>
       <Link href="/listings"
         className="inline-flex items-center gap-2 text-[#FAF6F0] font-bold text-sm px-6 py-3 rounded-2xl transition-all active:scale-95 hover:shadow-xl"
         style={{ background: "#2D4A33" }}>
-        Filterleri sifirla
+        Filterləri sıfırla
       </Link>
     </div>
   );
@@ -206,18 +206,18 @@ export default async function ListingsPage({ searchParams }) {
           <div className="flex items-center gap-3 mb-4">
             <Compass className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
             <Link href="/" className="text-[#D4A574]/80 hover:text-[#D4A574] text-xs font-semibold tracking-[0.25em] uppercase transition-colors">
-              Ana sehife
+              Ana səhifə
             </Link>
             <span className="text-[#FAF6F0]/30">/</span>
             <span className="text-[#FAF6F0]/60 text-xs font-semibold tracking-[0.25em] uppercase">
-              Kamp Yerleri
+              Kamp Yerləri
             </span>
           </div>
 
           {/* Title */}
           <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-5"
             style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}>
-            <em className="text-[#D4A574]">Mekanlar</em><br />
+            <em className="text-[#D4A574]">Məkanlar</em><br />
             kataloqu
           </h1>
 
@@ -227,8 +227,8 @@ export default async function ListingsPage({ searchParams }) {
               <span className="w-2 h-2 rounded-full bg-[#D4A574] animate-pulse" />
               <p className="text-[#FAF6F0]/60 text-sm sm:text-base">
                 {listings.length > 0
-                  ? <><span className="font-bold text-[#FAF6F0]">{listings.length}</span> mekan tapildi</>
-                  : "Filterlerle uygun macera tap"}
+                  ? <><span className="font-bold text-[#FAF6F0]">{listings.length}</span> məkan tapıldı</>
+                  : "Filterlərlə uyğun məkan tapılmadı"}
               </p>
             </div>
           </div>

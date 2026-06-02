@@ -1,11 +1,11 @@
 const ITEMS = [
-  "Mese Cigirlari",
-  "Dag Yamaclari",
-  "Gol Kenarlari",
-  "Ulduzli Geceler",
-  "Tonqal Sesi",
-  "Sehr Susqunluqu",
-  "Tebii Mənzərələr",
+  "Meşə cığırları",
+  "Dağ yamacları",
+  "Göl kənarları",
+  "Ulduzlu Gecələr",
+  "Tonqal Səsi",
+  "Şəhər susqunluğu",
+  "Təbii Mənzərələr",
   "Macera",
 ];
 

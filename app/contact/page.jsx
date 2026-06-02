@@ -11,13 +11,13 @@ const INITIAL_FORM = { name: "", email: "", subject: "", message: "" };
 function validate(form) {
   const errors = {};
   if (!form.name.trim() || form.name.trim().length < 2)
-    errors.name = "Ad en azı 2 simvol olmalidir.";
+    errors.name = "Ad ən azı 2 simvoldan ibarət olmalıdır.";
   if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-    errors.email = "Duzgun email daxil edin.";
+    errors.email = "Düzgün email daxil edin.";
   if (!form.subject.trim() || form.subject.trim().length < 3)
-    errors.subject = "Movzu en azı 3 simvol olmalidir.";
+    errors.subject = "Mövzu ən azı 3 simvoldan ibarət olmalıdır.";
   if (!form.message.trim() || form.message.trim().length < 10)
-    errors.message = "Mesaj en azı 10 simvol olmalidir.";
+    errors.message = "Mesaj ən azı 10 simvoldan ibarət olmalıdır.";
   return errors;
 }
 
@@ -68,7 +68,7 @@ export default function ContactPage() {
         }
       }
       setStatus("error");
-      setServerError(err.message || "Xeta bash verdi. Yeniden cehd edin.");
+      setServerError(err.message || "Xəta baş verdi. Yenidən cəhd edin.");
     }
   };
 
@@ -100,7 +100,7 @@ export default function ContactPage() {
             <div className="h-px w-10 bg-[#D4A574]" />
             <Compass className="w-5 h-5 text-[#D4A574]" strokeWidth={1.5} />
             <span className="text-[#D4A574] text-xs font-bold uppercase tracking-[0.25em]">
-              Bizimle elaqe
+              Bizimlə əlaqə
             </span>
             <Compass className="w-5 h-5 text-[#D4A574]" strokeWidth={1.5} />
             <div className="h-px w-10 bg-[#D4A574]" />
@@ -108,11 +108,11 @@ export default function ContactPage() {
 
           <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-6"
             style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}>
-            Bizimle <em className="text-[#D4A574]">danis</em>
+            Bizimlə <em className="text-[#D4A574]">danış</em>
           </h1>
 
           <p className="text-[#FAF6F0]/65 text-base sm:text-lg max-w-xl mx-auto leading-relaxed font-light">
-            Sualin, taklifin ve ya hekayen var? Bir mektub yaz — birlikde kesh edek.
+            Sualın, təklifin və ya hekayən var? Bir məktub yaz — birlikdə kəşf edək.
           </p>
         </div>
 
@@ -138,15 +138,15 @@ export default function ContactPage() {
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-8 h-px bg-[#D4A574]" />
                   <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                    Elaqe yollari
+                    Əlaqə yolları
                   </span>
                 </div>
                 <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95] mb-3"
                   style={{ fontSize: "clamp(1.75rem, 3vw, 2.5rem)" }}>
-                  Hər vaxt <em className="text-[#4A6B4F]">birlikteyik</em>
+                  Hər vaxt <em className="text-[#4A6B4F]">birlikdəyik</em>
                 </h2>
                 <p className="text-[#4A6B4F]/75 text-sm leading-relaxed">
-                  Aşagidaki kanallardan istifade ede biler ve ya formu doldura bilersen.
+                  Aşağıdakı kanallardan istifadə edə bilərsiniz və ya formu doldura bilərsiniz.
                 </p>
               </div>
 
@@ -154,7 +154,7 @@ export default function ContactPage() {
               {[
                 { icon: Mail, label: "Email", value: "info@kamping.az", href: "mailto:info@kamping.az", color: "#4A6B4F" },
                 { icon: Phone, label: "Telefon", value: "+994 50 123 45 67", href: "tel:+994501234567", color: "#A0613B" },
-                { icon: MapPin, label: "Unvan", value: "Baki, Azərbaycan", href: null, color: "#2D4A33" },
+                { icon: MapPin, label: "Ünvan", value: "Bakı, Azərbaycan", href: null, color: "#2D4A33" },
               ].map(({ icon: Icon, label, value, href, color }) => {
                 const Wrapper = href ? "a" : "div";
                 return (
@@ -219,10 +219,10 @@ export default function ContactPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em] mb-1">
-                          Mektub yaz
+                          Məktub yaz
                         </p>
                         <h2 className="font-display text-2xl font-bold text-[#1F2D24]">
-                          Sənin mesajin
+                          Sənin mesajın
                         </h2>
                       </div>
                       <Send className="w-7 h-7 text-[#4A6B4F]/40" strokeWidth={1.5} />
@@ -241,10 +241,10 @@ export default function ContactPage() {
                         </div>
                       </div>
                       <h3 className="font-display text-3xl font-bold text-[#1F2D24] mb-3">
-                        Mesaj <em className="text-[#4A6B4F]">gondərildi!</em>
+                        Mesaj <em className="text-[#4A6B4F]">göndərildi!</em>
                       </h3>
                       <p className="text-[#4A6B4F]/70 text-sm max-w-sm mb-6 leading-relaxed">
-                        Tezliklə sizinlə əlaqə saxlayacağıq. Bu vaxt mecanlara bir baxin?
+                        Tezliklə sizinlə əlaqə saxlayacağıq. Bu vaxt ərzində məkanlara bir baxın?
                       </p>
                       <div className="flex flex-col sm:flex-row gap-3">
                         <button onClick={() => setStatus("idle")}
@@ -253,7 +253,7 @@ export default function ContactPage() {
                         </button>
                         <Link href="/listings"
                           className="bg-[#2D4A33] hover:bg-[#1A3A2E] text-[#FAF6F0] font-bold text-sm px-5 py-3 rounded-xl transition-all">
-                          Mecanlara bax →
+                          Məkanlara bax →
                         </Link>
                       </div>
                     </div>
@@ -301,7 +301,7 @@ export default function ContactPage() {
                       {/* Subject */}
                       <div>
                         <label className="block text-xs font-bold text-[#4A6B4F] uppercase tracking-widest mb-1.5">
-                          Movzu <span className="text-[#A0613B]">*</span>
+                          Mövzu <span className="text-[#A0613B]">*</span>
                         </label>
                         <input
                           type="text"
@@ -362,18 +362,18 @@ export default function ContactPage() {
                               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z" />
                             </svg>
-                            Gondərilir...
+                            Göndərilir...
                           </>
                         ) : (
                           <>
                             <Send className="w-4 h-4" />
-                            Mektubu Yola sal
+                            Məktubu Yola sal
                           </>
                         )}
                       </button>
 
                       <p className="text-center text-[#4A6B4F]/50 text-xs">
-                        Mesajinizi gondərmekle <a href="#" className="underline">qaydalarimizi</a> qebul edirsiniz.
+                        Mesajınızı göndərməklə <a href="#" className="underline">qaydalarımızı</a> qəbul edirsiniz.
                       </p>
                     </form>
                   )}

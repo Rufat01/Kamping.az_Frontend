@@ -2,21 +2,21 @@ import { Star, Quote } from "lucide-react";
 
 const REVIEWS = [
   {
-    name: "Ayten Memmedova", location: "Baki", rating: 5,
-    text: "Qebelede ki dag cadiri inanilamaz idi. Sahibkar cox qonaqperver, her sey tertible hazirlanmisdi. Mutleq geri qayidacaqam.",
-    listing: "Qebele Dag Cadiri",
+    name: "Aytən Məmmədova", location: "Bakı", rating: 5,
+    text: "Qəbələdə ki dağ çadırı inanılmaz idi. Sahibkar çox qonaqpərvər idi, hər şey tərtiblə hazırlanmışdı.",
+    listing: "Qəbələ Dağ Çadırı",
     avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&q=80",
   },
   {
-    name: "Rauf Hesenov", location: "Gence", rating: 5,
-    text: "Ailemle Sekideki bungaloda 3 gece qaldig. Uşaqlar meşeni cox sevdiler, biz ise sakitliyi tapdiq.",
-    listing: "Seki Bungalo",
+    name: "Rauf Həsənov", location: "Gəncə", rating: 5,
+    text: "Ailəmlə Şəkidəki bungaloda 3 gecə qaldıq. Uşaqlar meşəni çox sevdilər, biz isə sakitliyi tapdıq.",
+    listing: "Şəki Bungalo",
     avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&q=80",
   },
   {
-    name: "Nigar Eliyeva", location: "Sumqayit", rating: 5,
-    text: "Glamping deyende luxsu gozleyirdim, amma elave olaraq mustesna tebiet menzaresi de aldim. Ulduzlu gece...",
-    listing: "Goygol Glamping",
+    name: "Nigar Aliyeva", location: "Sumqayıt", rating: 5,
+    text: "Glamping deyəndə elit yer gözləyirdim, amma əlavə olaraq müstəsna təbiət mənzərəsi də aldım. Ulduzlu gece...",
+    listing: "Göygöl Glamping",
     avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&q=80",
   },
 ];
@@ -46,13 +46,13 @@ export default function Testimonials() {
           <div className="flex items-center justify-center gap-2 mb-3">
             <div className="w-8 h-px bg-[#D4A574]" />
             <span className="text-[#D4A574] text-xs font-bold uppercase tracking-[0.25em]">
-              Macera Defterleri
+              Macəra günlükləri
             </span>
             <div className="w-8 h-px bg-[#D4A574]" />
           </div>
           <h2 className="font-display font-bold text-[#FAF6F0] leading-[0.92]"
             style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-            Onlar <em className="text-[#D4A574]">yasadi</em>...
+            Onlar <em className="text-[#D4A574]">yaşadılar</em>...
           </h2>
         </div>
 
@@ -106,9 +106,9 @@ export default function Testimonials() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 lg:gap-8 pt-12 border-t border-[#FAF6F0]/10">
           {[
             ["200+", "Kamp yeri"],
-            ["2,400+", "Macera"],
+            ["2,400+", "Macəra"],
             ["4.8★", "Reytinq"],
-            ["98%", "Memnuniyyet"],
+            ["98%", "Məmnuniyyət"],
           ].map(([v, l]) => (
             <div key={l} className="text-center">
               <div className="font-display text-3xl sm:text-4xl font-bold text-[#D4A574] mb-1">{v}</div>

@@ -30,17 +30,17 @@ export default function MapTeaser() {
             </div>
             <h2 className="font-display font-bold text-[#FAF6F0] leading-[0.92] mb-6"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-              Bir <em className="text-[#D4A574]">xeriteden</em><br />
-              butun mecanlar
+              Bir <em className="text-[#D4A574]">xəritədən</em><br />
+              bütün məkanlar
             </h2>
             <p className="text-[#FAF6F0]/50 text-base sm:text-lg leading-relaxed mb-8 max-w-md">
-              Azerbaycanin her gushesinde 200+ kamp noqtəsi. Interaktiv xerite ile en yaxin macərani tap.
+            Azərbaycanın hər guşəsində 200+ kamp nöqtəsi. Interaktiv xəritə ilə ən yaxın macəranı tap.
             </p>
 
             <div className="flex items-center gap-4 mb-10">
               <Link href="/map"
                 className="inline-flex items-center gap-3 bg-[#D4A574] hover:bg-[#C49060] text-[#1F2D24] font-bold text-sm px-7 py-4 rounded-2xl transition-all active:scale-95 shadow-xl">
-                Xeritenı ac
+                Xəritəni aç
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -49,7 +49,7 @@ export default function MapTeaser() {
             <div className="flex flex-wrap gap-6 pt-8 border-t border-[#FAF6F0]/10">
               {[
                 ["8", "Region"],
-                ["200+", "Mecan"],
+                ["200+", "Məkan"],
                 ["GPS", "Naviqasiya"],
               ].map(([n, l]) => (
                 <div key={l}>
@@ -92,11 +92,11 @@ export default function MapTeaser() {
 
               {/* Pins — illustrated style */}
               {[
-                { top: "30%", left: "55%", label: "Seki" },
-                { top: "45%", left: "38%", label: "Goygol" },
-                { top: "58%", left: "62%", label: "Qebele" },
-                { top: "70%", left: "73%", label: "Lenkaran" },
-                { top: "36%", left: "20%", label: "Naxcivan" },
+                { top: "30%", left: "55%", label: "Şəki" },
+                { top: "45%", left: "38%", label: "Göygöl" },
+                { top: "70%", left: "73%", label: "Qəbələ" },
+                { top: "36%", left: "20%", label: "Naxçıvan" },
+                { top: "58%", left: "62%", label: "Lənkəran" },
               ].map((pin, i) => (
                 <div key={pin.label} className="absolute" style={{ top: pin.top, left: pin.left }}>
                   <div className="relative flex flex-col items-center" style={{ transform: "translate(-50%, -100%)" }}>
@@ -121,7 +121,7 @@ export default function MapTeaser() {
               {/* Bottom label */}
               <div className="absolute bottom-4 left-4 right-4 text-center">
                 <p className="font-display text-xs font-bold text-[#2D4A33]/50 tracking-widest uppercase">
-                  Azerbaycan Kamp Xeritesi
+                  Azərbaycan kamp xəritəsi
                 </p>
               </div>
             </div>

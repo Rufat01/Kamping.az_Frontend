@@ -2,22 +2,22 @@ import Link from "next/link";
 
 const CATEGORIES = [
   {
-    type: "tent_site", label: "Cadir Yeri", desc: "Klassik kamp tecrubesi",
+    type: "tent_site", label: "Çadır yeri", desc: "Klassik kamp təcrübəsi",
     count: "84", emoji: "⛺",
     img: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&q=80",
   },
   {
-    type: "glamping", label: "Glamping", desc: "Luxs cadir macerasi",
+    type: "glamping", label: "Qlampinq", desc: "Elit çadır macerası",
     count: "42", emoji: "🏕️",
     img: "https://images.unsplash.com/photo-1593053272490-e0ed6d6a42c5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z2xhbXBpbmd8ZW58MHx8MHx8fDA%3D",
   },
   {
-    type: "bungalow", label: "Bungalo", desc: "Mese icherisinde",
+    type: "bungalow", label: "Bunqalo", desc: "Meşə içərisində",
     count: "53", emoji: "🏡",
     img: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&q=80",
   },
   {
-    type: "house", label: "Kend Evi", desc: "Avadanliqli tam ev",
+    type: "house", label: "Kənd Evi", desc: "Əşyalı tam ev",
     count: "31", emoji: "🏠",
     img: "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=600&q=80",
   },
@@ -43,13 +43,13 @@ export default function Categories() {
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-px bg-[#D4A574]" />
               <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                Tecrubeler
+                Təcrübələr
               </span>
             </div>
             <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95]"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-              Hansi <em className="text-[#4A6B4F]">macerani</em><br />
-              secersiniz?
+              Hansı <em className="text-[#4A6B4F]">macəranı</em><br />
+              seçərsiniz?
             </h2>
           </div>
           <Link href="/listings"
@@ -85,7 +85,7 @@ export default function Categories() {
 
                 {/* Count badge */}
                 <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#FAF6F0] text-[#2D4A33] text-xs font-bold px-3 py-1 rounded-full shadow">
-                  {cat.count} mekan
+                  {cat.count} məkan
                 </div>
 
                 {/* Emoji */}

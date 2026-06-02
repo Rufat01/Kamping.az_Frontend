@@ -11,40 +11,40 @@ const VALUES = [
   {
     icon: Leaf,
     title: "Təbiətə Hörmət",
-    desc: "Hər mecan ekoloji prinsiplerle idarə olunur. İz buraxma, hər seyi yerinde qoy.",
+    desc: "Hər məkan ekoloji prinsiplərlə idarə olunur. İz buraxma, hər şeyi yerində qoy.",
   },
   {
     icon: Heart,
     title: "İcma Ruhu",
-    desc: "Sahibkar və qonaq arasinda etibar — bizim ən böyük dəyərimiz. Bir ailəyik.",
+    desc: "Sahibkar və qonaq arasında etibar — bizim ən böyük dəyərimiz. Biz bir ailəyik.",
   },
   {
     icon: Mountain,
-    title: "Real Macera",
-    desc: "Otel yox — gerçek tebiet tecrubesi. Tonqalin yanı, ulduzlar altinda yatmaq.",
+    title: "Real Macəra",
+    desc: "Otel yox — gerçək təbiət təcrübəsi. Tonqalın yanı, ulduzlar altında yatmaq.",
   },
   {
     icon: Sparkles,
     title: "Keyfiyyət",
-    desc: "Hər mecan komandamiz tərəfindən yoxlanilir. Sənə yaxşilarini təqdim edirik.",
+    desc: "Hər məkan komandamız tərəfindən yoxlanılır. Sənə yaxşılarını təqdim edirik.",
   },
 ];
 
 const TIMELINE = [
   {
     year: "2024",
-    title: "Hekayə basladi",
-    desc: "Bir qrup macəra həvəskari Azerbaycanin gizli kamp guşeleirni daha asan tapilan etmek qerarini verdi.",
+    title: "Hekayə başladı",
+    desc: "Bir qrup macəra həvəskarı Azərbaycanın gizli kamp guşələrini daha asan tapılan etmək qərarını verdi.",
   },
   {
     year: "2025",
-    title: "İlk 50 mecan",
-    desc: "Şəki dağlarindan Lənkəran sahillərinə — 50+ unikal mecan platformamiza qosuldu.",
+    title: "İlk 50 məkan",
+    desc: "Şəki dağlarından Lənkəran sahillərinə — 50+ unikal məkan platformamıza qoşuldu.",
   },
   {
     year: "2026",
-    title: "200+ macera",
-    desc: "Bu gun 200+ kamp yeri, 2400+ qonaq və böyüməyə davam edən bir icma.",
+    title: "200+ macəra",
+    desc: "Bu gün 200+ kamp yeri, 2400+ qonaq və böyüməyə davam edən bir icma.",
   },
 ];
 
@@ -116,13 +116,13 @@ export default function AboutPage() {
 
           <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-6"
             style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}>
-            Tebiet bizim<br />
+            Təbiət bizim<br />
             <em className="text-[#D4A574]">ev</em>imizdir
           </h1>
 
           <p className="text-[#FAF6F0]/65 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed font-light">
-            Azerbaycanin gizli kamp guselrini sənin macəranla birlesdiririk.
-            Hər mese cigir, hər dağ etəyi, hər gol kenarı — bir hekayə.
+            Azərbaycanın gizli kamp güşələrini sənin macəranla birləşdiririk.
+            Hər meşə cığır, hər dağ ətəyi, hər göl kənarı — bir hekayə. 
           </p>
         </div>
 
@@ -165,7 +165,7 @@ export default function AboutPage() {
                   <span className="text-[#A0613B] text-xs font-bold uppercase tracking-widest">200+</span>
                 </div>
                 <p className="text-[#1F2D24] text-sm font-display font-bold leading-tight">
-                  Unikal mecan Azərbaycanda
+                  Unikal məkan Azərbaycanda
                 </p>
               </div>
             </div>
@@ -175,37 +175,37 @@ export default function AboutPage() {
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-8 h-px bg-[#D4A574]" />
                 <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                  Missiyamiz
+                  Missiyamız
                 </span>
               </div>
 
               <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95] mb-6"
                 style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-                Tebieti hamı<br />
-                <em className="text-[#4A6B4F]">kesf</em> etsin
+                Təbiəti hamı<br />
+                <em className="text-[#4A6B4F]">kəşf</em> etsin
               </h2>
 
               <div className="space-y-4 text-[#1F2D24]/80 text-base lg:text-lg leading-relaxed">
                 <p>
-                  Kamping.az 2024-cü ildə yaranib — sadə bir məqsədlə: <strong className="text-[#1F2D24]">Azerbaycanin gizli kamp guşelirini hər kəs üçün əlçatan etmək.</strong>
+                  Kamping.az 2024-cü ildə yaranıb — sadə bir məqsədlə: <strong className="text-[#1F2D24]">Azərbaycanın gizli kamp güşələrini hər kəs üçün əlçatan etmək.</strong>
                 </p>
                 <p className="font-light">
-                  Bilirdik ki, ölkəmizdə yüzlərlə möhtəşəm mese, dağ etəyi və gol kenarı var — amma bunlari tapmaq və rezervasiya etmək çətindi. Biz bunu dəyişdik.
+                  Bilirdik ki, ölkəmizdə yüzlərlə möhtəşəm meşə, dağ ətəyi və göl kənarı var — amma bunları tapmaq və rezervasiya etmək çətindi. Biz bunu dəyişdik.
                 </p>
                 <p className="font-light">
-                  Bu gun platformamizda hər zovqe uygun seçim var: pulsuz ictimai kamp yerlərindən luxs glamping otaqlarına qədər. Hamısı bir yerdə.
+                  Bu gün platformamızda hər zövqə uyğun seçim var: pulsuz ictimai kamp yerlərindən elit qlampinq otaqlarına qədər. Hamısı bir yerdə.
                 </p>
               </div>
 
               <div className="flex flex-wrap gap-3 mt-8">
                 <Link href="/listings"
                   className="inline-flex items-center gap-2 bg-[#2D4A33] hover:bg-[#1A3A2E] text-[#FAF6F0] font-bold text-sm px-6 py-3.5 rounded-2xl transition-all active:scale-95 hover:shadow-xl">
-                  Mecanlara bax
+                  Məkanlara bax
                   <ArrowUpRight className="w-4 h-4" />
                 </Link>
                 <Link href="/contact"
                   className="inline-flex items-center gap-2 bg-white border-2 border-dashed border-[#4A6B4F]/30 hover:border-[#2D4A33] text-[#1F2D24] font-bold text-sm px-6 py-3.5 rounded-2xl transition-all">
-                  Bizimle elaqe
+                  Bizimlə əlaqə
                 </Link>
               </div>
             </div>
@@ -227,8 +227,8 @@ export default function AboutPage() {
         <div className="relative max-w-7xl mx-auto">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-6 text-center">
             {[
-              { value: "200+", label: "Kamp mecani", icon: Tent },
-              { value: "2,400+", label: "Macera yasandi", icon: Heart },
+              { value: "200+", label: "Kamp məkanı", icon: Tent },
+              { value: "2,400+", label: "Macəra yaşandi", icon: Heart },
               { value: "8", label: "Region əhatə", icon: MapPin },
               { value: "4.8", label: "Ortalama reytinq", icon: Sparkles },
             ].map(({ value, label, icon: Icon }) => (
@@ -358,13 +358,13 @@ export default function AboutPage() {
               </div>
               <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95]"
                 style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-                Bu yolu beraber<br />
+                Bu yolu bərabər<br />
                 <em className="text-[#4A6B4F]">gedirik</em>
               </h2>
             </div>
             <Link href="/contact"
               className="text-[#4A6B4F] hover:text-[#2D4A33] text-sm font-bold transition-colors flex items-center gap-2 group whitespace-nowrap">
-              <span className="underline underline-offset-4 decoration-2 decoration-[#D4A574]">Bize qosul</span>
+              <span className="underline underline-offset-4 decoration-2 decoration-[#D4A574]">Bizə qoşul</span>
               <span className="group-hover:translate-x-1 transition-transform">→</span>
             </Link>
           </div>
@@ -421,7 +421,7 @@ export default function AboutPage() {
             <div className="relative z-10 text-center max-w-2xl mx-auto">
               <div className="inline-flex items-center gap-2 bg-[#FAF6F0]/10 backdrop-blur border border-[#D4A574]/30 text-[#D4A574] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
                 <Compass className="w-3 h-3" />
-                Macera başlayır
+                Macəra başlayır
               </div>
 
               <h2 className="font-display font-bold text-[#FAF6F0] leading-[0.92] mb-5"
@@ -429,12 +429,12 @@ export default function AboutPage() {
                 İlk macərana <em className="text-[#D4A574]">başla</em>
               </h2>
               <p className="text-[#FAF6F0]/60 text-base sm:text-lg mb-8 max-w-md mx-auto leading-relaxed">
-                Çantani gotur, yola dus. Tebietin qoynunda səni gozləyən hekayələr var.
+                Çantanı götür, yola düş. Təbiətin qoynunda səni gözləyən hekayələr var.
               </p>
 
               <Link href="/listings"
                 className="inline-flex items-center gap-2 bg-[#D4A574] hover:bg-[#C49060] text-[#1F2D24] font-bold text-sm px-8 py-4 rounded-2xl transition-all active:scale-95 hover:shadow-2xl">
-                Mecanlara bax
+                Məkanlara bax
                 <ArrowUpRight className="w-4 h-4" />
               </Link>
             </div>

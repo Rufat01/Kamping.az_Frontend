@@ -59,18 +59,18 @@ export default function FeaturedListings() {
             <div className="flex items-center gap-2 mb-3">
               <div className="w-8 h-px bg-[#D4A574]" />
               <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                Sevilenler
+                Sevilənlər
               </span>
             </div>
             <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95]"
               style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-              <em className="text-[#4A6B4F]">Ürəkdən</em> secilmis<br />
-              mecanlar
+              <em className="text-[#4A6B4F]">Ürəkdən</em> seçilmiş<br />
+              məkanlar
             </h2>
           </div>
           <Link href="/listings"
             className="text-[#4A6B4F] hover:text-[#2D4A33] text-sm font-bold transition-colors flex items-center gap-2 group whitespace-nowrap">
-            <span className="underline underline-offset-4 decoration-2 decoration-[#D4A574]">Butun elanlar</span>
+            <span className="underline underline-offset-4 decoration-2 decoration-[#D4A574]">Bütün elanlar</span>
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </Link>
         </div>

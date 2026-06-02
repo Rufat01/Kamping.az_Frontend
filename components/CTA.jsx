@@ -36,17 +36,17 @@ export default function CTA() {
             <div className="flex-1 max-w-2xl">
               <div className="inline-flex items-center gap-2 bg-[#FAF6F0]/15 backdrop-blur border border-[#D4A574]/40 text-[#D4A574] text-xs font-bold px-4 py-2 rounded-full mb-6 uppercase tracking-widest">
                 <Tent className="w-3 h-3" />
-                Sahibkarsiniz?
+                Sahibkarsınız?
               </div>
 
               <h2 className="font-display font-bold text-[#FAF6F0] leading-[0.92] mb-5"
                 style={{ fontSize: "clamp(2.5rem, 5.5vw, 5rem)" }}>
-                Oz mecanini<br />
-                <em className="text-[#D4A574]">paylas</em>
+                Öz məkanını<br />
+                <em className="text-[#D4A574]">paylaş</em>
               </h2>
 
               <p className="text-[#FAF6F0]/70 text-base sm:text-lg leading-relaxed max-w-md mb-8">
-                Azerbaycanda en sevilen kamp platformasinda yer al. Qeydiyyat pulsuzdur, komissiya seffafdir.
+              Azərbaycanda ən sevilən kamp platformasında yerini al. Qeydiyyat pulsuzdur, komissiya isə şəffafdır.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3">
@@ -57,7 +57,7 @@ export default function CTA() {
                 </Link>
                 <Link href="/about"
                   className="inline-flex items-center justify-center bg-[#FAF6F0]/10 hover:bg-[#FAF6F0]/20 backdrop-blur border border-[#FAF6F0]/20 text-[#FAF6F0] font-semibold text-sm px-7 py-4 rounded-2xl transition-all">
-                  Daha etrafli
+                  Daha ətraflı
                 </Link>
               </div>
             </div>
@@ -65,13 +65,13 @@ export default function CTA() {
             {/* Right side — decorative stats card */}
             <div className="bg-[#FAF6F0]/10 backdrop-blur-md border border-[#FAF6F0]/15 rounded-3xl p-7 lg:p-8 max-w-xs">
               <p className="text-[#D4A574] text-xs font-bold uppercase tracking-widest mb-5">
-                Sahibkarlar uchun
+                Sahibkarlar üçün
               </p>
               <div className="space-y-5">
                 {[
                   ["✓", "Pulsuz qeydiyyat"],
-                  ["✓", "Tehlukesiz odenis"],
-                  ["✓", "24/7 dəstək"],
+                  ["✓", "Təhlükəsiz ödəniş"],
+                  ["✓", "7/24 dəstək"],
                   ["✓", "Geniş auditoriya"],
                 ].map(([icon, text]) => (
                   <div key={text} className="flex items-center gap-3">

@@ -5,9 +5,9 @@ import { Search, X, SlidersHorizontal } from "lucide-react";
 
 const TYPES = [
   { value: "", label: "Hamısı", emoji: "✦" },
-  { value: "tent_site", label: "Cadir", emoji: "⛺" },
-  { value: "glamping", label: "Glamping", emoji: "🏕️" },
-  { value: "bungalow", label: "Bungalo", emoji: "🏡" },
+  { value: "tent_site", label: "Çadır", emoji: "⛺" },
+  { value: "glamping", label: "Qlampinq", emoji: "🏕️" },
+  { value: "bungalow", label: "Bunqalo", emoji: "🏡" },
   { value: "house", label: "Ev", emoji: "🏠" },
 ];
 
@@ -69,7 +69,7 @@ export default function ListingsFilterBar() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A6B4F]" strokeWidth={1.5} />
             <input
               type="text"
-              placeholder="Mekan adi, seher və ya açar söz..."
+              placeholder="Məkan adı, şəhər və ya açar söz..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}

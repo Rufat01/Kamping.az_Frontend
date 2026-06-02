@@ -57,9 +57,9 @@ useEffect(() => {
         <nav className="hidden md:flex items-center gap-8">
           {[
             { label: "Elanlar", href: "/listings" },
-            { label: "Xerite", href: "/map" },
-            { label: "Haqqimizda", href: "/about" },
-            { label: "Elaqe", href: "/contact" },
+            { label: "Xəritə", href: "/map" },
+            { label: "Haqqımızda", href: "/about" },
+            { label: "Əlaqə", href: "/contact" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -122,7 +122,7 @@ useEffect(() => {
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
                     >
                       <Settings className="w-4 h-4 text-forest-400" />
-                      Rezervasiyalarim
+                      Rezervasiyalarım
                     </Link>
                   </div>
                   <div className="border-t border-forest-100 py-1.5">
@@ -131,7 +131,7 @@ useEffect(() => {
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors w-full text-left"
                     >
                       <LogOut className="w-4 h-4" />
-                      Cixis
+                      Çıxış
                     </button>
                   </div>
                 </div>
@@ -168,9 +168,9 @@ useEffect(() => {
         <div className="bg-forest-800/98 backdrop-blur-md px-4 pt-4 pb-6 flex flex-col gap-4 border-t border-white/10">
           {[
             { label: "Elanlar", href: "/listings" },
-            { label: "Xerite", href: "/map" },
-            { label: "Haqqimizda", href: "/about" },
-            { label: "Elaqe", href: "/contact" },
+            { label: "Xəritə", href: "/map" },
+            { label: "Haqqımızda", href: "/about" },
+            { label: "Əlaqə", href: "/contact" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -209,7 +209,7 @@ useEffect(() => {
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="text-red-400 text-sm py-2 text-left"
                 >
-                  Cixis
+                  Çıxış
                 </button>
               </>
             ) : (

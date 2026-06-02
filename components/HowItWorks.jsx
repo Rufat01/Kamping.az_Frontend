@@ -1,10 +1,10 @@
 import { Search, CalendarCheck, Tent, Smile } from "lucide-react";
 
 const STEPS = [
-  { icon: Search, num: "01", title: "Macərani Tap", desc: "Seher, tarix ve qrup sayina gore uygun yerini sec." },
-  { icon: CalendarCheck, num: "02", title: "Yerini Saxla", desc: "Tehlukesiz odenis et, sahibkar 24 saat erzinde tesdiq edir." },
-  { icon: Tent, num: "03", title: "Hazirla", desc: "Cantani gotur, yola dus. Butun detallar sənin emailində olacaq." },
-  { icon: Smile, num: "04", title: "Yashayis", desc: "Tebietin qoynunda unudulmaz vaxt kecir. Reyini paylas." },
+  { icon: Search, num: "01", title: "Macəranı Tap", desc: "Şəhər, tarix ve qrup sayına görə uyğun yerini seç." },
+  { icon: CalendarCheck, num: "02", title: "Bron Et", desc: "Təhlükəsiz ödəniş et, sahibkar 24 saat ərzində təsdiq edir." },
+  { icon: Tent, num: "03", title: "Hazırlaş", desc: "Çantanı götür, yola çıx. Bütün detallar sənin emailində olacaq." },
+  { icon: Smile, num: "04", title: "Zövq al", desc: "Təbiətin qoynunda unudulmaz vaxt keçir. Rəyini paylaş." },
 ];
 
 export default function HowItWorks() {
@@ -23,13 +23,13 @@ export default function HowItWorks() {
           <div className="flex items-center justify-center gap-2 mb-3">
             <div className="w-8 h-px bg-[#D4A574]" />
             <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-              Yol Qaydalari
+              Yol xəritəsi
             </span>
             <div className="w-8 h-px bg-[#D4A574]" />
           </div>
           <h2 className="font-display font-bold text-[#1F2D24] leading-[0.92]"
             style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-            4 addimda <em className="text-[#4A6B4F]">macera</em>
+            4 addımda <em className="text-[#4A6B4F]">macəra</em>
           </h2>
         </div>
 

@@ -5,8 +5,8 @@ const FOOTER_LINKS = {
   "Kəşf et": [
     { label: "Bütün elanlar", href: "/listings" },
     { label: "Xəritə", href: "/map" },
-    { label: "Glamping", href: "/listings?listing_type=glamping" },
-    { label: "Bungalolar", href: "/listings?listing_type=bungalow" },
+    { label: "Qlampinq", href: "/listings?listing_type=glamping" },
+    { label: "Bunqalolar", href: "/listings?listing_type=bungalow" },
   ],
   "Şirkət": [
     { label: "Haqqımızda", href: "/about" },

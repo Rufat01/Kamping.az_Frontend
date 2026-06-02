@@ -49,11 +49,11 @@ export default async function ListingDetailPage({ params }) {
                 <nav aria-label="Naviqasiya" className="mb-6 flex items-center gap-2 text-sm">
                     <Compass className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
                     <Link href="/" className="text-[#4A6B4F]/70 hover:text-[#2D4A33] transition-colors font-semibold">
-                        Ana sehife
+                        Ana səhifə
                     </Link>
                     <ChevronRight className="w-3 h-3 text-[#4A6B4F]/40" />
                     <Link href="/listings" className="text-[#4A6B4F]/70 hover:text-[#2D4A33] transition-colors font-semibold">
-                        Mecanlar
+                        Məkanlar
                     </Link>
                     <ChevronRight className="w-3 h-3 text-[#4A6B4F]/40" />
                     <span className="text-[#2D4A33] font-bold truncate">{listing.title}</span>
@@ -124,7 +124,7 @@ export default async function ListingDetailPage({ params }) {
                             <div className="flex items-center gap-2 mb-4">
                                 <div className="w-6 h-px bg-[#D4A574]" />
                                 <h2 id="desc-heading" className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                                    Mekan haqqinda
+                                    Məkan haqqında
                                 </h2>
                             </div>
                             <div className="bg-white rounded-2xl p-7 lg:p-8 relative"
@@ -141,7 +141,7 @@ export default async function ListingDetailPage({ params }) {
                                 <div className="flex items-center gap-2 mb-4">
                                     <div className="w-6 h-px bg-[#D4A574]" />
                                     <h2 id="amenities-heading" className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                                        Imkanlar
+                                        İmkanlar
                                     </h2>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -167,7 +167,7 @@ export default async function ListingDetailPage({ params }) {
                         {/* CTA back to listings */}
                         <Link href="/listings"
                             className="inline-flex items-center gap-2 text-[#4A6B4F] hover:text-[#2D4A33] text-sm font-bold transition-colors group">
-                            ← Butun mecanlara qayit
+                            ← Bütün məkanlara qayıt
                         </Link>
                     </div>
 
@@ -199,7 +199,7 @@ export default async function ListingDetailPage({ params }) {
                                         </div>
                                         <div>
                                             <p className="font-display text-lg font-bold text-[#1F2D24]">{listing.owner_name}</p>
-                                            <p className="text-xs text-[#4A6B4F]/60">Doğrulanmiş sahibkar</p>
+                                            <p className="text-xs text-[#4A6B4F]/60">Doğrulanmış sahibkar</p>
                                         </div>
                                     </div>
 
@@ -225,7 +225,7 @@ export default async function ListingDetailPage({ params }) {
                                 <div className="px-6 py-3 border-b border-dashed border-[#E8E5D8]"
                                     style={{ background: "#FAF6F0" }}>
                                     <p className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                                        Qiymət detallari
+                                        Qiymət detalları
                                     </p>
                                 </div>
 
@@ -235,7 +235,7 @@ export default async function ListingDetailPage({ params }) {
                                             <span className="font-display text-4xl font-bold text-[#1F2D24]">
                                                 ₼{Number(listing.price_per_night).toLocaleString()}
                                             </span>
-                                            <span className="text-[#4A6B4F]/60 text-sm">/gece</span>
+                                            <span className="text-[#4A6B4F]/60 text-sm">/gecə</span>
                                         </div>
                                     </div>
 
@@ -274,20 +274,21 @@ export default async function ListingDetailPage({ params }) {
                                         </div>
                                         <div>
                                             <p className="text-[#A0613B] text-xs font-bold uppercase tracking-widest">
-                                                Ödenisli giriş
+                                                Ödənişli giriş
                                             </p>
                                             <h3 className="font-display text-lg font-bold text-[#1F2D24]">
-                                                Girisi pulludur
+                                                Girişi pulludur
                                             </h3>
                                         </div>
                                     </div>
 
                                     <p className="text-[#4A6B4F]/80 text-sm leading-relaxed italic">
-                                        Bu mecana giris üçün bir dəfəlik ödəniş tələb olunur. Əlavə rezervasiya tələb olunmur.
+                                    Bu məkana giriş üçün bir dəfəlik ödəniş tələb olunur. Əlavə rezervasiya tələb olunmur.
+                                     
                                     </p>
 
                                     <div className="text-center py-5 rounded-2xl bg-white border border-dashed border-[#A0613B]/30">
-                                        <p className="text-[#4A6B4F]/60 text-xs uppercase tracking-widest mb-1">Bir defelik</p>
+                                        <p className="text-[#4A6B4F]/60 text-xs uppercase tracking-widest mb-1">Bir dəfəlik</p>
                                         <div className="flex items-baseline justify-center gap-1">
                                             <span className="font-display text-4xl font-bold text-[#A0613B]">
                                                 ₼{Number(listing.entry_fee).toLocaleString()}
@@ -300,7 +301,7 @@ export default async function ListingDetailPage({ params }) {
                                             <span className="text-[#4A6B4F]/70 flex items-center gap-2">
                                                 <Users className="w-3.5 h-3.5" /> Maksimum qonaq
                                             </span>
-                                            <span className="font-bold text-[#1F2D24]">{listing.max_guests} nefer</span>
+                                            <span className="font-bold text-[#1F2D24]">{listing.max_guests} nəfər</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[#4A6B4F]/70 flex items-center gap-2">
@@ -334,7 +335,7 @@ export default async function ListingDetailPage({ params }) {
                                         </div>
                                         <div>
                                             <p className="text-[#D4A574] text-xs font-bold uppercase tracking-widest">
-                                                Pulsuz Mekan
+                                                Pulsuz Məkan
                                             </p>
                                             <h3 className="font-display text-lg font-bold text-[#FAF6F0]">
                                                 İctimai kamp yeri
@@ -343,7 +344,8 @@ export default async function ListingDetailPage({ params }) {
                                     </div>
 
                                     <p className="text-[#FAF6F0]/60 text-sm leading-relaxed italic">
-                                        Bu mecan ictimai kamp yeridir. Rezervasiya tələb olunmur — sadəcə yola dus və zövq al.
+                                    Bu məkan ictimai kamp yeridir. Rezervasiya tələb olunmur — sadəcə yola düş və zövq al.
+                                        
                                     </p>
 
                                     <div className="text-center py-4 rounded-2xl bg-[#FAF6F0]/5 border border-dashed border-[#D4A574]/30">
@@ -357,7 +359,7 @@ export default async function ListingDetailPage({ params }) {
                                             <span className="text-[#FAF6F0]/50 flex items-center gap-2">
                                                 <Users className="w-3.5 h-3.5" /> Maksimum qonaq
                                             </span>
-                                            <span className="font-bold text-[#FAF6F0]">{listing.max_guests} nefer</span>
+                                            <span className="font-bold text-[#FAF6F0]">{listing.max_guests} nəfər</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[#FAF6F0]/50 flex items-center gap-2">
@@ -379,7 +381,7 @@ export default async function ListingDetailPage({ params }) {
                         >
                             <div className="flex items-center gap-3">
                                 <Compass className="w-4 h-4 text-[#A0613B]" strokeWidth={1.5} />
-                                <span>Google Maps ile yol al</span>
+                                <span>Google Maps ilə yol al</span>
                             </div>
                             <ArrowUpRight className="w-4 h-4 text-[#4A6B4F] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </a>
