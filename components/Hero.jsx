@@ -3,12 +3,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { Search, MapPin, Users, Compass } from "lucide-react";
 
-const CITIES = ["Seki","Qebele","Goygol","Lerik","Lenkaran","Naxcivan","Ismayilli","Lahic","Xinaliq","Shahdag"];
+const CITIES = ["Şəki", "Qəbələ", "Göygöl", "Lerik", "Lənkəran", "Naxçıvan", "İsmayıllı", "Lahıc"];
 const TYPES = [
-  { value: "", label: "Hamisi" },
-  { value: "tent_site", label: "Cadir" },
-  { value: "bungalow", label: "Bungalo" },
-  { value: "glamping", label: "Glamping" },
+  { value: "", label: "Hamısı" },
+  { value: "tent_site", label: "Çadır" },
+  { value: "bungalow", label: "Bunqalo" },
+  { value: "glamping", label: "Qlampinq" },
   { value: "house", label: "Ev" },
 ];
 
