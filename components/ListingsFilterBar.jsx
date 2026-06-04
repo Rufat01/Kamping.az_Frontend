@@ -1,7 +1,7 @@
 "use client";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useEffect, useState, useRef } from "react";
-import { Search, X, SlidersHorizontal } from "lucide-react";
+import { Search, X, Check, ChevronDown } from "lucide-react";
 
 const TYPES = [
   { value: "", label: "Hamısı", emoji: "✦" },
@@ -15,6 +15,111 @@ const CITIES = [
   "Şəki", "Qəbələ", "Göygöl", "Lerik",
   "Lənkəran", "Naxçıvan", "İsmayıllı", "Lahıc",
 ];
+
+const GUESTS = ["1", "2", "3", "4", "5", "6", "8", "10"];
+
+// Reusable fixed-position dropdown — overflow-x-auto-dan qaçır
+function FilterDropdown({ value, onChange, options, placeholder, icon }) {
+  const [open, setOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
+  const buttonRef = useRef(null);
+  const menuRef = useRef(null);
+
+  const handleOpen = () => {
+    if (!open && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setMenuPos({ top: rect.bottom + 8, left: rect.left });
+    }
+    setOpen(!open);
+  };
+
+  useEffect(() => {
+    const handler = (e) => {
+      if (
+        buttonRef.current && !buttonRef.current.contains(e.target) &&
+        menuRef.current && !menuRef.current.contains(e.target)
+      ) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  const selectedLabel = options.find((o) =>
+    (typeof o === "string" ? o : o.value) === value
+  );
+  const displayLabel = value
+    ? (typeof selectedLabel === "string" ? selectedLabel : selectedLabel?.label)
+    : null;
+
+  return (
+    <div className="shrink-0">
+      <button
+        ref={buttonRef}
+        type="button"
+        onClick={handleOpen}
+        className={`flex items-center gap-2 text-xs font-semibold border rounded-full px-4 py-2 bg-white transition-colors ${
+          open ? "border-[#4A6B4F]" : "border-[#E8E5D8] hover:border-[#4A6B4F]"
+        } text-[#4A6B4F] cursor-pointer`}
+      >
+        <span>{icon}</span>
+        <span>{displayLabel || placeholder}</span>
+        <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+      </button>
+
+      {open && (
+        <div
+          ref={menuRef}
+          style={{
+            position: "fixed",
+            top: menuPos.top,
+            left: menuPos.left,
+            zIndex: 9999,
+            minWidth: "160px",
+            boxShadow: "0 15px 40px -8px rgba(45,74,51,0.2), 0 4px 12px -4px rgba(0,0,0,0.1)"
+          }}
+          className="bg-white rounded-2xl overflow-hidden"
+        >
+          {/* Sıfırla */}
+          <button
+            type="button"
+            onClick={() => { onChange(""); setOpen(false); }}
+            className={`w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold transition-colors text-left ${
+              !value ? "bg-[#2D4A33]/5 text-[#2D4A33]" : "hover:bg-[#FAF6F0] text-[#4A6B4F]"
+            }`}
+          >
+            <span>{placeholder}</span>
+            {!value && <Check className="w-3 h-3 text-[#2D4A33]" />}
+          </button>
+
+          <div className="h-px bg-[#E8E5D8] mx-3" />
+
+          <div className="py-1 max-h-48 overflow-y-auto">
+            {options.map((opt) => {
+              const optValue = typeof opt === "string" ? opt : opt.value;
+              const optLabel = typeof opt === "string" ? opt : opt.label;
+              const isSelected = value === optValue;
+              return (
+                <button
+                  key={optValue}
+                  type="button"
+                  onClick={() => { onChange(optValue); setOpen(false); }}
+                  className={`w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold transition-colors text-left ${
+                    isSelected
+                      ? "bg-[#2D4A33]/5 text-[#2D4A33]"
+                      : "hover:bg-[#FAF6F0] text-[#1F2D24]"
+                  }`}
+                >
+                  <span>{optLabel}</span>
+                  {isSelected && <Check className="w-3 h-3 text-[#2D4A33]" />}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function ListingsFilterBar() {
   const router = useRouter();
@@ -117,20 +222,16 @@ export default function ListingsFilterBar() {
             ))}
           </div>
 
-          {/* Divider */}
           <div className="w-px h-6 bg-[#E8E5D8] shrink-0 mx-1" />
 
-          {/* City */}
-          <select
+          {/* City dropdown */}
+          <FilterDropdown
             value={currentCity}
-            onChange={(e) => updateFilter("city", e.target.value)}
-            className="shrink-0 text-xs font-semibold border border-[#E8E5D8] rounded-full px-4 py-2 bg-white focus:outline-none focus:border-[#4A6B4F] text-[#4A6B4F] cursor-pointer hover:border-[#4A6B4F] transition-colors"
-          >
-            <option value="">📍 Bütün şəhərlər</option>
-            {CITIES.map((c) => (
-              <option key={c} value={c}>{c}</option>
-            ))}
-          </select>
+            onChange={(val) => updateFilter("city", val)}
+            options={CITIES}
+            placeholder="Bütün şəhərlər"
+            icon="📍"
+          />
 
           {/* Price */}
           <div className="flex items-center gap-1 shrink-0 bg-white border border-[#E8E5D8] rounded-full px-3 py-1.5 hover:border-[#4A6B4F] transition-colors">
@@ -154,17 +255,14 @@ export default function ListingsFilterBar() {
             />
           </div>
 
-          {/* Guests */}
-          <select
+          {/* Guests dropdown */}
+          <FilterDropdown
             value={currentGuests}
-            onChange={(e) => updateFilter("guests", e.target.value)}
-            className="shrink-0 text-xs font-semibold border border-[#E8E5D8] rounded-full px-4 py-2 bg-white focus:outline-none focus:border-[#4A6B4F] text-[#4A6B4F] cursor-pointer hover:border-[#4A6B4F] transition-colors"
-          >
-            <option value="">👥 Qonaq sayı</option>
-            {["1","2","3","4","5","6","8","10"].map((g) => (
-              <option key={g} value={g}>{g}+ nəfər</option>
-            ))}
-          </select>
+            onChange={(val) => updateFilter("guests", val)}
+            options={GUESTS.map((g) => ({ value: g, label: `${g}+ nəfər` }))}
+            placeholder="Qonaq sayı"
+            icon="👥"
+          />
 
           {/* Clear */}
           {activeCount > 0 && (
