@@ -19,8 +19,8 @@ const CITIES = [
 const TYPES = [
   { value: "", label: "Hamısı", emoji: "🗺️" },
   { value: "tent_site", label: "Çadır yeri", emoji: "⛺" },
-  { value: "bungalow", label: "Bungalo", emoji: "🏡" },
-  { value: "glamping", label: "Glamping", emoji: "🏕️" },
+  { value: "bungalow", label: "Bunqalo", emoji: "🏡" },
+  { value: "glamping", label: "Qlampinq", emoji: "🏕️" },
   { value: "house", label: "Ev", emoji: "🏠" },
 ];
 
@@ -145,18 +145,18 @@ export default function Hero() {
 
         {/* Compass mark */}
         <div className="flex items-center gap-3 mb-6">
-          <Compass className="w-5 h-5 text-[#D4A574]" strokeWidth={1.5} />
+          <Compass className="w-5 h-5 text-[#D4A574] animate-rotation" strokeWidth={1.5} />
           <span className="text-[#D4A574] text-xs font-semibold tracking-[0.25em] uppercase">
-            41.3°N · 47.7°E · Azerbaycan
+            41.3°N · 47.7°E · Azərbaycan
           </span>
         </div>
 
         {/* Headline */}
         <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-6"
           style={{ fontSize: "clamp(3rem, 8.5vw, 8rem)" }}>
-          Tebietin<br />
+          Təbiətin<br />
           <span className="inline-block relative">
-            <span style={{ color: "#D4A574", fontStyle: "italic" }}>nefesini</span>
+            <span style={{ color: "#D4A574", fontStyle: "italic" }}>nəfəsini</span>
             <svg className="absolute -bottom-2 left-0 w-full h-3" viewBox="0 0 300 12" preserveAspectRatio="none">
               <path d="M0,8 Q75,2 150,6 T300,4" stroke="#D4A574" strokeWidth="2" fill="none" opacity="0.6" />
             </svg>
@@ -164,9 +164,9 @@ export default function Hero() {
           al
         </h1>
 
-        <p className="text-[#FAF6F0]/60 text-base sm:text-lg max-w-md leading-relaxed mb-10 font-light">
-          200+ unikal kamp mecani. Rezervasiya qeydiyyatsızdır.
-        </p>
+        {/* <p className="text-[#FAF6F0]/60 text-base sm:text-lg max-w-md leading-relaxed mb-10 font-light">
+          200+ unikal kamp məkanı. Rezervasiya qeydiyyatsızdır.
+        </p> */}
 
         {/* Search card */}
         <div className="relative max-w-3xl">
@@ -234,7 +234,7 @@ export default function Hero() {
 
         {/* Stats */}
         <div className="flex flex-wrap items-center gap-6 sm:gap-10 mt-10 text-[#FAF6F0]/40">
-          {[["200+", "mecan"], ["2400+", "macera"], ["4.8★", "reytinq"]].map(([n, l]) => (
+          {[["200+", "məkan"], ["2400+", "macəra"], ["4.8★", "reytinq"]].map(([n, l]) => (
             <div key={l} className="flex items-baseline gap-2">
               <span className="font-display text-2xl sm:text-3xl font-bold text-[#FAF6F0]">{n}</span>
               <span className="text-xs uppercase tracking-widest">{l}</span>
