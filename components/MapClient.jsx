@@ -10,9 +10,10 @@ const TYPE_EMOJI = {
 
 const FILTERS = [
   { value: "", label: "Hamısı" },
+  { value: "camp", label: "⛺ Kamp" },
   { value: "tent_site", label: "⛺ Çadır" },
-  { value: "glamping", label: "🏕️ Qlampinq" },
-  { value: "bungalow", label: "🏡 Bunqalo" },
+  { value: "glamping", label: "🏕️ Glamping" },
+  { value: "bungalow", label: "🏡 Bungalo" },
   { value: "house", label: "🏠 Ev" },
 ];
 
@@ -22,8 +23,11 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
   const markersRef = useRef([]);
   const [selected, setSelected] = useState(null);
   const [selectedPos, setSelectedPos] = useState({ x: 0, y: 0 });
+  const routeLayerRef = useRef(null);
+  const [routeInfo, setRouteInfo] = useState(null);
   const [filter, setFilter] = useState("");
   const [mapReady, setMapReady] = useState(false);
+  
 
   const allLocations = [
     ...listingLocations.map((l) => ({
@@ -77,10 +81,50 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
 
       const map = L.map(mapRef.current).setView([40.4093, 47.5769], 7);
 
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution: "© OpenStreetMap",
-        maxZoom: 19,
-      }).addTo(map);
+      // Offline-capable tile layer
+      const createOfflineTileLayer = async () => {
+        const localforage = (await import("localforage")).default;
+
+        const OfflineTileLayer = L.TileLayer.extend({
+          createTile(coords, done) {
+            const tile = document.createElement("img");
+            tile.alt = "";
+            tile.setAttribute("role", "presentation");
+
+            const key = `tile_${coords.z}_${coords.x}_${coords.y}`;
+
+            localforage.getItem(key).then((blob) => {
+              if (blob) {
+                // Offline tile tapıldı
+                const url = URL.createObjectURL(blob);
+                tile.onload = () => { URL.revokeObjectURL(url); done(null, tile); };
+                tile.onerror = () => done(new Error("Tile load error"), tile);
+                tile.src = url;
+              } else {
+                // Online-dan yüklə
+                const url = this.getTileUrl(coords);
+                tile.onload = () => done(null, tile);
+                tile.onerror = () => done(new Error("Tile load error"), tile);
+                tile.src = url;
+              }
+            }).catch(() => {
+              const url = this.getTileUrl(coords);
+              tile.onload = () => done(null, tile);
+              tile.onerror = () => done(new Error("Tile load error"), tile);
+              tile.src = url;
+            });
+
+            return tile;
+          }
+        });
+
+        new OfflineTileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          attribution: "© OpenStreetMap",
+          maxZoom: 19,
+        }).addTo(map);
+      };
+
+      createOfflineTileLayer();
 
       // FIX 5 — xerite click etdikde secilmis paneli bag
       map.on("click", () => setSelected(null));
@@ -144,7 +188,6 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
 
       const watchId = navigator.geolocation.watchPosition(
         (pos) => {
-          if (!mapInstanceRef.current) return;
           const { latitude: lat, longitude: lng } = pos.coords;
           if (map._userMarker) {
             map._userMarker.setLatLng([lat, lng]);
@@ -227,12 +270,75 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
     };
   };
 
-  const handleNavigate = (loc) => {
+const handleNavigate = async (loc) => {
+  if (!mapInstanceRef.current) return;
+  const map = mapInstanceRef.current;
+
+  if (routeLayerRef.current) {
+    map.removeLayer(routeLayerRef.current);
+    routeLayerRef.current = null;
+  }
+
+  const userMarker = map._userMarker;
+  if (!userMarker) {
     window.open(
       `https://www.google.com/maps/dir/?api=1&destination=${loc.latitude},${loc.longitude}`,
       "_blank"
     );
+    return;
+  }
+
+  const { lat: fromLat, lng: fromLng } = userMarker.getLatLng();
+  const toLat = loc.latitude;
+  const toLng = loc.longitude;
+
+  setRouteInfo({ distance: "...", duration: "..." });
+
+  const cacheKey = `route_${fromLat.toFixed(4)}_${fromLng.toFixed(4)}_${toLat}_${toLng}`;
+  const localforage = (await import("localforage")).default;
+
+  const drawRoute = async (coords, distance, duration, fromCache = false) => {
+    const L = (await import("leaflet")).default;
+    routeLayerRef.current = L.polyline(coords, {
+      color: "#2D4A33",
+      weight: 5,
+      opacity: 0.85,
+      lineCap: "round",
+      lineJoin: "round",
+    }).addTo(map);
+    map.fitBounds(routeLayerRef.current.getBounds(), { padding: [60, 60] });
+    setRouteInfo({ distance, duration, fromCache });
   };
+
+  try {
+    // Online cəhd et
+    const res = await fetch(
+      `https://router.project-osrm.org/route/v1/driving/${fromLng},${fromLat};${toLng},${toLat}?overview=full&geometries=geojson`
+    );
+    const data = await res.json();
+
+    if (data.routes?.length > 0) {
+      const coords = data.routes[0].geometry.coordinates.map(([lng, lat]) => [lat, lng]);
+      const distance = (data.routes[0].distance / 1000).toFixed(1);
+      const duration = Math.round(data.routes[0].duration / 60);
+
+      // Cache-ə yaz
+      await localforage.setItem(cacheKey, { coords, distance, duration });
+
+      await drawRoute(coords, distance, duration, false);
+    }
+  } catch {
+    // Offline — cache-dən oxu
+    const cached = await localforage.getItem(cacheKey);
+
+    if (cached) {
+      await drawRoute(cached.coords, cached.distance, cached.duration, true);
+    } else {
+      // Cache yoxdur — xəbərdarlıq
+      setRouteInfo({ noCache: true });
+    }
+  }
+};
 
   return (
     <>
@@ -244,7 +350,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
 
       {/* FIX 4 — Compact filter bar */}
       <div
-        style={{ position: "fixed", top: 75, left: "50%", transform: "translateX(-50%)", zIndex: 900 }}
+        style={{ position: "fixed", top: 64, left: "50%", transform: "translateX(-50%)", zIndex: 900 }}
         className="flex gap-1 bg-white/95 backdrop-blur-sm rounded-xl shadow-md px-1.5 py-1.5 border border-stone-200 max-w-[95vw] overflow-x-auto"
       >
         {FILTERS.map((f) => (
@@ -264,7 +370,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
 
       {/* Məkan sayı */}
       <div
-        style={{ position: "fixed", top: 127, left: 12, zIndex: 900 }}
+        style={{ position: "fixed", top: 116, left: 12, zIndex: 900 }}
         className="bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-sm border border-stone-200"
       >
         <span className="text-xs font-semibold text-stone-600">{filtered.length} məkan</span>
@@ -346,6 +452,69 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
           </div>
         </div>
       )}
+
+      {/* Marşrut məlumatı */}
+{routeInfo && (
+  <div
+    style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 900, boxShadow: "0 8px 30px -5px rgba(45,74,51,0.2)" }}
+    className="bg-white rounded-2xl px-5 py-3 flex items-center gap-4"
+  >
+    {routeInfo.noCache ? (
+      // Cache yoxdur
+      <div className="flex items-center gap-3">
+        <div className="text-center">
+          <p className="font-display text-sm font-bold text-[#A0613B]">
+            Marşrut tapılmadı
+          </p>
+          <p className="text-[#4A6B4F]/60 text-xs mt-0.5">
+            Online ikən bu marşrutu bir dəfə açın
+          </p>
+        </div>
+        <button
+          onClick={() => setRouteInfo(null)}
+          className="w-7 h-7 rounded-full bg-[#FAF6F0] flex items-center justify-center ml-2"
+        >
+          <X className="w-3.5 h-3.5 text-[#4A6B4F]" />
+        </button>
+      </div>
+    ) : (
+      // Marşrut var
+      <>
+        {routeInfo.fromCache && (
+          <span className="text-[10px] font-bold text-[#4A6B4F] bg-[#4A6B4F]/10 px-2 py-0.5 rounded-full">
+            Cache
+          </span>
+        )}
+        <div className="text-center">
+          <p className="font-display text-xl font-bold text-[#1F2D24]">
+            {routeInfo.distance === "..." ? "..." : `${routeInfo.distance} km`}
+          </p>
+          <p className="text-[#4A6B4F]/60 text-xs">məsafə</p>
+        </div>
+        <div className="w-px h-8 bg-[#E8E5D8]" />
+        <div className="text-center">
+          <p className="font-display text-xl font-bold text-[#1F2D24]">
+            {routeInfo.duration === "..." ? "..." : `${routeInfo.duration} dəq`}
+          </p>
+          <p className="text-[#4A6B4F]/60 text-xs">təxmini vaxt</p>
+        </div>
+        <button
+          onClick={() => {
+            if (routeLayerRef.current && mapInstanceRef.current) {
+              mapInstanceRef.current.removeLayer(routeLayerRef.current);
+              routeLayerRef.current = null;
+            }
+            setRouteInfo(null);
+          }}
+          className="w-7 h-7 rounded-full bg-[#FAF6F0] flex items-center justify-center ml-2"
+        >
+          <X className="w-3.5 h-3.5 text-[#4A6B4F]" />
+        </button>
+      </>
+    )}
+  </div>
+)}
+
     </>
   );
 }

@@ -5,6 +5,8 @@ import Footer from "../components/Footer";
 import PageLoader from "../components/PageLoader";
 import RecaptchaProvider from "../components/RecaptchaProvider";
 import AuthSessionProvider from "../components/SessionProvider";
+import InstallBanner from "../components/InstallBanner";
+import OfflineBanner from "../components/OfflineBanner";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -17,6 +19,7 @@ const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta",
   display: "swap",
 });
+
 
 export const metadata = {
   title: "Kamping.az",
@@ -42,6 +45,15 @@ export const metadata = {
     index: true,
     follow: true,
   },
+    // ... mövcud metadata
+  manifest: "/manifest.json",
+};
+
+export const viewport = {
+  themeColor: "#1A3A2E",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }) {
@@ -55,6 +67,8 @@ export default function RootLayout({ children }) {
             <Footer />
           </RecaptchaProvider>
         </AuthSessionProvider>
+        <InstallBanner />
+        <OfflineBanner />
       </body>
     </html>
   );
