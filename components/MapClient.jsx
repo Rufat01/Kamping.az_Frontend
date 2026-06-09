@@ -227,6 +227,13 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
           const point = map.latLngToContainerPoint([lat, lng]);
           setSelectedPos({ x: point.x, y: point.y });
           setSelected(loc);
+          setRouteInfo(null);
+
+          if (routeLayerRef.current) {
+            map.removeLayer(routeLayerRef.current);
+            routeLayerRef.current = null;
+          }
+
         });
         markersRef.current.push(marker);
       });
@@ -307,6 +314,9 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
       window.open(`https://www.google.com/maps/dir/?api=1&destination=${loc.latitude},${loc.longitude}`, "_blank");
       return;
     }
+
+    setSelected(null);
+    setRouteInfo({ loading: true });
 
     setRouteInfo({ loading: true });
 

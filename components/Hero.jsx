@@ -194,7 +194,7 @@ export default function Hero() {
                 value={type}
                 onChange={setType}
                 options={TYPES}
-                placeholder="Tecrube"
+                placeholder="Təcrübə"
                 icon={({ className, strokeWidth }) => <span className="text-base">🏕️</span>}
               />
 

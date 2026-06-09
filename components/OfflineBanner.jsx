@@ -60,7 +60,7 @@ export default function OfflineBanner() {
 
   return (
     <div
-      className="fixed top-[7rem] left-1/2 max-w-[400px] w-full -translate-x-1/2 z-[1150] flex items-center gap-3 px-5 py-3 rounded-2xl"
+      className="fixed top-[7rem] left-1/2 max-w-[400px] w-full -translate-x-1/2 z-[1050] flex items-center gap-3 px-5 py-3 rounded-2xl"
       style={{ background: "#1A3A2E", boxShadow: "0 10px 30px -5px rgba(0,0,0,0.3)" }}
     >
       <WifiOff className="w-4 h-4 shrink-0" style={{ color: "#D4A574" }} />
