@@ -1,12 +1,12 @@
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import PageLoader from "../components/PageLoader";
-import RecaptchaProvider from "../components/RecaptchaProvider";
-import AuthSessionProvider from "../components/SessionProvider";
-import InstallBanner from "../components/InstallBanner";
-import OfflineBanner from "../components/OfflineBanner";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import PageLoader from "@/components/ui/PageLoader";
+import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
+import AuthSessionProvider from "@/features/(auth)/components/SessionProvider";
+import InstallBanner from "@/components/ui/InstallBanner";
+import OfflineBanner from "@/features/(public)/map/components/OfflineBanner";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
