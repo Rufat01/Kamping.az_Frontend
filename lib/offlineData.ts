@@ -1,14 +1,14 @@
 import localforage from "localforage";
+import type { MapListing } from "../types";
 
 const MARKERS_KEY = "offline-markers";
 const MARKERS_DATE_KEY = "offline-markers-date";
 
-// Markerləri backend-dən yüklə və IndexedDB-yə saxla
-export async function syncMarkersOffline(apiUrl) {
+export async function syncMarkersOffline(apiUrl: string): Promise<MapListing[]> {
   try {
     const res = await fetch(`${apiUrl}/api/v1/listings/map/`);
     if (!res.ok) throw new Error("fetch failed");
-    const data = await res.json();
+    const data: MapListing[] = await res.json();
     await localforage.setItem(MARKERS_KEY, data);
     await localforage.setItem(MARKERS_DATE_KEY, new Date().toISOString());
     return data;
@@ -17,18 +17,15 @@ export async function syncMarkersOffline(apiUrl) {
   }
 }
 
-// Offline marker-ləri oxu
-export async function getOfflineMarkers() {
-  return await localforage.getItem(MARKERS_KEY);
+export async function getOfflineMarkers(): Promise<MapListing[] | null> {
+  return localforage.getItem<MapListing[]>(MARKERS_KEY);
 }
 
-// Son sinxronizasiya tarixi
-export async function getMarkersLastSync() {
-  return await localforage.getItem(MARKERS_DATE_KEY);
+export async function getMarkersLastSync(): Promise<string | null> {
+  return localforage.getItem<string>(MARKERS_DATE_KEY);
 }
 
-// Online yoxsa offline marker-ləri qaytar
-export async function getMarkers(apiUrl) {
+export async function getMarkers(apiUrl: string): Promise<{ data: MapListing[]; source: "online" | "offline" }> {
   if (navigator.onLine) {
     try {
       const data = await syncMarkersOffline(apiUrl);

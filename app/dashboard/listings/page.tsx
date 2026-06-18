@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Navbar from "../../../components/Navbar";
 import { ownerListings } from "../../../lib/api";
+import type { Listing } from "../../../types";
 
 function ConfirmModal({ listing, onConfirm, onCancel }) {
   return (
@@ -171,7 +172,7 @@ export default function OwnerListingsPage() {
     if (status === "authenticated") {
       ownerListings.myListings(session.accessToken)
         .then((data) => {
-          setListings(Array.isArray(data) ? data : (data.results ?? []));
+          setListings(Array.isArray(data) ? data : ((data as { results?: Listing[] }).results ?? []));
         })
         .catch(() => setError("Elanlar yüklənərkən xəta baş verdi."))
         .finally(() => setLoading(false));

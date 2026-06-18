@@ -17,7 +17,14 @@ const FILTERS = [
   { value: "house", label: "🏠 Ev" },
 ];
 
-function WazeButton({ toLat, toLng, fromLat, fromLng }) {
+interface WazeButtonProps {
+  toLat: number;
+  toLng: number;
+  fromLat: number;
+  fromLng: number;
+}
+
+function WazeButton({ toLat, toLng, fromLat, fromLng }: WazeButtonProps) {
   const handleWaze = (e) => {
     e.preventDefault();
     const deepLink = `waze://?ll=${toLat},${toLng}&from=${fromLat},${fromLng}&navigate=yes`;
@@ -50,7 +57,14 @@ function WazeButton({ toLat, toLng, fromLat, fromLng }) {
   );
 }
 
-export default function MapClient({ locations = [], listingLocations = [] }) {
+import type { MapLocation, MapListing } from "../types";
+
+interface MapClientProps {
+  locations?: MapLocation[];
+  listingLocations?: MapListing[];
+}
+
+export default function MapClient({ locations = [], listingLocations = [] }: MapClientProps) {
   const mapRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const markersRef = useRef([]);
@@ -71,7 +85,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
       cover_image_url: l.cover_image,
       listing_id: l.id,
       listing_price: l.price_per_night,
-      listing_rating: parseFloat(l.rating) || 0,
+      listing_rating: l.rating || 0,
       max_guests: l.max_guests,
       city: l.city,
       source: "listing",
@@ -102,7 +116,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
         document.head.appendChild(link);
       }
 
-      delete L.Icon.Default.prototype._getIconUrl;
+      delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl;
       L.Icon.Default.mergeOptions({
         iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
         iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -130,7 +144,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
               const blob = await localforage.getItem(key);
 
               if (blob) {
-                const url = URL.createObjectURL(blob);
+                const url = URL.createObjectURL(blob as Blob);
 
                 if (z === coords.z) {
                   // Dəqiq tile tapıldı
@@ -181,7 +195,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
           }
         });
 
-        new OfflineTileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        new (OfflineTileLayer as new (url: string, options: object) => L.TileLayer)("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
           attribution: "© OpenStreetMap",
           maxZoom: 19,
         }).addTo(map);
@@ -280,7 +294,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
     });
   }, [mapReady]);
 
-  const getPanelStyle = () => {
+  const getPanelStyle = (): React.CSSProperties => {
     const PANEL_W = 300;
     const PANEL_H = 320;
     const MARGIN = 12;
@@ -352,7 +366,7 @@ export default function MapClient({ locations = [], listingLocations = [] }) {
         await drawRoute(coords, distance, duration, false);
       }
     } catch {
-      const cached = await localforage.getItem(cacheKey);
+      const cached = await localforage.getItem<{ coords: number[][]; distance: string; duration: number }>(cacheKey);
       if (cached) {
         await drawRoute(cached.coords, cached.distance, cached.duration, true);
       } else {

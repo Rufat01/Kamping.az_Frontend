@@ -3,8 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { MapPin, Star, Users, Heart } from "lucide-react";
+import type { Listing } from "../types";
 
-export default function ListingsGrid({ listings }) {
+export default function ListingsGrid({ listings }: { listings: Listing[] }) {
   if (!listings?.length) {
     return <p className="py-12 text-center">Hələ elan yoxdur.</p>;
   }

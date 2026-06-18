@@ -10,14 +10,16 @@ export const metadata = {
   description: "Azerbaycanda en gozal kamp yerleri, glamping, bungalo ve cadir yerlerini kesf edin.",
 };
 
-async function fetchListings(searchParams) {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+async function fetchListings(searchParams: SearchParams) {
   const params = new URLSearchParams();
-  if (searchParams?.listing_type) params.append("listing_type", searchParams.listing_type);
-  if (searchParams?.city) params.append("city", searchParams.city);
-  if (searchParams?.min_price) params.append("min_price", searchParams.min_price);
-  if (searchParams?.max_price) params.append("max_price", searchParams.max_price);
-  if (searchParams?.guests) params.append("guests", searchParams.guests);
-  if (searchParams?.search) params.append("search", searchParams.search);
+  if (searchParams?.listing_type) params.append("listing_type", String(searchParams.listing_type));
+  if (searchParams?.city) params.append("city", String(searchParams.city));
+  if (searchParams?.min_price) params.append("min_price", String(searchParams.min_price));
+  if (searchParams?.max_price) params.append("max_price", String(searchParams.max_price));
+  if (searchParams?.guests) params.append("guests", String(searchParams.guests));
+  if (searchParams?.search) params.append("search", String(searchParams.search));
 
   try {
     const res = await fetch(
@@ -166,7 +168,7 @@ function EmptyState() {
   );
 }
 
-export default async function ListingsPage({ searchParams }) {
+export default async function ListingsPage({ searchParams }: { searchParams: SearchParams }) {
   const listings = await fetchListings(searchParams);
 
   return (
@@ -250,7 +252,7 @@ export default async function ListingsPage({ searchParams }) {
         {listings.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-7">
             {listings.map((listing, i) => (
-              <ListingCard key={listing.id} listing={listing} index={i} />
+              <ListingCard key={listing.id} listing={listing} />
             ))}
           </div>
         ) : (

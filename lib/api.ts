@@ -1,43 +1,60 @@
+import type {
+  Listing,
+  MapListing,
+  MapLocation,
+  Tour,
+  RegisterData,
+  LoginData,
+  ContactFormData,
+  ReservationData,
+  User,
+} from "../types";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
-// ── Əsas fetch helper ──────────────────────────────────
-async function apiFetch(endpoint, options = {}) {
+async function apiFetch<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const res = await fetch(`${API_URL}${endpoint}`, {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
   if (!res.ok) throw new Error(`API xətası: ${res.status} — ${endpoint}`);
-  return res.json();
+  return res.json() as Promise<T>;
 }
 
 // ── Auth ───────────────────────────────────────────────
 export const auth = {
-  register: (data) =>
-  apiFetch("/api/v1/auth/register/", {
-    method: "POST",
-    body: JSON.stringify({
-      full_name: data.full_name,
-      email: data.email,
-      phone: data.phone,
-      password: data.password,
-      password2: data.password_confirm, // ← backend password2 gözləyir
-      role: data.role,
+  register: (data: RegisterData) =>
+    apiFetch<unknown>("/api/v1/auth/register/", {
+      method: "POST",
+      body: JSON.stringify({
+        full_name: data.full_name,
+        email: data.email,
+        phone: data.phone,
+        password: data.password,
+        password2: data.password_confirm,
+        role: data.role,
+      }),
     }),
-  }),
 
-  login: (data) =>
-    apiFetch("/api/v1/auth/login/", { method: "POST", body: JSON.stringify(data) }),
+  login: (data: LoginData) =>
+    apiFetch<{ access: string; refresh: string }>("/api/v1/auth/login/", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
 
-  refresh: (refresh) =>
-    apiFetch("/api/v1/auth/refresh/", { method: "POST", body: JSON.stringify({ refresh }) }),
+  refresh: (refresh: string) =>
+    apiFetch<{ access: string }>("/api/v1/auth/refresh/", {
+      method: "POST",
+      body: JSON.stringify({ refresh }),
+    }),
 
-  me: (token) =>
-    apiFetch("/api/v1/auth/me/", {
+  me: (token: string) =>
+    apiFetch<User>("/api/v1/auth/me/", {
       headers: { Authorization: `Bearer ${token}` },
     }),
 
-  changePassword: (data, token) =>
-    apiFetch("/api/v1/auth/change-password/", {
+  changePassword: (data: { old_password: string; new_password: string }, token: string) =>
+    apiFetch<unknown>("/api/v1/auth/change-password/", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -45,65 +62,52 @@ export const auth = {
 };
 
 // ── Listings ───────────────────────────────────────────
-export async function getListings(searchParams = {}) {
+export async function getListings(searchParams: Record<string, string> = {}): Promise<Listing[]> {
   const query = new URLSearchParams(searchParams).toString();
   const res = await fetch(
     `${API_URL}/api/v1/listings/${query ? `?${query}` : ""}`,
-    {
-      // ISR: 60 saniyədən bir yenilənir, SEO + performans balansı
-      next: { revalidate: 60 },
-    }
+    { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Elanları yükləmək alınmadı");
-  return res.json();
+  return res.json() as Promise<Listing[]>;
 }
 
-
-// Tək bir elan üçün
-export async function getListing(id) {
+export async function getListing(id: number | string): Promise<Listing> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_URL}/api/v1/listings/${id}/`,
     { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Elan tapılmadı");
-  return res.json();
+  return res.json() as Promise<Listing>;
 }
-
-
-
 
 // ── Reservations ───────────────────────────────────────
 export const reservations = {
-  // İstifadəçinin öz rezervasiyaları
-  myReservations: (token) =>
-    apiFetch("/api/v1/reservations/my/", {
+  myReservations: (token: string) =>
+    apiFetch<unknown[]>("/api/v1/reservations/my/", {
       headers: { Authorization: `Bearer ${token}` },
     }),
 
-  // Rezervasiya yarat
-  create: (data, token) =>
-    apiFetch("/api/v1/reservations/", {
+  create: (data: ReservationData, token: string) =>
+    apiFetch<unknown>("/api/v1/reservations/", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     }),
 
-  // Rezervasiyanı ləğv et
-  cancel: (id, token) =>
-    apiFetch(`/api/v1/reservations/${id}/cancel/`, {
+  cancel: (id: number | string, token: string) =>
+    apiFetch<unknown>(`/api/v1/reservations/${id}/cancel/`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
     }),
 
-  // Sahibkar — gələn rezervasiyalar
-  incoming: (token) =>
-    apiFetch("/api/v1/reservations/incoming/", {
+  incoming: (token: string) =>
+    apiFetch<unknown[]>("/api/v1/reservations/incoming/", {
       headers: { Authorization: `Bearer ${token}` },
     }),
 
-  // Sahibkar — status yenilə
-  updateStatus: (id, status, token) =>
-    apiFetch(`/api/v1/reservations/incoming/${id}/`, {
+  updateStatus: (id: number | string, status: string, token: string) =>
+    apiFetch<unknown>(`/api/v1/reservations/incoming/${id}/`, {
       method: "PATCH",
       body: JSON.stringify({ status }),
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -112,35 +116,34 @@ export const reservations = {
 
 // ── Map Locations ──────────────────────────────────────
 export const mapLocations = {
-  list: (params = {}) => {
+  list: (params: Record<string, string> = {}) => {
     const query = new URLSearchParams(
       Object.fromEntries(Object.entries(params).filter(([, v]) => v !== "" && v != null))
     ).toString();
-    return apiFetch(`/api/v1/map/locations/${query ? `?${query}` : ""}`, {
+    return apiFetch<MapLocation[]>(`/api/v1/map/locations/${query ? `?${query}` : ""}`, {
       cache: "no-store",
     });
   },
 
-  detail: (id) =>
-    apiFetch(`/api/v1/map/locations/${id}/`, { next: { revalidate: 60 } }),
+  detail: (id: number | string) =>
+    apiFetch<MapLocation>(`/api/v1/map/locations/${id}/`, { next: { revalidate: 60 } }),
 };
 
-
 // ── Xəritə üçün elan məlumatları ─────────────────────────
-export async function getListingsMap() {
+export async function getListingsMap(): Promise<MapListing[]> {
   const res = await fetch(`${API_URL}/api/v1/listings/map/`, {
     cache: "no-store",
   });
   if (!res.ok) throw new Error("Xəritə elanlarını yükləmək alınmadı");
-  return res.json();
+  return res.json() as Promise<MapListing[]>;
 }
 
 // ── Contact ────────────────────────────────────────────
-export async function sendContactMessage(data) {
+export async function sendContactMessage(data: ContactFormData): Promise<unknown> {
   const res = await fetch(`${API_URL}/api/v1/contact/`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data), // artıq token data içindədir
+    body: JSON.stringify(data),
   });
   const json = await res.json();
   if (!res.ok) throw json;
@@ -148,43 +151,43 @@ export async function sendContactMessage(data) {
 }
 
 // ── Tours ──────────────────────────────────────────────
-export async function getTours(params = {}) {
+export async function getTours(params: Record<string, string> = {}): Promise<Tour[]> {
   const query = new URLSearchParams(params).toString();
-  return apiFetch(`/api/v1/posts/${query ? `?${query}` : ""}`);
+  return apiFetch<Tour[]>(`/api/v1/posts/${query ? `?${query}` : ""}`);
 }
 
-export async function getTour(id) {
+export async function getTour(id: number | string): Promise<Tour> {
   const res = await fetch(
     `${API_URL}/api/v1/posts/${id}/`,
     { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Tur tapılmadı");
-  return res.json();
+  return res.json() as Promise<Tour>;
 }
 
 // ── Owner Listings (CRUD) ──────────────────────────────
 export const ownerListings = {
-  myListings: (token) =>
-    apiFetch("/api/v1/listings/my/", {
+  myListings: (token: string) =>
+    apiFetch<Listing[]>("/api/v1/listings/my/", {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     }),
 
-  create: (data, token) =>
-    apiFetch("/api/v1/listings/", {
+  create: (data: Record<string, unknown>, token: string) =>
+    apiFetch<Listing>("/api/v1/listings/", {
       method: "POST",
       body: JSON.stringify(data),
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     }),
 
-  update: (id, data, token) =>
-    apiFetch(`/api/v1/listings/${id}/`, {
+  update: (id: number | string, data: Record<string, unknown>, token: string) =>
+    apiFetch<Listing>(`/api/v1/listings/${id}/`, {
       method: "PATCH",
       body: JSON.stringify(data),
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     }),
 
-  delete: async (id, token) => {
+  delete: async (id: number | string, token: string): Promise<void> => {
     const res = await fetch(`${API_URL}/api/v1/listings/${id}/`, {
       method: "DELETE",
       headers: { Authorization: `Bearer ${token}` },

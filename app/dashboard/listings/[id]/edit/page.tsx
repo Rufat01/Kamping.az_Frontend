@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react";
 import ListingForm from "../../ListingForm";
 import { getListing } from "../../../../../lib/api";
 
-export default function EditListingPage({ params }) {
+export default function EditListingPage({ params }: { params: { id: string } }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [listing, setListing] = useState(null);

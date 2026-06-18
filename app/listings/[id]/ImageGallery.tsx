@@ -9,8 +9,9 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 import "swiper/css/zoom";
+import type { ListingImage } from "../../../types";
 
-export default function ImageGallery({ images, title }) {
+export default function ImageGallery({ images, title }: { images: ListingImage[]; title: string }) {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
     const [lightbox, setLightbox] = useState(false);
     const [activeIndex, setActiveIndex] = useState(0);

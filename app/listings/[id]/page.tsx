@@ -5,7 +5,9 @@ import ImageGallery from "./ImageGallery";
 import { MapPin, Star, Users, Compass, ArrowUpRight, Phone, Calendar, ChevronRight } from "lucide-react";
 import Navbar from "../../../components/Navbar";
 
-export async function generateMetadata({ params }) {
+type PageProps = { params: { id: string } };
+
+export async function generateMetadata({ params }: PageProps) {
     try {
         const listing = await getListing(params.id);
         return {
@@ -22,7 +24,7 @@ export async function generateMetadata({ params }) {
     }
 }
 
-export default async function ListingDetailPage({ params }) {
+export default async function ListingDetailPage({ params }: PageProps) {
     let listing;
     try {
         listing = await getListing(params.id);

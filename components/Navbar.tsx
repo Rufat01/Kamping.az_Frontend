@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { Menu, X, Tent, ChevronDown, User, LogOut, Settings, LayoutList } from "lucide-react";
 
-export default function Navbar({ forceScrolled }) {
+interface NavbarProps {
+  forceScrolled?: boolean;
+}
+
+export default function Navbar({ forceScrolled }: NavbarProps) {
   const [scrolled, setScrolled] = useState(forceScrolled);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -18,14 +22,14 @@ useEffect(() => {
 }, [forceScrolled]);
 
   useEffect(() => {
-    const handleClick = (e) => {
-      if (!e.target.closest("#user-dropdown")) setDropdownOpen(false);
+    const handleClick = (e: MouseEvent) => {
+      if (!(e.target as HTMLElement).closest("#user-dropdown")) setDropdownOpen(false);
     };
     document.addEventListener("click", handleClick);
     return () => document.removeEventListener("click", handleClick);
   }, []);
 
-  const getInitials = (name) => {
+  const getInitials = (name: string | null | undefined): string => {
     if (!name || typeof name !== "string") return "?";
     const parts = name.trim().split(" ").filter(Boolean);
     if (parts.length === 0) return "?";

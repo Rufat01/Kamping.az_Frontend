@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { MapPin, Star, Users } from "lucide-react";
+import type { Listing } from "../types";
 
-
-function ListingCard({ listing }) {
+function ListingCard({ listing }: { listing: Listing }) {
   return (
     <Link
       href={`/listings/${listing.id}`}

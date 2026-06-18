@@ -8,8 +8,8 @@ import Navbar from "../../components/Navbar";
 
 const INITIAL_FORM = { name: "", email: "", subject: "", message: "" };
 
-function validate(form) {
-  const errors = {};
+function validate(form: typeof INITIAL_FORM): Record<string, string> {
+  const errors: Record<string, string> = {};
   if (!form.name.trim() || form.name.trim().length < 2)
     errors.name = "Ad ən azı 2 simvoldan ibarət olmalıdır.";
   if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
@@ -24,7 +24,7 @@ function validate(form) {
 export default function ContactPage() {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [form, setForm] = useState(INITIAL_FORM);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState("idle");
   const [serverError, setServerError] = useState("");
 

@@ -3,23 +3,13 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useCallback, useEffect, useState, useRef } from "react";
 import { Search, X, Check, ChevronDown } from "lucide-react";
 
-const TYPES = [
-  { value: "", label: "Hamısı", emoji: "✦" },
-  { value: "tent_site", label: "Çadır", emoji: "⛺" },
-  { value: "glamping", label: "Qlampinq", emoji: "🏕️" },
-  { value: "bungalow", label: "Bunqalo", emoji: "🏡" },
-  { value: "house", label: "Ev", emoji: "🏠" },
-];
-
-const CITIES = [
+const LOCATIONS = [
   "Şəki", "Qəbələ", "Göygöl", "Lerik",
   "Lənkəran", "Naxçıvan", "İsmayıllı", "Lahıc",
+  "Xınalıq", "Şahdağ", "Abşeron", "Quba",
 ];
 
-const GUESTS = ["1", "2", "3", "4", "5", "6", "8", "10"];
-
-// Reusable fixed-position dropdown — overflow-x-auto-dan qaçır
-function FilterDropdown({ value, onChange, options, placeholder, icon }) {
+function LocationDropdown({ value, onChange }) {
   const [open, setOpen] = useState(false);
   const [menuPos, setMenuPos] = useState({ top: 0, left: 0 });
   const buttonRef = useRef(null);
@@ -44,13 +34,6 @@ function FilterDropdown({ value, onChange, options, placeholder, icon }) {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const selectedLabel = options.find((o) =>
-    (typeof o === "string" ? o : o.value) === value
-  );
-  const displayLabel = value
-    ? (typeof selectedLabel === "string" ? selectedLabel : selectedLabel?.label)
-    : null;
-
   return (
     <div className="shrink-0">
       <button
@@ -61,8 +44,8 @@ function FilterDropdown({ value, onChange, options, placeholder, icon }) {
           open ? "border-[#4A6B4F]" : "border-[#E8E5D8] hover:border-[#4A6B4F]"
         } text-[#4A6B4F] cursor-pointer`}
       >
-        <span>{icon}</span>
-        <span>{displayLabel || placeholder}</span>
+        <span>📍</span>
+        <span>{value || "Bütün yerlər"}</span>
         <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
@@ -74,12 +57,11 @@ function FilterDropdown({ value, onChange, options, placeholder, icon }) {
             top: menuPos.top,
             left: menuPos.left,
             zIndex: 9999,
-            minWidth: "160px",
+            minWidth: "170px",
             boxShadow: "0 15px 40px -8px rgba(45,74,51,0.2), 0 4px 12px -4px rgba(0,0,0,0.1)"
           }}
           className="bg-white rounded-2xl overflow-hidden"
         >
-          {/* Sıfırla */}
           <button
             type="button"
             onClick={() => { onChange(""); setOpen(false); }}
@@ -87,33 +69,28 @@ function FilterDropdown({ value, onChange, options, placeholder, icon }) {
               !value ? "bg-[#2D4A33]/5 text-[#2D4A33]" : "hover:bg-[#FAF6F0] text-[#4A6B4F]"
             }`}
           >
-            <span>{placeholder}</span>
+            <span>Bütün yerlər</span>
             {!value && <Check className="w-3 h-3 text-[#2D4A33]" />}
           </button>
 
           <div className="h-px bg-[#E8E5D8] mx-3" />
 
           <div className="py-1 max-h-48 overflow-y-auto">
-            {options.map((opt) => {
-              const optValue = typeof opt === "string" ? opt : opt.value;
-              const optLabel = typeof opt === "string" ? opt : opt.label;
-              const isSelected = value === optValue;
-              return (
-                <button
-                  key={optValue}
-                  type="button"
-                  onClick={() => { onChange(optValue); setOpen(false); }}
-                  className={`w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold transition-colors text-left ${
-                    isSelected
-                      ? "bg-[#2D4A33]/5 text-[#2D4A33]"
-                      : "hover:bg-[#FAF6F0] text-[#1F2D24]"
-                  }`}
-                >
-                  <span>{optLabel}</span>
-                  {isSelected && <Check className="w-3 h-3 text-[#2D4A33]" />}
-                </button>
-              );
-            })}
+            {LOCATIONS.map((loc) => (
+              <button
+                key={loc}
+                type="button"
+                onClick={() => { onChange(loc); setOpen(false); }}
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-xs font-semibold transition-colors text-left ${
+                  value === loc
+                    ? "bg-[#2D4A33]/5 text-[#2D4A33]"
+                    : "hover:bg-[#FAF6F0] text-[#1F2D24]"
+                }`}
+              >
+                <span>{loc}</span>
+                {value === loc && <Check className="w-3 h-3 text-[#2D4A33]" />}
+              </button>
+            ))}
           </div>
         </div>
       )}
@@ -121,17 +98,16 @@ function FilterDropdown({ value, onChange, options, placeholder, icon }) {
   );
 }
 
-export default function ListingsFilterBar() {
+export default function ToursFilterBar() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const currentType = searchParams.get("listing_type") || "";
-  const currentCity = searchParams.get("city") || "";
+  const currentSearch = searchParams.get("search") || "";
+  const currentLocation = searchParams.get("location") || "";
   const currentMinPrice = searchParams.get("min_price") || "";
   const currentMaxPrice = searchParams.get("max_price") || "";
-  const currentGuests = searchParams.get("guests") || "";
-  const currentSearch = searchParams.get("search") || "";
+  const currentFree = searchParams.get("free") || "";
 
   const [searchInput, setSearchInput] = useState(currentSearch);
   const debounceRef = useRef(null);
@@ -161,7 +137,7 @@ export default function ListingsFilterBar() {
     router.push(pathname, { scroll: false });
   }, [router, pathname]);
 
-  const activeCount = [currentType, currentCity, currentMinPrice, currentMaxPrice, currentGuests, currentSearch]
+  const activeCount = [currentSearch, currentLocation, currentMinPrice, currentMaxPrice, currentFree]
     .filter(Boolean).length;
 
   return (
@@ -174,7 +150,7 @@ export default function ListingsFilterBar() {
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A6B4F]" strokeWidth={1.5} />
             <input
               type="text"
-              placeholder="Məkan adı, şəhər və ya açar söz..."
+              placeholder="Tur adı, yer və ya açar söz..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
@@ -200,40 +176,31 @@ export default function ListingsFilterBar() {
           </button>
         </div>
 
-        {/* Filter chips row */}
+        {/* Filter chips */}
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
 
-          {/* Type chips */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {TYPES.map((t) => (
-              <button
-                key={t.value}
-                onClick={() => updateFilter("listing_type", t.value)}
-                className={`flex items-center gap-1.5 whitespace-nowrap text-xs font-bold px-3.5 py-2 rounded-full transition-all ${
-                  currentType === t.value
-                    ? "text-white shadow-md"
-                    : "bg-white text-[#4A6B4F] border border-[#E8E5D8] hover:border-[#4A6B4F]"
-                }`}
-                style={currentType === t.value ? { background: "#2D4A33" } : {}}
-              >
-                <span>{t.emoji}</span>
-                {t.label}
-              </button>
-            ))}
-          </div>
+          {/* Pulsuz tur toggle */}
+          <button
+            onClick={() => updateFilter("free", currentFree === "true" ? "" : "true")}
+            className={`flex items-center gap-1.5 whitespace-nowrap text-xs font-bold px-3.5 py-2 rounded-full transition-all shrink-0 ${
+              currentFree === "true"
+                ? "text-white shadow-md"
+                : "bg-white text-[#4A6B4F] border border-[#E8E5D8] hover:border-[#4A6B4F]"
+            }`}
+            style={currentFree === "true" ? { background: "#4A6B4F" } : {}}
+          >
+            🌿 Pulsuz turlar
+          </button>
 
           <div className="w-px h-6 bg-[#E8E5D8] shrink-0 mx-1" />
 
-          {/* City dropdown */}
-          <FilterDropdown
-            value={currentCity}
-            onChange={(val) => updateFilter("city", val)}
-            options={CITIES}
-            placeholder="Bütün şəhərlər"
-            icon="📍"
+          {/* Location dropdown */}
+          <LocationDropdown
+            value={currentLocation}
+            onChange={(val) => updateFilter("location", val)}
           />
 
-          {/* Price */}
+          {/* Price range */}
           <div className="flex items-center gap-1 shrink-0 bg-white border border-[#E8E5D8] rounded-full px-3 py-1.5 hover:border-[#4A6B4F] transition-colors">
             <span className="text-[10px] font-bold text-[#4A6B4F]/60 uppercase tracking-wider pr-1">₼</span>
             <input
@@ -241,7 +208,7 @@ export default function ListingsFilterBar() {
               placeholder="Min"
               defaultValue={currentMinPrice}
               onBlur={(e) => updateFilter("min_price", e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && updateFilter("min_price", e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && updateFilter("min_price", e.currentTarget.value)}
               className="w-14 text-xs font-semibold bg-transparent focus:outline-none text-[#1F2D24]"
             />
             <span className="text-[#4A6B4F]/30 text-xs">—</span>
@@ -250,19 +217,10 @@ export default function ListingsFilterBar() {
               placeholder="Max"
               defaultValue={currentMaxPrice}
               onBlur={(e) => updateFilter("max_price", e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && updateFilter("max_price", e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && updateFilter("max_price", e.currentTarget.value)}
               className="w-14 text-xs font-semibold bg-transparent focus:outline-none text-[#1F2D24]"
             />
           </div>
-
-          {/* Guests dropdown */}
-          <FilterDropdown
-            value={currentGuests}
-            onChange={(val) => updateFilter("guests", val)}
-            options={GUESTS.map((g) => ({ value: g, label: `${g}+ nəfər` }))}
-            placeholder="Qonaq sayı"
-            icon="👥"
-          />
 
           {/* Clear */}
           {activeCount > 0 && (

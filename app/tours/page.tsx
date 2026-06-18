@@ -4,28 +4,31 @@ import { MapPin, Eye, Clock, Phone, ArrowUpRight, Compass } from "lucide-react";
 import ToursFilterBar from "../../components/ToursFilterBar";
 import { getTours } from "../../lib/api";
 import Navbar from "../../components/Navbar";
+import type { Tour } from "../../types";
 
 export const metadata = {
   title: "Turlar — Kamping.az",
   description: "Azerbaycanda en gozal tur paketleri ve macera turlari.",
 };
 
-async function fetchTours(searchParams) {
+type SearchParams = Record<string, string | string[] | undefined>;
+
+async function fetchTours(searchParams: SearchParams) {
   try {
-    const params = {};
-    if (searchParams?.search) params.search = searchParams.search;
-    if (searchParams?.location) params.location = searchParams.location;
-    if (searchParams?.min_price) params.min_price = searchParams.min_price;
-    if (searchParams?.max_price) params.max_price = searchParams.max_price;
-    if (searchParams?.free) params.free = searchParams.free;
+    const params: Record<string, string> = {};
+    if (searchParams?.search) params.search = String(searchParams.search);
+    if (searchParams?.location) params.location = String(searchParams.location);
+    if (searchParams?.min_price) params.min_price = String(searchParams.min_price);
+    if (searchParams?.max_price) params.max_price = String(searchParams.max_price);
+    if (searchParams?.free) params.free = String(searchParams.free);
     const data = await getTours(params);
-    return Array.isArray(data) ? data : (data.results ?? []);
+    return Array.isArray(data) ? data : ((data as { results?: Tour[] }).results ?? []);
   } catch {
     return [];
   }
 }
 
-function TourCard({ tour, index }) {
+function TourCard({ tour, index }: { tour: Tour; index: number }) {
   const rotations = [-0.5, 0.4, -0.3, 0.6, -0.4, 0.3];
   const rotate = rotations[index % rotations.length];
 
@@ -142,7 +145,7 @@ function EmptyState() {
   );
 }
 
-export default async function ToursPage({ searchParams }) {
+export default async function ToursPage({ searchParams }: { searchParams: SearchParams }) {
   const tours = await fetchTours(searchParams);
 
   return (

@@ -40,7 +40,10 @@ const EMPTY_FORM = {
   longitude: "",
 };
 
-function FieldLabel({ children, required }) {
+import type { ReactNode } from "react";
+import type { Listing } from "../../../types";
+
+function FieldLabel({ children, required }: { children: ReactNode; required?: boolean }) {
   return (
     <label className="block text-xs font-bold text-[#2D4A33] uppercase tracking-wider mb-1.5">
       {children} {required && <span className="text-red-400">*</span>}
@@ -48,7 +51,7 @@ function FieldLabel({ children, required }) {
   );
 }
 
-function Input({ error, ...props }) {
+function Input({ error, ...props }: React.InputHTMLAttributes<HTMLInputElement> & { error?: string }) {
   return (
     <input
       className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
@@ -61,7 +64,7 @@ function Input({ error, ...props }) {
   );
 }
 
-function Textarea({ error, ...props }) {
+function Textarea({ error, ...props }: React.TextareaHTMLAttributes<HTMLTextAreaElement> & { error?: string }) {
   return (
     <textarea
       className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors resize-none ${
@@ -75,7 +78,12 @@ function Textarea({ error, ...props }) {
   );
 }
 
-export default function ListingForm({ initialData, listingId }) {
+interface ListingFormProps {
+  initialData?: Partial<Listing>;
+  listingId?: number | string;
+}
+
+export default function ListingForm({ initialData, listingId }: ListingFormProps) {
   const isEdit = !!listingId;
   const { data: session } = useSession();
   const router = useRouter();
@@ -102,18 +110,18 @@ export default function ListingForm({ initialData, listingId }) {
     };
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState("");
 
-  const set = (field) => (e) => {
+  const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
   const validate = () => {
-    const e = {};
+    const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Başlıq daxil edin.";
     if (!form.description.trim()) e.description = "Təsvir daxil edin.";
     if (!form.city.trim()) e.city = "Şəhər daxil edin.";
@@ -428,7 +436,7 @@ export default function ListingForm({ initialData, listingId }) {
                       src={form.cover_image}
                       alt="Preview"
                       className="w-full h-full object-cover"
-                      onError={(e) => { e.target.style.display = "none"; }}
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
                     />
                   </div>
                 )}

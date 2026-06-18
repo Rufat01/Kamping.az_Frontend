@@ -7,7 +7,9 @@ import {
 } from "lucide-react";
 import Navbar from "../../../components/Navbar";
 
-export async function generateMetadata({ params }) {
+type PageProps = { params: { id: string } };
+
+export async function generateMetadata({ params }: PageProps) {
   try {
     const tour = await getTour(params.id);
     return {
@@ -24,7 +26,7 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function TourDetailPage({ params }) {
+export default async function TourDetailPage({ params }: PageProps) {
   let tour;
   try {
     tour = await getTour(params.id);

@@ -3,40 +3,16 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Eye, EyeOff, Tent, ArrowRight, Mail } from "lucide-react";
-import { auth } from "../../lib/api";
+import { Eye, EyeOff, Tent, ArrowRight } from "lucide-react";
 import Navbar from "../../components/Navbar";
 
-const INITIAL_FORM = {
-  full_name: "",
-  email: "",
-  phone: "",
-  password: "",
-  password_confirm: "",
-  role: "user",
-};
-
-function validate(form) {
-  const errors = {};
-  if (!form.full_name.trim() || form.full_name.trim().length < 2)
-    errors.full_name = "Ad ən azı 2 simvol olmalıdır.";
-  if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-    errors.email = "Düzgün email daxil edin.";
-  if (!form.password || form.password.length < 8)
-    errors.password = "Şifrə ən azı 8 simvol olmalıdır.";
-  if (form.password !== form.password_confirm)
-    errors.password_confirm = "Şifrələr uyğun gəlmir.";
-  return errors;
-}
-
-export default function RegisterPage() {
+export default function LoginPage() {
   const router = useRouter();
-  const [form, setForm] = useState(INITIAL_FORM);
-  const [errors, setErrors] = useState({});
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState("idle");
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -44,9 +20,18 @@ export default function RegisterPage() {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+  const validate = () => {
+    const errs: Record<string, string> = {};
+    if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
+      errs.email = "Düzgün email daxil edin.";
+    if (!form.password || form.password.length < 6)
+      errs.password = "Şifrəni daxil edin.";
+    return errs;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validate(form);
+    const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -55,33 +40,18 @@ export default function RegisterPage() {
     setStatus("loading");
     setServerError("");
 
-    try {
-      await auth.register(form);
-      // Qeydiyyatdan sonra avtomatik login
-      const result = await signIn("credentials", {
-        email: form.email,
-        password: form.password,
-        redirect: false,
-      });
+    const result = await signIn("credentials", {
+      email: form.email,
+      password: form.password,
+      redirect: false,
+    });
 
-      if (result?.ok) {
-        router.push("/");
-      } else {
-        router.push("/login");
-      }
-    } catch (err) {
+    if (result?.ok) {
+      router.push("/");
+      router.refresh();
+    } else {
       setStatus("idle");
-      if (err && typeof err === "object") {
-        const backendErrors = {};
-        Object.keys(err).forEach((key) => {
-          if (Array.isArray(err[key])) backendErrors[key] = err[key][0];
-        });
-        if (Object.keys(backendErrors).length > 0) {
-          setErrors(backendErrors);
-          return;
-        }
-      }
-      setServerError("Xəta baş verdi. Yenidən cəhd edin.");
+      setServerError("Email və ya şifrə yanlışdır.");
     }
   };
 
@@ -94,32 +64,28 @@ export default function RegisterPage() {
     <Navbar forceScrolled />
     <div className="min-h-screen bg-[#F9F5EE] flex">
 
-      {/* Sol — dekorativ panel (desktop) */}
+      {/* Sol — dekorativ panel */}
       <div className="hidden lg:flex lg:w-1/2 bg-forest-900 relative overflow-hidden flex-col items-center justify-center p-12">
-        <div className="absolute inset-0 opacity-10"
-          style={{
-            backgroundImage: `radial-gradient(circle at 30% 50%, #f59e0b33 0%, transparent 60%),
-              radial-gradient(circle at 80% 20%, #ffffff11 0%, transparent 40%)`
-          }}
-        />
         <img
-          src="https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?w=800&q=80"
+          src="https://images.unsplash.com/photo-1487730116645-74489c95b41b?w=800&q=80"
           alt=""
           className="absolute inset-0 w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0"
+          style={{ background: "radial-gradient(circle at 30% 50%, #f59e0b22 0%, transparent 60%)" }}
         />
         <div className="relative z-10 text-center">
           <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
             <Tent className="w-8 h-8 text-forest-900" strokeWidth={2} />
           </div>
           <h2 className="font-display text-4xl font-bold text-white mb-4 leading-tight">
-            Azərbaycanın ən gözəl<br />
-            <span className="text-amber-400">kamp məkanları</span>
+            Xoş gəldiniz,<br />
+            <span className="text-amber-400">macəraçı!</span>
           </h2>
           <p className="text-white/60 text-lg max-w-sm mx-auto">
-            Qeydiyyatdan keç, sevimli məkanlarını saxla, rezervasiya et.
+            Hesabınıza daxil olun, rezervasiyalarınızı idarə edin.
           </p>
 
-          {/* Mini stat-lar */}
           <div className="mt-10 flex gap-8 justify-center">
             {[["200+", "Məkan"], ["2400+", "Qonaq"], ["4.8★", "Reytinq"]].map(([n, l]) => (
               <div key={l}>
@@ -132,7 +98,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Sağ — form */}
-      <div className="flex-1 flex items-center justify-center p-6 sm:p-10 lg:pt-[100px]">
+      <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-md">
 
           {/* Logo — mobile */}
@@ -146,16 +112,16 @@ export default function RegisterPage() {
           </div>
 
           <h1 className="font-display text-3xl font-bold text-forest-900 mb-1">
-            Hesab yarat
+            Daxil ol
           </h1>
           <p className="text-forest-500 text-sm mb-8">
-            Artıq hesabın var?{" "}
-            <Link href="/login" className="text-forest-800 font-semibold hover:underline">
-              Daxil ol
+            Hesabın yoxdur?{" "}
+            <Link href="/register" className="text-forest-800 font-semibold hover:underline">
+              Qeydiyyatdan keç
             </Link>
           </p>
 
-          {/* Google button */}
+          {/* Google */}
           <button
             onClick={handleGoogle}
             type="button"
@@ -167,7 +133,7 @@ export default function RegisterPage() {
               <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
               <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
             </svg>
-            Google ilə davam et
+            Google ilə daxil ol
           </button>
 
           {/* Ayırıcı */}
@@ -184,28 +150,7 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* Form */}
           <form onSubmit={handleSubmit} noValidate className="space-y-4">
-
-            {/* Ad Soyad */}
-            <div>
-              <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">
-                Ad Soyad <span className="text-red-400">*</span>
-              </label>
-              <input
-                type="text"
-                name="full_name"
-                value={form.full_name}
-                onChange={handleChange}
-                placeholder="Adınız Soyadınız"
-                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.full_name
-                    ? "border-red-300 bg-red-50"
-                    : "border-forest-200 bg-white focus:border-forest-400"
-                }`}
-              />
-              {errors.full_name && <p className="text-red-500 text-xs mt-1">{errors.full_name}</p>}
-            </div>
 
             {/* Email */}
             <div>
@@ -227,33 +172,23 @@ export default function RegisterPage() {
               {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
             </div>
 
-            {/* Telefon */}
-            <div>
-              <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">
-                Telefon
-              </label>
-              <input
-                type="tel"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="+994 50 000 00 00"
-                className="w-full border border-forest-200 bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-forest-400 transition-colors"
-              />
-            </div>
-
             {/* Şifrə */}
             <div>
-              <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">
-                Şifrə <span className="text-red-400">*</span>
-              </label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider">
+                  Şifrə <span className="text-red-400">*</span>
+                </label>
+                <Link href="/forgot-password" className="text-xs text-forest-500 hover:text-forest-800 transition-colors">
+                  Şifrəni unutmusan?
+                </Link>
+              </div>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={form.password}
                   onChange={handleChange}
-                  placeholder="Ən azı 8 simvol"
+                  placeholder="Şifrənizi daxil edin"
                   className={`w-full border rounded-xl px-4 py-3 pr-11 text-sm focus:outline-none transition-colors ${
                     errors.password
                       ? "border-red-300 bg-red-50"
@@ -271,64 +206,6 @@ export default function RegisterPage() {
               {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
             </div>
 
-            {/* Şifrə təkrar */}
-            <div>
-              <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">
-                Şifrəni təkrarla <span className="text-red-400">*</span>
-              </label>
-              <div className="relative">
-                <input
-                  type={showConfirm ? "text" : "password"}
-                  name="password_confirm"
-                  value={form.password_confirm}
-                  onChange={handleChange}
-                  placeholder="Şifrəni təkrarlayın"
-                  className={`w-full border rounded-xl px-4 py-3 pr-11 text-sm focus:outline-none transition-colors ${
-                    errors.password_confirm
-                      ? "border-red-300 bg-red-50"
-                      : "border-forest-200 bg-white focus:border-forest-400"
-                  }`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirm(!showConfirm)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-forest-400 hover:text-forest-600"
-                >
-                  {showConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-              {errors.password_confirm && <p className="text-red-500 text-xs mt-1">{errors.password_confirm}</p>}
-            </div>
-
-            {/* Rol seçimi 
-            <div>
-              <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-2">
-                Hesab növü
-              </label>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { value: "user", label: "🏕️ İstifadəçi", desc: "Kamp yerlərini kəşf et" },
-                  { value: "owner", label: "🏡 Sahibkar", desc: "Öz məkanını paylaş" },
-                ].map((r) => (
-                  <button
-                    key={r.value}
-                    type="button"
-                    onClick={() => setForm((prev) => ({ ...prev, role: r.value }))}
-                    className={`border rounded-xl p-3 text-left transition-all ${
-                      form.role === r.value
-                        ? "border-forest-700 bg-forest-50 ring-1 ring-forest-700"
-                        : "border-forest-200 bg-white hover:border-forest-300"
-                    }`}
-                  >
-                    <div className="text-sm font-semibold text-forest-900">{r.label}</div>
-                    <div className="text-xs text-forest-500 mt-0.5">{r.desc}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            */}
-
             {/* Submit */}
             <button
               type="submit"
@@ -345,7 +222,7 @@ export default function RegisterPage() {
                 </>
               ) : (
                 <>
-                  Qeydiyyatdan keç
+                  Daxil ol
                   <ArrowRight className="w-4 h-4" />
                 </>
               )}
