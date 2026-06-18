@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, X, Tent, ChevronDown, User, LogOut, Settings } from "lucide-react";
+import { Menu, X, Tent, ChevronDown, User, LogOut, Settings, LayoutList } from "lucide-react";
 
 export default function Navbar({ forceScrolled }) {
   const [scrolled, setScrolled] = useState(forceScrolled);
@@ -57,6 +57,7 @@ useEffect(() => {
         <nav className="hidden md:flex items-center gap-8">
           {[
             { label: "Elanlar", href: "/listings" },
+            { label: "Turlar", href: "/tours" },
             { label: "Xəritə", href: "/map" },
             { label: "Haqqımızda", href: "/about" },
             { label: "Əlaqə", href: "/contact" },
@@ -116,14 +117,25 @@ useEffect(() => {
                       <User className="w-4 h-4 text-forest-400" />
                       Hesabim
                     </Link>
-                    <Link
-                      href="/dashboard/reservations"
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
-                    >
-                      <Settings className="w-4 h-4 text-forest-400" />
-                      Rezervasiyalarım
-                    </Link>
+                    {session.user?.role === "owner" ? (
+                      <Link
+                        href="/dashboard/listings"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
+                      >
+                        <LayoutList className="w-4 h-4 text-forest-400" />
+                        Elanlarım
+                      </Link>
+                    ) : (
+                      <Link
+                        href="/dashboard/reservations"
+                        onClick={() => setDropdownOpen(false)}
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
+                      >
+                        <Settings className="w-4 h-4 text-forest-400" />
+                        Rezervasiyalarım
+                      </Link>
+                    )}
                   </div>
                   <div className="border-t border-forest-100 py-1.5">
                     <button
@@ -168,6 +180,7 @@ useEffect(() => {
         <div className="bg-forest-800/98 backdrop-blur-md px-4 pt-4 pb-6 flex flex-col gap-4 border-t border-white/10">
           {[
             { label: "Elanlar", href: "/listings" },
+            { label: "Turlar", href: "/tours" },
             { label: "Xəritə", href: "/map" },
             { label: "Haqqımızda", href: "/about" },
             { label: "Əlaqə", href: "/contact" },
@@ -205,6 +218,13 @@ useEffect(() => {
                 </div>
                 <Link href="/dashboard" onClick={() => setMobileOpen(false)}
                   className="text-white/80 text-sm py-2">Hesabim</Link>
+                {session.user?.role === "owner" ? (
+                  <Link href="/dashboard/listings" onClick={() => setMobileOpen(false)}
+                    className="text-white/80 text-sm py-2">Elanlarım</Link>
+                ) : (
+                  <Link href="/dashboard/reservations" onClick={() => setMobileOpen(false)}
+                    className="text-white/80 text-sm py-2">Rezervasiyalarım</Link>
+                )}
                 <button
                   onClick={() => signOut({ callbackUrl: "/" })}
                   className="text-red-400 text-sm py-2 text-left"
