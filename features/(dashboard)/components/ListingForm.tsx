@@ -161,13 +161,26 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
       }
 
       const existingHasCover = existingImages.some((img) => img.is_cover);
+      const failedUploads: string[] = [];
       for (let i = 0; i < newImages.length; i++) {
         const isCover = !existingHasCover && i === 0;
-        await ownerListings.uploadImage(targetId, newImages[i], isCover, session!.accessToken);
+        try {
+          const uploaded = await ownerListings.uploadImage(targetId, newImages[i], isCover, session!.accessToken);
+          console.log(`[upload ${i + 1}/${newImages.length}] uğurlu:`, uploaded);
+        } catch (err) {
+          console.error(`[upload ${i + 1}/${newImages.length}] xəta:`, err);
+          failedUploads.push(newImages[i].name);
+        }
       }
 
       for (const imgId of removedImageIds) {
         await ownerListings.deleteImage(targetId, imgId, session!.accessToken);
+      }
+
+      if (failedUploads.length > 0) {
+        setServerError(`${failedUploads.length} şəkil yüklənmədi: ${failedUploads.join(", ")}`);
+        setSubmitting(false);
+        return;
       }
 
       setSuccess(true);

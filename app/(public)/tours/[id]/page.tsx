@@ -2,10 +2,11 @@ import { getTour } from "@/features/(public)/tours/services/tours.service";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
-  MapPin, Clock, Phone, ArrowUpRight, Compass, ChevronRight,
-  Eye, Users, CheckCircle2, XCircle, Calendar,
+  MapPin, Clock, Phone, Compass, ChevronRight,
+  Users, CheckCircle2, XCircle, Calendar,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
+import ImageGallery from "@/features/(public)/listings/components/ImageGallery";
 
 type PageProps = { params: { id: string } };
 
@@ -63,31 +64,17 @@ export default async function TourDetailPage({ params }: PageProps) {
             <span className="text-[#2D4A33] font-bold truncate">{tour.title}</span>
           </nav>
 
-          {/* Cover image */}
-          {tour.cover_image && (
-            <section aria-label="Əsas şəkil" className="mb-10">
-              <div className="relative w-full overflow-hidden rounded-3xl"
-                style={{ aspectRatio: "21/9", maxHeight: "520px" }}>
-                <img
-                  src={tour.cover_image}
-                  alt={tour.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 pointer-events-none"
-                  style={{ background: "linear-gradient(to top, rgba(26,58,46,0.4) 0%, transparent 50%)" }} />
-
-                {tour.duration && (
-                  <div className="absolute bottom-5 left-5 flex items-center gap-2 bg-[#FAF6F0]/95 backdrop-blur text-[#2D4A33] text-sm font-bold px-4 py-2 rounded-xl border-2 border-dashed border-[#4A6B4F]/30">
-                    <Clock className="w-4 h-4" />
-                    {tour.duration}
-                  </div>
-                )}
-
-                <div className="absolute bottom-5 right-5 flex items-center gap-1.5 bg-black/40 backdrop-blur text-white text-xs font-semibold px-3 py-2 rounded-full">
-                  <Eye className="w-3.5 h-3.5" />
-                  {tour.view_count ?? 0}
-                </div>
-              </div>
+          {/* Image Gallery */}
+          {(tour.images?.length || tour.cover_image) && (
+            <section aria-label="Şəkillər" className="mb-10">
+              <ImageGallery
+                images={
+                  tour.images?.length
+                    ? tour.images
+                    : [{ id: 0, image: tour.cover_image!, is_cover: true }]
+                }
+                title={tour.title}
+              />
             </section>
           )}
 
