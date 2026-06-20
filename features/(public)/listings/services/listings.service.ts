@@ -1,5 +1,5 @@
 import { apiFetch, API_URL } from "@/lib/api/client";
-import type { Listing, ListingImage, MapListing } from "@/types";
+import type { Listing, ListingImage, MapListing, Tour } from "@/types";
 
 export async function getListings(searchParams: Record<string, string> = {}): Promise<Listing[]> {
   const query = new URLSearchParams(searchParams).toString();
@@ -29,6 +29,12 @@ export async function getListingsMap(): Promise<MapListing[]> {
 export const ownerListings = {
   myListings: (token: string) =>
     apiFetch<Listing[]>("/api/v1/posts/my/", {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: "no-store",
+    }),
+
+  getOne: (id: number | string, token: string) =>
+    apiFetch<Tour>(`/api/v1/posts/my/${id}/`, {
       headers: { Authorization: `Bearer ${token}` },
       cache: "no-store",
     }),

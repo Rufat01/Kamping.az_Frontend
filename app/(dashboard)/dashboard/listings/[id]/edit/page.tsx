@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import ListingForm from "@/features/(dashboard)/components/ListingForm";
 import FormSkeleton from "@/features/(dashboard)/components/FormSkeleton";
-import { getListing } from "@/features/(public)/listings/services/listings.service";
+import { ownerListings } from "@/features/(public)/listings/services/listings.service";
 
 export default function EditListingPage({ params }: { params: { id: string } }) {
   const { data: session, status } = useSession();
@@ -16,7 +16,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
     if (status === "unauthenticated") { router.replace("/login"); return; }
     if (status === "authenticated" && session.user?.role !== "owner") { router.replace("/"); return; }
     if (status === "authenticated") {
-      getListing(params.id)
+      ownerListings.getOne(params.id, session.accessToken)
         .then(setListing)
         .catch(() => setLoadError(true));
     }

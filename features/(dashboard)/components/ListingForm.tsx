@@ -17,6 +17,7 @@ const EMPTY_FORM = {
   price: "",
   duration: "",
   location: "",
+  status: "draft" as string,
 };
 
 function FieldLabel({ children, required }: { children: ReactNode; required?: boolean }) {
@@ -84,6 +85,7 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
       price: String(initialData.price ?? ""),
       duration: initialData.duration ?? "",
       location: initialData.location ?? "",
+      status: initialData.status ?? "draft",
     };
   });
 
@@ -141,12 +143,13 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
     setSubmitting(true);
     setServerError("");
     try {
-      const payload = {
+      const payload: Record<string, unknown> = {
         title: form.title.trim(),
         description: form.description.trim(),
         price: Number(form.price),
         duration: form.duration.trim() || null,
         location: form.location.trim() || null,
+        status: form.status,
       };
 
       console.log("[ownerListings] payload:", payload);
