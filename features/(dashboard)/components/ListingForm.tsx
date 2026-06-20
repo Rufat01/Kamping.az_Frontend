@@ -1,7 +1,7 @@
 "use client";
 import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 import {
   Loader2, AlertTriangle, CheckCircle2, ChevronRight, Compass, X, ImagePlus,
@@ -74,7 +74,6 @@ interface ListingFormProps {
 export default function ListingForm({ initialData, listingId }: ListingFormProps) {
   const isEdit = !!listingId;
   const { data: session } = useSession();
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState(() => {
@@ -149,7 +148,7 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
         price: Number(form.price),
         duration: form.duration.trim() || null,
         location: form.location.trim() || null,
-        status: form.status,
+        status: isEdit ? "pending" : "draft",
       };
 
       console.log("[ownerListings] payload:", payload);
@@ -187,7 +186,7 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
       }
 
       setSuccess(true);
-      setTimeout(() => router.push("/dashboard/listings"), 1500);
+      setTimeout(() => { window.location.href = "/dashboard/listings"; }, 1500);
     } catch {
       setServerError("Xəta baş verdi. Yenidən cəhd edin.");
     } finally {

@@ -59,7 +59,7 @@ export interface MapLocation {
   city?: string;
 }
 
-export type TourStatus = "draft" | "published" | "inactive" | "pending";
+export type TourStatus = "draft" | "published" | "inactive" | "pending" | "rejected";
 
 export interface Tour {
   id: number;
