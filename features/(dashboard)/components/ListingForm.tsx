@@ -1,53 +1,40 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  Loader2, AlertTriangle, CheckCircle2, ChevronRight, Compass,
-  MapPin, Users, DollarSign, Image, AlignLeft, Tag,
+  Loader2, AlertTriangle, CheckCircle2, ChevronRight, Compass, X, ImagePlus,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import { ownerListings } from "@/features/(public)/listings/services/listings.service";
-
-const LISTING_TYPES = [
-  { value: "camping", label: "🏕️ Kamp" },
-  { value: "glamping", label: "✨ Glamping" },
-  { value: "bungalow", label: "🏠 Bungalov" },
-  { value: "villa", label: "🏡 Villa" },
-  { value: "treehouse", label: "🌳 Ağac evi" },
-  { value: "other", label: "📍 Digər" },
-];
-
-const PRICE_TYPES = [
-  { value: "per_night", label: "Gecəlik ödəniş" },
-  { value: "entry_fee", label: "Giriş haqqı" },
-  { value: "free", label: "Pulsuz" },
-];
+import type { ReactNode } from "react";
+import type { Tour, ListingImage } from "@/types";
 
 const EMPTY_FORM = {
   title: "",
   description: "",
-  listing_type: "camping",
-  city: "",
-  address: "",
-  max_guests: "",
-  price_type: "per_night",
-  price_per_night: "",
-  entry_fee: "",
-  cover_image: "",
-  latitude: "",
-  longitude: "",
+  price: "",
+  duration: "",
+  location: "",
 };
-
-import type { ReactNode } from "react";
-import type { Listing } from "@/types";
 
 function FieldLabel({ children, required }: { children: ReactNode; required?: boolean }) {
   return (
     <label className="block text-xs font-bold text-[#2D4A33] uppercase tracking-wider mb-1.5">
       {children} {required && <span className="text-red-400">*</span>}
     </label>
+  );
+}
+
+function SectionDivider({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-3 pt-2">
+      <span className="text-[#A0613B] text-[10px] font-bold uppercase tracking-[0.3em] whitespace-nowrap">
+        {label}
+      </span>
+      <div className="flex-1 border-t border-dashed border-[#E8E5D8]" />
+    </div>
   );
 }
 
@@ -72,14 +59,14 @@ function Textarea({ error, ...props }: React.TextareaHTMLAttributes<HTMLTextArea
           ? "border-red-300 bg-red-50 focus:border-red-400"
           : "border-[#E8E5D8] bg-white focus:border-[#4A6B4F]"
       }`}
-      rows={5}
+      rows={4}
       {...props}
     />
   );
 }
 
 interface ListingFormProps {
-  initialData?: Partial<Listing>;
+  initialData?: Partial<Tour>;
   listingId?: number | string;
 }
 
@@ -87,68 +74,66 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
   const isEdit = !!listingId;
   const { data: session } = useSession();
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState(() => {
     if (!initialData) return EMPTY_FORM;
     return {
       title: initialData.title ?? "",
       description: initialData.description ?? "",
-      listing_type: initialData.listing_type ?? "camping",
-      city: initialData.city ?? "",
-      address: initialData.address ?? "",
-      max_guests: initialData.max_guests ?? "",
-      price_type: initialData.is_free
-        ? "free"
-        : initialData.entry_fee
-        ? "entry_fee"
-        : "per_night",
-      price_per_night: initialData.price_per_night ?? "",
-      entry_fee: initialData.entry_fee ?? "",
-      cover_image: initialData.cover_image ?? "",
-      latitude: initialData.latitude ?? "",
-      longitude: initialData.longitude ?? "",
+      price: String(initialData.price ?? ""),
+      duration: initialData.duration ?? "",
+      location: initialData.location ?? "",
     };
   });
+
+  const [existingImages, setExistingImages] = useState<ListingImage[]>(
+    initialData?.images ?? []
+  );
+  const [removedImageIds, setRemovedImageIds] = useState<number[]>([]);
+  const [newImages, setNewImages] = useState<File[]>([]);
+  const [newPreviews, setNewPreviews] = useState<string[]>([]);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState("");
 
-  const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const set = (field: string) => (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []);
+    if (!files.length) return;
+    setNewImages((prev) => [...prev, ...files]);
+    setNewPreviews((prev) => [...prev, ...files.map((f) => URL.createObjectURL(f))]);
+    e.target.value = "";
+  };
+
+  const removeNew = (index: number) => {
+    URL.revokeObjectURL(newPreviews[index]);
+    setNewImages((prev) => prev.filter((_, i) => i !== index));
+    setNewPreviews((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const removeExisting = (id: number) => {
+    setExistingImages((prev) => prev.filter((img) => img.id !== id));
+    setRemovedImageIds((prev) => [...prev, id]);
   };
 
   const validate = () => {
     const e: Record<string, string> = {};
     if (!form.title.trim()) e.title = "Başlıq daxil edin.";
     if (!form.description.trim()) e.description = "Təsvir daxil edin.";
-    if (!form.city.trim()) e.city = "Şəhər daxil edin.";
-    if (!form.max_guests || Number(form.max_guests) < 1) e.max_guests = "Düzgün qonaq sayı daxil edin.";
-    if (form.price_type === "per_night" && (!form.price_per_night || Number(form.price_per_night) <= 0))
-      e.price_per_night = "Gecəlik qiymət daxil edin.";
-    if (form.price_type === "entry_fee" && (!form.entry_fee || Number(form.entry_fee) <= 0))
-      e.entry_fee = "Giriş haqqı daxil edin.";
+    if (!form.price || Number(form.price) <= 0) e.price = "Qiymət daxil edin.";
     return e;
   };
 
-  const buildPayload = () => ({
-    title: form.title.trim(),
-    description: form.description.trim(),
-    listing_type: form.listing_type,
-    city: form.city.trim(),
-    address: form.address.trim(),
-    max_guests: Number(form.max_guests),
-    is_free: form.price_type === "free",
-    price_per_night: form.price_type === "per_night" ? Number(form.price_per_night) : null,
-    entry_fee: form.price_type === "entry_fee" ? Number(form.entry_fee) : null,
-    cover_image: form.cover_image.trim() || null,
-    latitude: form.latitude ? Number(form.latitude) : null,
-    longitude: form.longitude ? Number(form.longitude) : null,
-  });
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
@@ -156,14 +141,38 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
     setSubmitting(true);
     setServerError("");
     try {
+      const payload = {
+        title: form.title.trim(),
+        description: form.description.trim(),
+        price: Number(form.price),
+        duration: form.duration.trim() || null,
+        location: form.location.trim() || null,
+      };
+
+      console.log("[ownerListings] payload:", payload);
+
+      let targetId: number | string;
       if (isEdit) {
-        await ownerListings.update(listingId, buildPayload(), session.accessToken);
+        await ownerListings.update(listingId, payload, session!.accessToken);
+        targetId = listingId;
       } else {
-        await ownerListings.create(buildPayload(), session.accessToken);
+        const created = await ownerListings.create(payload, session!.accessToken);
+        targetId = created.id;
       }
+
+      const existingHasCover = existingImages.some((img) => img.is_cover);
+      for (let i = 0; i < newImages.length; i++) {
+        const isCover = !existingHasCover && i === 0;
+        await ownerListings.uploadImage(targetId, newImages[i], isCover, session!.accessToken);
+      }
+
+      for (const imgId of removedImageIds) {
+        await ownerListings.deleteImage(targetId, imgId, session!.accessToken);
+      }
+
       setSuccess(true);
       setTimeout(() => router.push("/dashboard/listings"), 1500);
-    } catch (err) {
+    } catch {
       setServerError("Xəta baş verdi. Yenidən cəhd edin.");
     } finally {
       setSubmitting(false);
@@ -190,19 +199,19 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
     );
   }
 
+  const totalImages = existingImages.length + newImages.length;
+
   return (
     <>
       <Navbar forceScrolled />
       <main style={{ background: "#FAF6F0" }} className="min-h-screen relative overflow-hidden">
 
-        {/* Decorative */}
         <svg className="absolute top-32 right-8 w-12 h-12 opacity-[0.10] animate-float-slow pointer-events-none" viewBox="0 0 64 64" fill="none">
           <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#D4A574" />
         </svg>
 
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
 
-          {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm mb-8">
             <Compass className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
             <Link href="/dashboard/listings" className="text-[#4A6B4F]/70 hover:text-[#2D4A33] font-semibold transition-colors">
@@ -212,14 +221,13 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
             <span className="text-[#2D4A33] font-bold">{isEdit ? "Redaktə et" : "Yeni elan"}</span>
           </nav>
 
-          {/* Page title */}
           <div className="mb-8">
             <h1 className="font-display font-bold text-[#1F2D24]"
               style={{ fontSize: "clamp(1.6rem, 4vw, 2.4rem)" }}>
               {isEdit ? "Elanı redaktə et" : "Yeni elan əlavə et"}
             </h1>
             <p className="text-[#4A6B4F]/70 text-sm mt-1">
-              {isEdit ? "Elanınızın məlumatlarını yeniləyin." : "Kamp mekanınızı platformada paylaşın."}
+              {isEdit ? "Elanınızın məlumatlarını yeniləyin." : "Tur elanınızı platformada paylaşın."}
             </p>
           </div>
 
@@ -230,21 +238,18 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
             </div>
           )}
 
-          <form onSubmit={handleSubmit} noValidate className="space-y-7">
-
-            {/* ─ Əsas məlumatlar ─ */}
-            <section className="bg-white rounded-3xl p-6 sm:p-8 space-y-5"
+          <form onSubmit={handleSubmit} noValidate>
+            <div className="bg-white rounded-3xl p-6 sm:p-8 space-y-5"
               style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.06)" }}>
-              <div className="flex items-center gap-2 pb-4 border-b border-dashed border-[#E8E5D8]">
-                <Tag className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
-                <h2 className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">Əsas məlumatlar</h2>
-              </div>
+
+              {/* Əsas məlumatlar */}
+              <SectionDivider label="Əsas məlumatlar" />
 
               <div>
                 <FieldLabel required>Başlıq</FieldLabel>
                 <Input
                   type="text"
-                  placeholder="Məkanın adı"
+                  placeholder="Turun adı"
                   value={form.title}
                   onChange={set("title")}
                   error={errors.title}
@@ -253,198 +258,130 @@ export default function ListingForm({ initialData, listingId }: ListingFormProps
               </div>
 
               <div>
-                <FieldLabel required>Məkan növü</FieldLabel>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
-                  {LISTING_TYPES.map((t) => (
-                    <button
-                      key={t.value}
-                      type="button"
-                      onClick={() => setForm((prev) => ({ ...prev, listing_type: t.value }))}
-                      className={`py-2.5 px-3 rounded-xl text-sm font-semibold border-2 transition-all text-left ${
-                        form.listing_type === t.value
-                          ? "border-[#2D4A33] bg-[#2D4A33]/5 text-[#2D4A33]"
-                          : "border-[#E8E5D8] bg-white text-[#4A6B4F] hover:border-[#4A6B4F]/40"
-                      }`}
-                    >
-                      {t.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div>
                 <FieldLabel required>Təsvir</FieldLabel>
                 <Textarea
-                  placeholder="Məkan haqqında ətraflı məlumat"
+                  placeholder="Tur haqqında ətraflı məlumat"
                   value={form.description}
                   onChange={set("description")}
                   error={errors.description}
                 />
                 {errors.description && <p className="text-red-500 text-xs mt-1">{errors.description}</p>}
               </div>
-            </section>
 
-            {/* ─ Yer ─ */}
-            <section className="bg-white rounded-3xl p-6 sm:p-8 space-y-5"
-              style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.06)" }}>
-              <div className="flex items-center gap-2 pb-4 border-b border-dashed border-[#E8E5D8]">
-                <MapPin className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
-                <h2 className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">Yer</h2>
+              {/* Yer */}
+              <SectionDivider label="Yer" />
+
+              <div>
+                <FieldLabel>Məkan</FieldLabel>
+                <Input
+                  type="text"
+                  placeholder="Şəki, Quba, Lənkəran..."
+                  value={form.location}
+                  onChange={set("location")}
+                />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <FieldLabel required>Şəhər / Rayon</FieldLabel>
-                  <Input
-                    type="text"
-                    placeholder="Şəki, Quba, Lənkəran..."
-                    value={form.city}
-                    onChange={set("city")}
-                    error={errors.city}
-                  />
-                  {errors.city && <p className="text-red-500 text-xs mt-1">{errors.city}</p>}
-                </div>
-                <div>
-                  <FieldLabel>Ünvan</FieldLabel>
-                  <Input
-                    type="text"
-                    placeholder="Məhəllə, kənd, küçə..."
-                    value={form.address}
-                    onChange={set("address")}
-                  />
-                </div>
-              </div>
+              {/* Qiymət & Müddət */}
+              <SectionDivider label="Qiymət & Müddət" />
 
               <div className="grid grid-cols-2 gap-5">
                 <div>
-                  <FieldLabel>Enlik (latitude)</FieldLabel>
+                  <FieldLabel required>Qiymət (₼)</FieldLabel>
                   <Input
                     type="number"
-                    step="any"
-                    placeholder="40.4093"
-                    value={form.latitude}
-                    onChange={set("latitude")}
+                    min="0"
+                    step="0.01"
+                    placeholder="150"
+                    value={form.price}
+                    onChange={set("price")}
+                    error={errors.price}
                   />
+                  {errors.price && <p className="text-red-500 text-xs mt-1">{errors.price}</p>}
                 </div>
                 <div>
-                  <FieldLabel>Uzunluq (longitude)</FieldLabel>
+                  <FieldLabel>Müddət</FieldLabel>
                   <Input
-                    type="number"
-                    step="any"
-                    placeholder="49.8671"
-                    value={form.longitude}
-                    onChange={set("longitude")}
+                    type="text"
+                    placeholder="3 gün 2 gecə"
+                    value={form.duration}
+                    onChange={set("duration")}
                   />
                 </div>
               </div>
-            </section>
 
-            {/* ─ Qiymət və tutum ─ */}
-            <section className="bg-white rounded-3xl p-6 sm:p-8 space-y-5"
-              style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.06)" }}>
-              <div className="flex items-center gap-2 pb-4 border-b border-dashed border-[#E8E5D8]">
-                <DollarSign className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
-                <h2 className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">Qiymət & Tutum</h2>
-              </div>
+              {/* Şəkillər */}
+              <SectionDivider label="Şəkillər" />
 
               <div>
-                <FieldLabel required>Maksimum qonaq sayı</FieldLabel>
-                <Input
-                  type="number"
-                  min="1"
-                  placeholder="10"
-                  value={form.max_guests}
-                  onChange={set("max_guests")}
-                  error={errors.max_guests}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
                 />
-                {errors.max_guests && <p className="text-red-500 text-xs mt-1">{errors.max_guests}</p>}
-              </div>
 
-              <div>
-                <FieldLabel required>Qiymət növü</FieldLabel>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {PRICE_TYPES.map((pt) => (
+                {totalImages === 0 ? (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full border-2 border-dashed border-[#E8E5D8] rounded-2xl py-10 flex flex-col items-center justify-center gap-2 hover:border-[#4A6B4F]/40 hover:bg-[#FAF6F0]/60 transition-colors cursor-pointer"
+                  >
+                    <div className="w-12 h-12 rounded-full bg-[#F0EBE1] flex items-center justify-center">
+                      <ImagePlus className="w-5 h-5 text-[#4A6B4F]" strokeWidth={1.5} />
+                    </div>
+                    <p className="text-sm font-semibold text-[#4A6B4F]">Şəkil əlavə et</p>
+                    <p className="text-xs text-[#4A6B4F]/50">Qalereya və ya kamera — bir neçə seçə bilərsiniz</p>
+                  </button>
+                ) : (
+                  <div className="grid grid-cols-3 gap-2.5">
+                    {existingImages.map((img) => (
+                      <div key={img.id} className="relative aspect-square rounded-2xl overflow-hidden border border-[#E8E5D8]">
+                        <img src={img.image} alt="" className="w-full h-full object-cover" />
+                        {img.is_cover && (
+                          <span className="absolute bottom-1.5 left-1.5 bg-[#2D4A33] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                            Əsas
+                          </span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => removeExisting(img.id)}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center"
+                        >
+                          <X className="w-3 h-3 text-white" strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    ))}
+
+                    {newPreviews.map((src, i) => (
+                      <div key={`new-${i}`} className="relative aspect-square rounded-2xl overflow-hidden border border-[#E8E5D8]">
+                        <img src={src} alt="" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => removeNew(i)}
+                          className="absolute top-1.5 right-1.5 w-6 h-6 bg-black/50 backdrop-blur-sm rounded-full flex items-center justify-center"
+                        >
+                          <X className="w-3 h-3 text-white" strokeWidth={2.5} />
+                        </button>
+                      </div>
+                    ))}
+
                     <button
-                      key={pt.value}
                       type="button"
-                      onClick={() => setForm((prev) => ({ ...prev, price_type: pt.value }))}
-                      className={`py-3 px-4 rounded-xl text-sm font-semibold border-2 transition-all ${
-                        form.price_type === pt.value
-                          ? "border-[#2D4A33] bg-[#2D4A33]/5 text-[#2D4A33]"
-                          : "border-[#E8E5D8] bg-white text-[#4A6B4F] hover:border-[#4A6B4F]/40"
-                      }`}
+                      onClick={() => fileInputRef.current?.click()}
+                      className="aspect-square rounded-2xl border-2 border-dashed border-[#E8E5D8] flex flex-col items-center justify-center gap-1 hover:border-[#4A6B4F]/40 hover:bg-[#FAF6F0] transition-colors cursor-pointer"
                     >
-                      {pt.label}
+                      <ImagePlus className="w-5 h-5 text-[#4A6B4F]/50" strokeWidth={1.5} />
+                      <span className="text-[10px] text-[#4A6B4F]/50 font-medium">Əlavə et</span>
                     </button>
-                  ))}
-                </div>
-              </div>
-
-              {form.price_type === "per_night" && (
-                <div>
-                  <FieldLabel required>Gecəlik qiymət (₼)</FieldLabel>
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="50"
-                    value={form.price_per_night}
-                    onChange={set("price_per_night")}
-                    error={errors.price_per_night}
-                  />
-                  {errors.price_per_night && <p className="text-red-500 text-xs mt-1">{errors.price_per_night}</p>}
-                </div>
-              )}
-
-              {form.price_type === "entry_fee" && (
-                <div>
-                  <FieldLabel required>Giriş haqqı (₼)</FieldLabel>
-                  <Input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="10"
-                    value={form.entry_fee}
-                    onChange={set("entry_fee")}
-                    error={errors.entry_fee}
-                  />
-                  {errors.entry_fee && <p className="text-red-500 text-xs mt-1">{errors.entry_fee}</p>}
-                </div>
-              )}
-            </section>
-
-            {/* ─ Media ─ */}
-            <section className="bg-white rounded-3xl p-6 sm:p-8 space-y-5"
-              style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.06)" }}>
-              <div className="flex items-center gap-2 pb-4 border-b border-dashed border-[#E8E5D8]">
-                <Image className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
-                <h2 className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">Media</h2>
-              </div>
-
-              <div>
-                <FieldLabel>Əsas şəkil (URL)</FieldLabel>
-                <Input
-                  type="url"
-                  placeholder="https://..."
-                  value={form.cover_image}
-                  onChange={set("cover_image")}
-                />
-                {form.cover_image && (
-                  <div className="mt-3 rounded-2xl overflow-hidden border border-[#E8E5D8]"
-                    style={{ aspectRatio: "16/7" }}>
-                    <img
-                      src={form.cover_image}
-                      alt="Preview"
-                      className="w-full h-full object-cover"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-                    />
                   </div>
                 )}
               </div>
-            </section>
+            </div>
 
             {/* Submit */}
-            <div className="flex items-center gap-3 pt-2">
+            <div className="flex items-center gap-3 pt-6">
               <Link
                 href="/dashboard/listings"
                 className="flex-1 sm:flex-none py-3.5 px-6 rounded-2xl border-2 border-[#E8E5D8] text-[#4A6B4F] font-semibold text-sm text-center hover:bg-[#FAF6F0] transition-colors"

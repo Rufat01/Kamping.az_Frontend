@@ -4,12 +4,12 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
-  Plus, Pencil, Trash2, MapPin, Users, Eye,
-  Tent, AlertTriangle, Loader2, LayoutList,
+  Plus, Pencil, Trash2, Clock, Eye,
+  Tent, AlertTriangle, LayoutList,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import { ownerListings } from "@/features/(public)/listings/services/listings.service";
-import type { Listing } from "@/types";
+import type { Tour } from "@/types";
 
 function ConfirmModal({ listing, onConfirm, onCancel }) {
   return (
@@ -47,6 +47,26 @@ function ConfirmModal({ listing, onConfirm, onCancel }) {
   );
 }
 
+function ListingSkeleton() {
+  return (
+    <div className="bg-white rounded-2xl overflow-hidden border border-[#E8E5D8]"
+      style={{ boxShadow: "0 2px 12px -2px rgba(45,74,51,0.06)" }}>
+      <div className="flex items-start">
+        <div className="shrink-0 w-28 sm:w-36 min-h-[110px] bg-[#E8E5D8] animate-pulse" />
+        <div className="flex-1 p-4">
+          <div className="h-3 w-14 bg-[#E8E5D8] rounded animate-pulse mb-3" />
+          <div className="h-5 w-2/3 bg-[#E8E5D8] rounded animate-pulse mb-2" />
+          <div className="h-3 w-1/3 bg-[#E8E5D8] rounded animate-pulse" />
+          <div className="flex gap-2 mt-4 pt-3 border-t border-dashed border-[#E8E5D8]">
+            <div className="h-7 w-14 bg-[#E8E5D8] rounded-xl animate-pulse" />
+            <div className="h-7 w-20 bg-[#E8E5D8] rounded-xl animate-pulse" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ListingRow({ listing, onDelete }) {
   return (
     <div className="bg-white rounded-2xl overflow-hidden border border-[#E8E5D8] hover:border-[#4A6B4F]/30 hover:shadow-md transition-all group"
@@ -73,23 +93,16 @@ function ListingRow({ listing, onDelete }) {
         <div className="flex-1 p-4 sm:py-4 sm:pr-4 min-w-0">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              {listing.listing_type_display && (
-                <span className="inline-block bg-[#FAF6F0] text-[#2D4A33] text-[10px] font-bold px-2.5 py-1 rounded-md border border-dashed border-[#4A6B4F]/25 mb-2">
-                  {listing.listing_type_display}
-                </span>
-              )}
+              <span className="inline-block bg-[#FAF6F0] text-[#2D4A33] text-[10px] font-bold px-2.5 py-1 rounded-md border border-dashed border-[#4A6B4F]/25 mb-2">
+                Tur paketi
+              </span>
               <h3 className="font-display text-base sm:text-lg font-bold text-[#1F2D24] leading-tight truncate">
                 {listing.title}
               </h3>
               <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-[#4A6B4F]/70">
-                {listing.city && (
+                {listing.duration && (
                   <span className="flex items-center gap-1">
-                    <MapPin className="w-3 h-3" /> {listing.city}
-                  </span>
-                )}
-                {listing.max_guests && (
-                  <span className="flex items-center gap-1">
-                    <Users className="w-3 h-3" /> {listing.max_guests} qonaq
+                    <Clock className="w-3 h-3" /> {listing.duration}
                   </span>
                 )}
                 {listing.view_count != null && (
@@ -102,20 +115,15 @@ function ListingRow({ listing, onDelete }) {
 
             {/* Price */}
             <div className="shrink-0 text-right">
-              {listing.is_free || (!listing.price_per_night && !listing.entry_fee) ? (
+              {listing.price ? (
+                <div>
+                  <p className="font-display text-lg font-bold text-[#1F2D24]">₼{Number(listing.price).toLocaleString()}</p>
+                  <p className="text-[10px] text-[#4A6B4F]/60">nəfər</p>
+                </div>
+              ) : (
                 <span className="inline-block bg-[#4A6B4F]/10 text-[#4A6B4F] text-xs font-bold px-3 py-1.5 rounded-full">
                   🌿 Pulsuz
                 </span>
-              ) : listing.entry_fee ? (
-                <div>
-                  <p className="font-display text-lg font-bold text-[#A0613B]">₼{Number(listing.entry_fee).toLocaleString()}</p>
-                  <p className="text-[10px] text-[#4A6B4F]/60">giriş</p>
-                </div>
-              ) : (
-                <div>
-                  <p className="font-display text-lg font-bold text-[#1F2D24]">₼{Number(listing.price_per_night).toLocaleString()}</p>
-                  <p className="text-[10px] text-[#4A6B4F]/60">gecəlik</p>
-                </div>
               )}
             </div>
           </div>
@@ -123,7 +131,7 @@ function ListingRow({ listing, onDelete }) {
           {/* Actions */}
           <div className="flex items-center gap-2 mt-4 pt-3 border-t border-dashed border-[#E8E5D8]">
             <Link
-              href={`/listings/${listing.id}`}
+              href={`/tours/${listing.id}`}
               className="flex items-center gap-1.5 text-[#4A6B4F] hover:text-[#2D4A33] text-xs font-semibold px-3 py-2 rounded-xl hover:bg-[#FAF6F0] transition-colors"
             >
               <Eye className="w-3.5 h-3.5" />
@@ -172,7 +180,7 @@ export default function OwnerListingsPage() {
     if (status === "authenticated") {
       ownerListings.myListings(session.accessToken)
         .then((data) => {
-          setListings(Array.isArray(data) ? data : ((data as { results?: Listing[] }).results ?? []));
+          setListings(Array.isArray(data) ? data : ((data as { results?: Tour[] }).results ?? []));
         })
         .catch(() => setError("Elanlar yüklənərkən xəta baş verdi."))
         .finally(() => setLoading(false));
@@ -198,8 +206,20 @@ export default function OwnerListingsPage() {
     return (
       <>
         <Navbar forceScrolled />
-        <main className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6F0" }}>
-          <Loader2 className="w-8 h-8 text-[#4A6B4F] animate-spin" />
+        <main style={{ background: "#FAF6F0" }} className="min-h-screen">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-28 pb-20">
+            <div className="flex items-start justify-between gap-4 mb-10">
+              <div>
+                <div className="h-3 w-28 bg-[#E8E5D8] rounded animate-pulse mb-3" />
+                <div className="h-9 w-48 bg-[#E8E5D8] rounded animate-pulse mb-2" />
+                <div className="h-3 w-24 bg-[#E8E5D8] rounded animate-pulse" />
+              </div>
+              <div className="h-11 w-32 bg-[#E8E5D8] rounded-2xl animate-pulse shrink-0" />
+            </div>
+            <div className="space-y-4">
+              {[1, 2, 3].map((i) => <ListingSkeleton key={i} />)}
+            </div>
+          </div>
         </main>
       </>
     );

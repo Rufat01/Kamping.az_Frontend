@@ -78,7 +78,9 @@ useEffect(() => {
 
         {/* Desktop CTA */}
         <div className="hidden md:flex items-center gap-3">
-          {status === "authenticated" ? (
+          {status === "loading" ? (
+            <div className="w-36 h-9 bg-white/10 rounded-full animate-pulse" />
+          ) : status === "authenticated" ? (
             <div id="user-dropdown" className="relative">
               <button
                 onClick={() => setDropdownOpen(!dropdownOpen)}
@@ -200,7 +202,12 @@ useEffect(() => {
           ))}
 
           <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-            {status === "authenticated" ? (
+            {status === "loading" ? (
+              <div className="space-y-2 py-1">
+                <div className="h-9 bg-white/10 rounded-xl animate-pulse" />
+                <div className="h-12 bg-white/10 rounded-full animate-pulse" />
+              </div>
+            ) : status === "authenticated" ? (
               <>
                 <div className="flex items-center gap-3 py-2">
                   {session.user?.image ? (

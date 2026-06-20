@@ -2,8 +2,37 @@ import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
+import type { JWT } from "next-auth/jwt";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+
+function decodeJwtExpiry(token: string): number {
+  const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+  const payload = JSON.parse(Buffer.from(base64, "base64").toString("utf8"));
+  return payload.exp * 1000;
+}
+
+async function refreshAccessToken(token: JWT): Promise<JWT> {
+  try {
+    const res = await fetch(`${API_URL}/api/v1/auth/token/refresh/`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refresh: token.refreshToken }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error("Refresh failed");
+
+    return {
+      ...token,
+      accessToken: data.access,
+      accessTokenExpiry: decodeJwtExpiry(data.access),
+      ...(data.refresh ? { refreshToken: data.refresh } : {}),
+      error: undefined,
+    };
+  } catch {
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+}
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -85,6 +114,9 @@ const authOptions: NextAuthOptions = {
         token.refreshToken = user.refreshToken;
         token.role = user.role;
         token.id = user.id;
+        token.accessTokenExpiry = user.accessToken
+          ? decodeJwtExpiry(user.accessToken)
+          : undefined;
       }
 
       if (account?.provider === "google") {
@@ -94,13 +126,32 @@ const authOptions: NextAuthOptions = {
         token.id = user.backendId;
         token.isGoogle = true;
         token.picture = (profile as { picture?: string })?.picture;
+        token.accessTokenExpiry = user.accessToken
+          ? decodeJwtExpiry(user.accessToken)
+          : undefined;
       }
 
-      return token;
+      // Expiry bilinmirsə token-dən oxu
+      if (!token.accessTokenExpiry && token.accessToken) {
+        try {
+          token.accessTokenExpiry = decodeJwtExpiry(token.accessToken);
+        } catch {
+          // decode alınmadısa refresh edəcəyik
+        }
+      }
+
+      // Token hələ keçərlidir (60 saniyə buffer ilə)
+      if (token.accessTokenExpiry && Date.now() < token.accessTokenExpiry - 60_000) {
+        return token;
+      }
+
+      // Token bitib və ya bitmək üzrədir — yenilə
+      return refreshAccessToken(token);
     },
 
     async session({ session, token }) {
       session.accessToken = token.accessToken;
+      session.error = token.error;
       session.user.role = token.role;
       session.user.isGoogle = token.isGoogle;
       session.user.image = token.picture ?? null;

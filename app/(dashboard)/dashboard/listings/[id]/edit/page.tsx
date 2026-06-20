@@ -2,8 +2,8 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 import ListingForm from "@/features/(dashboard)/components/ListingForm";
+import FormSkeleton from "@/features/(dashboard)/components/FormSkeleton";
 import { getListing } from "@/features/(public)/listings/services/listings.service";
 
 export default function EditListingPage({ params }: { params: { id: string } }) {
@@ -22,13 +22,7 @@ export default function EditListingPage({ params }: { params: { id: string } }) 
     }
   }, [status, session, params.id, router]);
 
-  if (status === "loading" || (!listing && !loadError)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6F0" }}>
-        <Loader2 className="w-8 h-8 text-[#4A6B4F] animate-spin" />
-      </div>
-    );
-  }
+  if (status === "loading" || (!listing && !loadError)) return <FormSkeleton />;
 
   if (loadError) {
     return (

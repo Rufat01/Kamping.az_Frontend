@@ -2,8 +2,8 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-import { Loader2 } from "lucide-react";
 import ListingForm from "@/features/(dashboard)/components/ListingForm";
+import FormSkeleton from "@/features/(dashboard)/components/FormSkeleton";
 
 export default function NewListingPage() {
   const { data: session, status } = useSession();
@@ -14,13 +14,7 @@ export default function NewListingPage() {
     if (status === "authenticated" && session.user?.role !== "owner") router.replace("/");
   }, [status, session, router]);
 
-  if (status === "loading") {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "#FAF6F0" }}>
-        <Loader2 className="w-8 h-8 text-[#4A6B4F] animate-spin" />
-      </div>
-    );
-  }
+  if (status === "loading") return <FormSkeleton />;
 
   return <ListingForm />;
 }

@@ -4,6 +4,7 @@ import { JWT } from "next-auth/jwt";
 declare module "next-auth" {
   interface Session {
     accessToken?: string;
+    error?: string;
     user: {
       id?: string | number;
       name?: string | null;
@@ -27,9 +28,11 @@ declare module "next-auth/jwt" {
   interface JWT {
     accessToken?: string;
     refreshToken?: string;
+    accessTokenExpiry?: number;
     role?: string;
     id?: string | number;
     isGoogle?: boolean;
     picture?: string;
+    error?: string;
   }
 }

@@ -3,11 +3,11 @@ import type { Tour } from "@/types";
 
 export async function getTours(params: Record<string, string> = {}): Promise<Tour[]> {
   const query = new URLSearchParams(params).toString();
-  return apiFetch<Tour[]>(`/api/v1/posts/${query ? `?${query}` : ""}`);
+  return apiFetch<Tour[]>(`/api/v1/posts/${query ? `?${query}` : ""}`, { cache: "no-store" });
 }
 
 export async function getTour(id: number | string): Promise<Tour> {
-  const res = await fetch(`${API_URL}/api/v1/posts/${id}/`, { next: { revalidate: 60 } });
+  const res = await fetch(`${API_URL}/api/v1/posts/${id}/`, { cache: "no-store" });
   if (!res.ok) throw new Error("Tur tapılmadı");
   return res.json() as Promise<Tour>;
 }
