@@ -59,6 +59,8 @@ export interface MapLocation {
   city?: string;
 }
 
+export type TourStatus = "draft" | "published" | "inactive" | "pending";
+
 export interface Tour {
   id: number;
   title: string;
@@ -78,6 +80,7 @@ export interface Tour {
   excludes?: string[];
   meeting_point?: string;
   start_date?: string;
+  status?: TourStatus;
 }
 
 export interface User {
