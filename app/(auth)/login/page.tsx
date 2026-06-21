@@ -1,13 +1,15 @@
 "use client";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Tent, ArrowRight } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
   const [form, setForm] = useState({ email: "", password: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState("idle");
@@ -47,7 +49,7 @@ export default function LoginPage() {
     });
 
     if (result?.ok) {
-      router.push("/");
+      router.push(callbackUrl);
       router.refresh();
     } else {
       setStatus("idle");
@@ -56,7 +58,7 @@ export default function LoginPage() {
   };
 
   const handleGoogle = () => {
-    signIn("google", { callbackUrl: "/" });
+    signIn("google", { callbackUrl });
   };
 
   return (
@@ -232,5 +234,13 @@ export default function LoginPage() {
       </div>
     </div>
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }

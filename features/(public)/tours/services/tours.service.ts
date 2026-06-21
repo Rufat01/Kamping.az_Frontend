@@ -6,8 +6,10 @@ export async function getTours(params: Record<string, string> = {}): Promise<Tou
   return apiFetch<Tour[]>(`/api/v1/posts/${query ? `?${query}` : ""}`, { cache: "no-store" });
 }
 
-export async function getTour(id: number | string): Promise<Tour> {
-  const res = await fetch(`${API_URL}/api/v1/posts/${id}/`, { cache: "no-store" });
+export async function getTour(id: number | string, token?: string): Promise<Tour> {
+  const headers: HeadersInit = {};
+  if (token) headers["Authorization"] = `Bearer ${token}`;
+  const res = await fetch(`${API_URL}/api/v1/posts/${id}/`, { cache: "no-store", headers });
   if (!res.ok) throw new Error("Tur tapılmadı");
   return res.json() as Promise<Tour>;
 }

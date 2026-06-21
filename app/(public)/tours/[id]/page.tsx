@@ -1,18 +1,22 @@
 import { getTour } from "@/features/(public)/tours/services/tours.service";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
-  MapPin, Clock, Phone, Compass, ChevronRight,
+  MapPin, Clock, Compass, ChevronRight,
   Users, CheckCircle2, XCircle, Calendar,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ImageGallery from "@/features/(public)/listings/components/ImageGallery";
+import RevealPhoneButton from "@/features/(public)/tours/components/RevealPhoneButton";
 
-type PageProps = { params: { id: string } };
+type PageProps = { params: { id: string }; searchParams?: { reveal_phone?: string } };
 
 export async function generateMetadata({ params }: PageProps) {
+  const session = await getServerSession(authOptions);
   try {
-    const tour = await getTour(params.id);
+    const tour = await getTour(params.id, session?.accessToken);
     return {
       title: `${tour.title} | Kamping.az`,
       description: tour.description?.slice(0, 155),
@@ -27,10 +31,12 @@ export async function generateMetadata({ params }: PageProps) {
   }
 }
 
-export default async function TourDetailPage({ params }: PageProps) {
+export default async function TourDetailPage({ params, searchParams }: PageProps) {
+  const session = await getServerSession(authOptions);
+  const autoReveal = !!session && searchParams?.reveal_phone === "true";
   let tour;
   try {
-    tour = await getTour(params.id);
+    tour = await getTour(params.id, session?.accessToken);
   } catch {
     notFound();
   }
@@ -275,14 +281,12 @@ export default async function TourDetailPage({ params }: PageProps) {
                     </div>
 
                     {tour.owner_phone && (
-                      <a
-                        href={`tel:${tour.owner_phone}`}
-                        className="flex w-full items-center justify-center gap-2 text-[#FAF6F0] font-bold text-sm px-5 py-3.5 rounded-2xl transition-all active:scale-95 hover:shadow-lg"
-                        style={{ background: "#2D4A33" }}
-                      >
-                        <Phone className="w-4 h-4" />
-                        {tour.owner_phone}
-                      </a>
+                      <RevealPhoneButton
+                        phone={tour.owner_phone}
+                        tourId={tour.id}
+                        isLoggedIn={!!session}
+                        autoReveal={autoReveal}
+                      />
                     )}
                   </div>
                 </div>
@@ -290,14 +294,12 @@ export default async function TourDetailPage({ params }: PageProps) {
 
               {/* Owner phone (no name) */}
               {!tour.owner_name && tour.owner_phone && (
-                <a
-                  href={`tel:${tour.owner_phone}`}
-                  className="flex w-full items-center justify-center gap-2 text-[#FAF6F0] font-bold text-sm px-5 py-3.5 rounded-2xl transition-all active:scale-95 hover:shadow-lg"
-                  style={{ background: "#2D4A33" }}
-                >
-                  <Phone className="w-4 h-4" />
-                  {tour.owner_phone}
-                </a>
+                <RevealPhoneButton
+                  phone={tour.owner_phone}
+                  tourId={tour.id}
+                  isLoggedIn={!!session}
+                  autoReveal={autoReveal}
+                />
               )}
 
               {/* Price card — paid */}
@@ -350,14 +352,13 @@ export default async function TourDetailPage({ params }: PageProps) {
                     </div>
 
                     {tour.owner_phone && (
-                      <a
-                        href={`tel:${tour.owner_phone}`}
-                        className="flex w-full items-center justify-center gap-2 text-[#FAF6F0] font-bold text-sm px-5 py-3.5 rounded-2xl transition-all active:scale-95 hover:shadow-lg mt-2"
-                        style={{ background: "#2D4A33" }}
-                      >
-                        <Phone className="w-4 h-4" />
-                        Rezervasiya et
-                      </a>
+                      <RevealPhoneButton
+                        phone={tour.owner_phone}
+                        tourId={tour.id}
+                        isLoggedIn={!!session}
+                        autoReveal={autoReveal}
+                        label="Rezervasiya et"
+                      />
                     )}
                   </div>
                 </div>
@@ -398,14 +399,14 @@ export default async function TourDetailPage({ params }: PageProps) {
                     </div>
 
                     {tour.owner_phone && (
-                      <a
-                        href={`tel:${tour.owner_phone}`}
-                        className="flex w-full items-center justify-center gap-2 text-[#1A3A2E] font-bold text-sm px-5 py-3.5 rounded-2xl transition-all active:scale-95 hover:shadow-lg"
-                        style={{ background: "#D4A574" }}
-                      >
-                        <Phone className="w-4 h-4" />
-                        Əlaqə
-                      </a>
+                      <RevealPhoneButton
+                        phone={tour.owner_phone}
+                        tourId={tour.id}
+                        isLoggedIn={!!session}
+                        autoReveal={autoReveal}
+                        variant="gold"
+                        label="Əlaqə"
+                      />
                     )}
                   </div>
                 </div>

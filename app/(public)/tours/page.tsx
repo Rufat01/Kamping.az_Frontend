@@ -90,16 +90,7 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
           </p>
 
           <div className="flex items-center justify-between pt-4 border-t border-dashed border-[#E8E5D8]">
-            {tour.owner_phone && (
-              <a
-                href={`tel:${tour.owner_phone}`}
-                className="flex items-center gap-1.5 text-[#4A6B4F] hover:text-[#2D4A33] transition-colors text-xs font-semibold"
-              >
-                <Phone className="w-3.5 h-3.5" />
-                {tour.owner_phone}
-              </a>
-            )}
-
+            
             <div className="ml-auto">
               {tour.price ? (
                 <div>
