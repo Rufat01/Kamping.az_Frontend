@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import ImageGallery from "@/features/(public)/listings/components/ImageGallery";
 import RevealPhoneButton from "@/features/(public)/listings/components/RevealPhoneButton";
+import WazeButton from "@/features/(public)/listings/components/WazeButton";
 import { MapPin, Star, Users, Compass, ArrowUpRight, Calendar, ChevronRight } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 
@@ -390,6 +391,8 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                             </div>
                             <ArrowUpRight className="w-4 h-4 text-[#4A6B4F] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                         </a>
+
+                        <WazeButton latitude={listing.latitude} longitude={listing.longitude} />
                     </aside>
                 </div>
             </div>
