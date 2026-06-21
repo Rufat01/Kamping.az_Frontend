@@ -99,6 +99,8 @@ export const authOptions: NextAuthOptions = {
             user.refreshToken = data.refresh;
             user.role = data.user?.role || "user";
             user.backendId = data.user?.id;
+            user.profileCompleted = data.user?.profile_completed ?? false;
+            user.phone = data.user?.phone ?? null;
           }
         } catch (e) {
           console.error("Google backend sync xətası:", e);
@@ -107,12 +109,20 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
 
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account, profile, trigger, session }) {
+      if (trigger === "update" && session) {
+        if (session.profileCompleted !== undefined) token.profileCompleted = session.profileCompleted;
+        if (session.role) token.role = session.role;
+        if (session.phone !== undefined) token.phone = session.phone;
+        return token;
+      }
+
       if (user && account?.provider === "credentials") {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.role = user.role;
         token.id = user.id;
+        token.profileCompleted = user.profileCompleted ?? true;
         token.accessTokenExpiry = user.accessToken
           ? decodeJwtExpiry(user.accessToken)
           : undefined;
@@ -125,6 +135,8 @@ export const authOptions: NextAuthOptions = {
         token.id = user.backendId;
         token.isGoogle = true;
         token.picture = (profile as { picture?: string })?.picture;
+        token.profileCompleted = user.profileCompleted ?? false;
+        token.phone = user.phone ?? null;
         token.accessTokenExpiry = user.accessToken
           ? decodeJwtExpiry(user.accessToken)
           : undefined;
@@ -152,6 +164,8 @@ export const authOptions: NextAuthOptions = {
       session.user.isGoogle = token.isGoogle;
       session.user.image = token.picture ?? null;
       session.user.id = token.id;
+      session.user.profile_completed = token.profileCompleted;
+      session.user.phone = token.phone;
       return session;
     },
   },

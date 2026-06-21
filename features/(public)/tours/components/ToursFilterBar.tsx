@@ -116,16 +116,17 @@ export default function ToursFilterBar() {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
     else params.delete(key);
+    params.delete("page");
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   }, [searchParams, router, pathname]);
 
-  useEffect(() => {
+  const handleSearchChange = (value: string) => {
+    setSearchInput(value);
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      updateFilter("search", searchInput);
+      updateFilter("search", value);
     }, 400);
-    return () => clearTimeout(debounceRef.current);
-  }, [searchInput]);
+  };
 
   const handleSearchSubmit = () => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -152,7 +153,7 @@ export default function ToursFilterBar() {
               type="text"
               placeholder="Tur adı, yer və ya açar söz..."
               value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
+              onChange={(e) => handleSearchChange(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSearchSubmit()}
               className="w-full pl-11 pr-10 py-3 text-sm rounded-2xl bg-white border border-[#E8E5D8] focus:outline-none focus:border-[#4A6B4F] text-[#1F2D24] placeholder:text-[#4A6B4F]/50 transition-colors"
             />

@@ -528,11 +528,6 @@ export default function MapClient({ locations = [], listingLocations = [] }: Map
                 <p className="text-[#4A6B4F]/60 text-xs">məsafə</p>
               </div>
               <div className="w-px h-8 bg-[#E8E5D8] shrink-0" />
-              <div className="text-center">
-                <p className="font-display text-xl font-bold text-[#1F2D24]">{routeInfo.duration} dəq</p>
-                <p className="text-[#4A6B4F]/60 text-xs">vaxt</p>
-              </div>
-              <div className="w-px h-8 bg-[#E8E5D8] shrink-0" />
               <WazeButton
                 toLat={routeInfo.toLat}
                 toLng={routeInfo.toLng}

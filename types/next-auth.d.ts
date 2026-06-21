@@ -12,6 +12,8 @@ declare module "next-auth" {
       image?: string | null;
       role?: string;
       isGoogle?: boolean;
+      profile_completed?: boolean;
+      phone?: string | null;
     };
   }
 
@@ -21,6 +23,8 @@ declare module "next-auth" {
     refreshToken?: string;
     role?: string;
     backendId?: string | number;
+    profileCompleted?: boolean;
+    phone?: string | null;
   }
 }
 
@@ -34,5 +38,7 @@ declare module "next-auth/jwt" {
     isGoogle?: boolean;
     picture?: string;
     error?: string;
+    profileCompleted?: boolean;
+    phone?: string | null;
   }
 }

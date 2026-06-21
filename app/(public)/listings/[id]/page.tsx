@@ -1,11 +1,14 @@
 import { getListing } from "@/features/(public)/listings/services/listings.service";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth/options";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import ImageGallery from "@/features/(public)/listings/components/ImageGallery";
-import { MapPin, Star, Users, Compass, ArrowUpRight, Phone, Calendar, ChevronRight } from "lucide-react";
+import RevealPhoneButton from "@/features/(public)/listings/components/RevealPhoneButton";
+import { MapPin, Star, Users, Compass, ArrowUpRight, Calendar, ChevronRight } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 
-type PageProps = { params: { id: string } };
+type PageProps = { params: { id: string }; searchParams?: { reveal_phone?: string } };
 
 export async function generateMetadata({ params }: PageProps) {
     try {
@@ -24,7 +27,9 @@ export async function generateMetadata({ params }: PageProps) {
     }
 }
 
-export default async function ListingDetailPage({ params }: PageProps) {
+export default async function ListingDetailPage({ params, searchParams }: PageProps) {
+    const session = await getServerSession(authOptions);
+    const autoReveal = !!session && searchParams?.reveal_phone === "true";
     let listing;
     try {
         listing = await getListing(params.id);
@@ -206,14 +211,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
                                     </div>
 
                                     {listing.owner_phone && (
-                                        <a
-                                            href={`tel:${listing.owner_phone}`}
-                                            className="flex w-full items-center justify-center gap-2 text-[#FAF6F0] font-bold text-sm px-5 py-3.5 rounded-2xl transition-all active:scale-95 hover:shadow-lg"
-                                            style={{ background: "#2D4A33" }}
-                                        >
-                                            <Phone className="w-4 h-4" />
-                                            {listing.owner_phone}
-                                        </a>
+                                        <RevealPhoneButton
+                                            phone={listing.owner_phone}
+                                            listingId={listing.id}
+                                            isLoggedIn={!!session}
+                                            autoReveal={autoReveal}
+                                        />
                                     )}
                                 </div>
                             </div>

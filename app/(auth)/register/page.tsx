@@ -6,11 +6,12 @@ import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Tent, ArrowRight, Mail } from "lucide-react";
 import { auth } from "@/features/(auth)/services/auth.service";
 import Navbar from "@/components/layout/Navbar";
+import { validatePhone } from "@/lib/validation";
 
 const INITIAL_FORM = {
   full_name: "",
   email: "",
-  phone: "",
+  phone: "+994",
   password: "",
   password_confirm: "",
   role: "user",
@@ -22,6 +23,8 @@ function validate(form: typeof INITIAL_FORM): Record<string, string> {
     errors.full_name = "Ad ən azı 2 simvol olmalıdır.";
   if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
     errors.email = "Düzgün email daxil edin.";
+  const phoneError = validatePhone(form.phone);
+  if (phoneError) errors.phone = phoneError;
   if (!form.password || form.password.length < 8)
     errors.password = "Şifrə ən azı 8 simvol olmalıdır.";
   if (form.password !== form.password_confirm)
@@ -40,7 +43,11 @@ export default function RegisterPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    if (name === "phone") {
+      setForm((prev) => ({ ...prev, phone: value.startsWith("+994") ? value : "+994" }));
+    } else {
+      setForm((prev) => ({ ...prev, [name]: value }));
+    }
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
@@ -230,16 +237,21 @@ export default function RegisterPage() {
             {/* Telefon */}
             <div>
               <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">
-                Telefon
+                Telefon <span className="text-red-400">*</span>
               </label>
               <input
                 type="tel"
                 name="phone"
                 value={form.phone}
                 onChange={handleChange}
-                placeholder="+994 50 000 00 00"
-                className="w-full border border-forest-200 bg-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-forest-400 transition-colors"
+                placeholder="501234567"
+                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
+                  errors.phone
+                    ? "border-red-300 bg-red-50"
+                    : "border-forest-200 bg-white focus:border-forest-400"
+                }`}
               />
+              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
             </div>
 
             {/* Şifrə */}
@@ -300,7 +312,7 @@ export default function RegisterPage() {
               {errors.password_confirm && <p className="text-red-500 text-xs mt-1">{errors.password_confirm}</p>}
             </div>
 
-            {/* Rol seçimi 
+            {/* Rol seçimi */}
             <div>
               <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-2">
                 Hesab növü
@@ -326,8 +338,6 @@ export default function RegisterPage() {
                 ))}
               </div>
             </div>
-
-            */}
 
             {/* Submit */}
             <button

@@ -1,3 +1,10 @@
+export interface PaginatedResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
 export interface ListingImage {
   id: number;
   image: string;
@@ -88,7 +95,8 @@ export interface User {
   email: string;
   full_name: string;
   role: string;
-  phone?: string;
+  phone?: string | null;
+  profile_completed?: boolean;
 }
 
 export interface RegisterData {
