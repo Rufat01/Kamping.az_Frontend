@@ -1,5 +1,5 @@
 import { apiFetch } from "@/lib/api/client";
-import type { ReservationData } from "@/types";
+import type { ReservationData, ReservationIntent } from "@/types";
 
 export const reservations = {
   myReservations: (token: string) =>
@@ -30,5 +30,24 @@ export const reservations = {
       method: "PATCH",
       body: JSON.stringify({ status }),
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    }),
+};
+
+export const reservationIntents = {
+  list: (token: string, status?: string) => {
+    const query = status ? `?status=${status}` : "";
+    return apiFetch<{ results: ReservationIntent[]; count: number }>(
+      `/api/v1/owner/reservation-intents/${query}`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+  },
+  updateStatus: (id: number, status: "confirmed" | "cancelled", token: string) =>
+    apiFetch<ReservationIntent>(`/api/v1/owner/reservation-intents/${id}/`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     }),
 };

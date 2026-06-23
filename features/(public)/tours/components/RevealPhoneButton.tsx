@@ -47,6 +47,11 @@ export default function RevealPhoneButton({
       setRevealed(true);
       fetch(`/api/tours/${tourId}/phone-reveal`, { method: "POST" }).catch(() => {});
       if (whatsapp) {
+        fetch(`/api/tours/${tourId}/reservation-intent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notes: "" }),
+        }).catch((err) => console.error("reservation-intent error:", err));
         router.replace(`/tours/${tourId}`, { scroll: false });
         window.location.href = buildWhatsAppUrl(phone);
       } else {
@@ -75,6 +80,11 @@ export default function RevealPhoneButton({
       fetch(`/api/tours/${tourId}/phone-reveal`, { method: "POST" }).catch(() => {});
     }
     if (whatsapp) {
+      fetch(`/api/tours/${tourId}/reservation-intent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes: "" }),
+      }).catch((err) => console.error("reservation-intent error:", err));
       window.location.href = buildWhatsAppUrl(phone);
       return;
     }

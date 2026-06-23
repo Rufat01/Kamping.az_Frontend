@@ -128,6 +128,18 @@ export interface ReservationData {
   guests: number;
 }
 
+export interface ReservationIntent {
+  id: number;
+  user_full_name: string;
+  user_email: string;
+  user_phone: string;
+  tour_title: string;
+  tour_id: number;
+  status: "pending" | "confirmed" | "cancelled";
+  notes: string;
+  created_at: string;
+}
+
 export interface OfflineRegionInfo {
   name: string;
   date: string;

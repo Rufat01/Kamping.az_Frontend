@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, X, Tent, ChevronDown, User, LogOut, Settings, LayoutList } from "lucide-react";
+import { Menu, X, Tent, ChevronDown, User, LogOut, Settings, LayoutList, Calendar } from "lucide-react";
 
 interface NavbarProps {
   forceScrolled?: boolean;
@@ -124,14 +124,24 @@ useEffect(() => {
                       Hesabim
                     </Link>
                     {session.user?.role === "owner" ? (
-                      <Link
-                        href="/dashboard/listings"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
-                      >
-                        <LayoutList className="w-4 h-4 text-forest-400" />
-                        Elanlarım
-                      </Link>
+                      <>
+                        <Link
+                          href="/dashboard/listings"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
+                        >
+                          <LayoutList className="w-4 h-4 text-forest-400" />
+                          Elanlarım
+                        </Link>
+                        <Link
+                          href="/dashboard/reservation-intents"
+                          onClick={() => setDropdownOpen(false)}
+                          className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
+                        >
+                          <Calendar className="w-4 h-4 text-forest-400" />
+                          Rezervasiya İstəkləri
+                        </Link>
+                      </>
                     ) : (
                       <Link
                         href="/dashboard/reservations"
@@ -230,8 +240,12 @@ useEffect(() => {
                 <Link href="/dashboard" onClick={() => setMobileOpen(false)}
                   className="text-white/80 text-sm py-2">Hesabim</Link>
                 {session.user?.role === "owner" ? (
-                  <Link href="/dashboard/listings" onClick={() => setMobileOpen(false)}
-                    className="text-white/80 text-sm py-2">Elanlarım</Link>
+                  <>
+                    <Link href="/dashboard/listings" onClick={() => setMobileOpen(false)}
+                      className="text-white/80 text-sm py-2">Elanlarım</Link>
+                    <Link href="/dashboard/reservation-intents" onClick={() => setMobileOpen(false)}
+                      className="text-white/80 text-sm py-2">Rezervasiya İstəkləri</Link>
+                  </>
                 ) : (
                   <Link href="/dashboard/reservations" onClick={() => setMobileOpen(false)}
                     className="text-white/80 text-sm py-2">Rezervasiyalarım</Link>
