@@ -358,6 +358,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
                         isLoggedIn={!!session}
                         autoReveal={autoReveal}
                         label="Rezervasiya et"
+                        whatsapp
                       />
                     )}
                   </div>

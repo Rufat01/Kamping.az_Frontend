@@ -11,6 +11,7 @@ interface Props {
   autoReveal?: boolean;
   label?: string;
   variant?: "dark" | "gold";
+  whatsapp?: boolean;
 }
 
 function maskPhone(phone: string): string {
@@ -24,6 +25,11 @@ function maskPhone(phone: string): string {
   return "*** *** **";
 }
 
+function buildWhatsAppUrl(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  return `https://wa.me/${digits}`;
+}
+
 export default function RevealPhoneButton({
   phone,
   tourId,
@@ -31,6 +37,7 @@ export default function RevealPhoneButton({
   autoReveal = false,
   label,
   variant = "dark",
+  whatsapp = false,
 }: Props) {
   const router = useRouter();
   const [revealed, setRevealed] = useState(false);
@@ -39,7 +46,12 @@ export default function RevealPhoneButton({
     if (autoReveal && isLoggedIn && !revealed) {
       setRevealed(true);
       fetch(`/api/tours/${tourId}/phone-reveal`, { method: "POST" }).catch(() => {});
-      router.replace(`/tours/${tourId}`, { scroll: false });
+      if (whatsapp) {
+        router.replace(`/tours/${tourId}`, { scroll: false });
+        window.location.href = buildWhatsAppUrl(phone);
+      } else {
+        router.replace(`/tours/${tourId}`, { scroll: false });
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -62,9 +74,13 @@ export default function RevealPhoneButton({
       setRevealed(true);
       fetch(`/api/tours/${tourId}/phone-reveal`, { method: "POST" }).catch(() => {});
     }
+    if (whatsapp) {
+      window.location.href = buildWhatsAppUrl(phone);
+      return;
+    }
   }
 
-  if (revealed) {
+  if (revealed && !whatsapp) {
     return (
       <a href={`tel:${phone}`} className={baseClass} style={colorStyle}>
         <Phone className="w-4 h-4" />
