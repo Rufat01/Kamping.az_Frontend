@@ -172,6 +172,13 @@ body {
   background: #FAF6F0;
 }
 
+/* Mobile app-like layout: reserve space for bottom nav */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
 /* Subtle grain texture */
 .grain {
   position: relative;

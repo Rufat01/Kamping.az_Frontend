@@ -1,7 +1,7 @@
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import MobileBottomNav from "@/components/layout/MobileBottomNav";
 import PageLoader from "@/components/ui/PageLoader";
 import RecaptchaProvider from "@/lib/providers/RecaptchaProvider";
 import AuthSessionProvider from "@/features/(auth)/components/SessionProvider";
@@ -64,7 +64,10 @@ export default function RootLayout({ children }) {
         <AuthSessionProvider>
           <RecaptchaProvider>
             {children}
-            <Footer />
+            <div className="hidden md:block">
+              <Footer />
+            </div>
+            <MobileBottomNav />
           </RecaptchaProvider>
         </AuthSessionProvider>
         <InstallBanner />

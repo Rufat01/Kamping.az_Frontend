@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { Menu, X, Tent, ChevronDown, User, LogOut, Settings, LayoutList, Calendar } from "lucide-react";
+import { Tent, ChevronDown, User, LogOut, Settings, LayoutList, Calendar } from "lucide-react";
 
 interface NavbarProps {
   forceScrolled?: boolean;
@@ -10,7 +10,6 @@ interface NavbarProps {
 
 export default function Navbar({ forceScrolled }: NavbarProps) {
   const [scrolled, setScrolled] = useState(forceScrolled);
-  const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const { data: session, status } = useSession();
 
@@ -177,101 +176,6 @@ useEffect(() => {
           )}
         </div>
 
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden text-white p-1"
-          aria-label="Menyunu ac/bagla"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <div
-        className={`md:hidden transition-all duration-300 ${
-          mobileOpen
-            ? "max-h-[calc(100svh-64px)] opacity-100 overflow-y-auto"
-            : "max-h-0 opacity-0 overflow-hidden"
-        }`}
-      >
-        <div className="bg-forest-800/98 backdrop-blur-md px-4 pt-4 pb-6 flex flex-col gap-4 border-t border-white/10">
-          {[
-            { label: "Elanlar", href: "/listings" },
-            { label: "Turlar", href: "/tours" },
-            { label: "Xəritə", href: "/map" },
-            { label: "Haqqımızda", href: "/about" },
-            { label: "Əlaqə", href: "/contact" },
-          ].map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setMobileOpen(false)}
-              className="text-white/80 hover:text-white text-base font-medium py-1 transition-colors"
-            >
-              {item.label}
-            </Link>
-          ))}
-
-          <div className="flex flex-col gap-2 pt-2 border-t border-white/10">
-            {status === "loading" ? (
-              <div className="space-y-2 py-1">
-                <div className="h-9 bg-white/10 rounded-xl animate-pulse" />
-                <div className="h-12 bg-white/10 rounded-full animate-pulse" />
-              </div>
-            ) : status === "authenticated" ? (
-              <>
-                <div className="flex items-center gap-3 py-2">
-                  {session.user?.image ? (
-                    <img
-                      src={session.user.image}
-                      alt=""
-                      className="w-9 h-9 rounded-full object-cover"
-                      referrerPolicy="no-referrer"
-                    />
-                  ) : (
-                    <div className="w-9 h-9 rounded-full bg-amber-500 flex items-center justify-center text-forest-900 text-sm font-bold">
-                      {getInitials(session.user?.name)}
-                    </div>
-                  )}
-                  <div>
-                    <p className="text-white text-sm font-semibold">{session.user?.name}</p>
-                    <p className="text-white/40 text-xs">{session.user?.email}</p>
-                  </div>
-                </div>
-                <Link href="/dashboard" onClick={() => setMobileOpen(false)}
-                  className="text-white/80 text-sm py-2">Hesabim</Link>
-                {session.user?.role === "owner" ? (
-                  <>
-                    <Link href="/dashboard/listings" onClick={() => setMobileOpen(false)}
-                      className="text-white/80 text-sm py-2">Elanlarım</Link>
-                    <Link href="/dashboard/reservation-intents" onClick={() => setMobileOpen(false)}
-                      className="text-white/80 text-sm py-2">Rezervasiya İstəkləri</Link>
-                  </>
-                ) : (
-                  <Link href="/dashboard/reservations" onClick={() => setMobileOpen(false)}
-                    className="text-white/80 text-sm py-2">Rezervasiyalarım</Link>
-                )}
-                <button
-                  onClick={() => signOut({ callbackUrl: "/" })}
-                  className="text-red-400 text-sm py-2 text-left"
-                >
-                  Çıxış
-                </button>
-              </>
-            ) : (
-              <>
-                <Link href="/login" className="text-white/80 text-base font-medium py-2 text-center">
-                  Daxil ol
-                </Link>
-                <Link href="/register"
-                  className="bg-amber-500 text-forest-900 font-semibold py-3 rounded-full text-center text-base">
-                  Qeydiyyat
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
       </div>
     </header>
   );
