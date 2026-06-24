@@ -98,7 +98,7 @@ useEffect(() => {
                   </div>
                 )}
                 <span className="text-white text-sm font-medium max-w-[120px] truncate">
-                  {session.user?.name?.split(" ")[0] || "Hesabim"}
+                  {session.user?.name?.split(" ")[0] || "Hesabım"}
                 </span>
                 <ChevronDown className={`w-3.5 h-3.5 text-white/60 transition-transform ${dropdownOpen ? "rotate-180" : ""}`} />
               </button>
@@ -120,7 +120,7 @@ useEffect(() => {
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-forest-700 hover:bg-forest-50 transition-colors"
                     >
                       <User className="w-4 h-4 text-forest-400" />
-                      Hesabim
+                      Hesabım
                     </Link>
                     {session.user?.role === "owner" ? (
                       <>

@@ -48,4 +48,11 @@ export const auth = {
       body: JSON.stringify(data),
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
     }),
+
+  updateProfile: (data: { full_name?: string; phone?: string }, token: string) =>
+    apiFetch<User>("/api/v1/auth/me/", {
+      method: "PATCH",
+      body: JSON.stringify(data),
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+    }),
 };

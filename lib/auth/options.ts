@@ -114,6 +114,7 @@ export const authOptions: NextAuthOptions = {
         if (session.profileCompleted !== undefined) token.profileCompleted = session.profileCompleted;
         if (session.role) token.role = session.role;
         if (session.phone !== undefined) token.phone = session.phone;
+        if (session.name !== undefined) token.name = session.name;
         return token;
       }
 
