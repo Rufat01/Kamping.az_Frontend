@@ -411,7 +411,7 @@ export default function OwnerListingsPage() {
 
             <div className="flex items-center gap-3 shrink-0">
               {/* View toggle */}
-              <div className="flex items-center bg-[#F0EDE6] rounded-xl p-1">
+              <div className="hidden sm:flex items-center bg-[#F0EDE6] rounded-xl p-1">
                 <button
                   onClick={() => setViewMode("list")}
                   className={`flex items-center justify-center w-8 h-8 rounded-lg transition-all ${viewMode === "list" ? "bg-white shadow-sm text-[#2D4A33]" : "text-[#4A6B4F]/50 hover:text-[#4A6B4F]"}`}
@@ -474,8 +474,9 @@ export default function OwnerListingsPage() {
 
           {/* Listings */}
           {listings.length > 0 && (
-            viewMode === "grid" ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            <>
+              {/* Mobile: always grid */}
+              <div className="sm:hidden grid grid-cols-1 gap-4">
                 {listings.map((listing) => (
                   <ListingCard
                     key={listing.id}
@@ -484,17 +485,29 @@ export default function OwnerListingsPage() {
                   />
                 ))}
               </div>
-            ) : (
-              <div className="space-y-3">
-                {listings.map((listing) => (
-                  <ListingRow
-                    key={listing.id}
-                    listing={listing}
-                    onDelete={setDeleteTarget}
-                  />
-                ))}
-              </div>
-            )
+              {/* Desktop: follow viewMode */}
+              {viewMode === "grid" ? (
+                <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {listings.map((listing) => (
+                    <ListingCard
+                      key={listing.id}
+                      listing={listing}
+                      onDelete={setDeleteTarget}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="hidden sm:block space-y-3">
+                  {listings.map((listing) => (
+                    <ListingRow
+                      key={listing.id}
+                      listing={listing}
+                      onDelete={setDeleteTarget}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </div>
       </main>
