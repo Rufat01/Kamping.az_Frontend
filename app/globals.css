@@ -177,6 +177,10 @@ body {
   body {
     padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
+
+  .grecaptcha-badge {
+    bottom: calc(4rem + 14px + env(safe-area-inset-bottom, 0px)) !important;
+  }
 }
 
 /* Subtle grain texture */

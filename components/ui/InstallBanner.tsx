@@ -2,41 +2,54 @@
 import { useEffect, useState } from "react";
 import { X, Download, Smartphone } from "lucide-react";
 
+// Module-level flag: event bir session-da yalnız bir dəfə emal edilir,
+// komponentin remount olub-olmamasından asılı olmayaraq.
+let capturedPrompt: any = null;
+let shownThisSession = false;
+
 export default function InstallBanner() {
-  const [prompt, setPrompt] = useState(null);
+  const [prompt, setPrompt] = useState<any>(null);
   const [show, setShow] = useState(false);
   const [installed, setInstalled] = useState(false);
 
   useEffect(() => {
-    // Artıq qurulubsa göstərmə
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setInstalled(true);
       return;
     }
-
-    // Dismissed-i yoxla
     if (localStorage.getItem("install-dismissed")) return;
+    if (shownThisSession) return;
 
-    const handler = (e) => {
+    // Əvvəlki navigasiyada artıq event tutulubsa — gecikməli göstər
+    if (capturedPrompt) {
+      shownThisSession = true;
+      const t = setTimeout(() => { setPrompt(capturedPrompt); setShow(true); }, 4000);
+      return () => clearTimeout(t);
+    }
+
+    const handler = (e: Event) => {
       e.preventDefault();
-      setPrompt(e);
-      setShow(true);
+      capturedPrompt = e;
+      if (shownThisSession) return;
+      shownThisSession = true;
+      // İlk yükləmədən 4 saniyə sonra göstər
+      setTimeout(() => { setPrompt(e); setShow(true); }, 4000);
     };
 
     window.addEventListener("beforeinstallprompt", handler);
     return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
+  const handleDismiss = () => {
+    localStorage.setItem("install-dismissed", "1");
+    setShow(false);
+  };
+
   const handleInstall = async () => {
     if (!prompt) return;
     prompt.prompt();
     const { outcome } = await prompt.userChoice;
     if (outcome === "accepted") setInstalled(true);
-    setShow(false);
-  };
-
-  const handleDismiss = () => {
-    localStorage.setItem("install-dismissed", "1");
     setShow(false);
   };
 

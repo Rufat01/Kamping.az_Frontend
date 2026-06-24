@@ -299,11 +299,12 @@ export default function MapClient({ locations = [], listingLocations = [] }: Map
     const PANEL_H = 320;
     const MARGIN = 12;
     const NAVBAR_H = 64;
+    const BOTTOM_NAV_H = 64; // mobile bottom nav h-16
     const vw = typeof window !== "undefined" ? window.innerWidth : 1200;
     const vh = typeof window !== "undefined" ? window.innerHeight : 800;
-    const isMobile = vw < 640;
+    const isMobile = vw < 768;
     if (isMobile) {
-      return { position: "fixed", left: MARGIN, right: MARGIN, bottom: MARGIN, zIndex: 900, width: "auto" };
+      return { position: "fixed", left: MARGIN, right: MARGIN, bottom: MARGIN + BOTTOM_NAV_H, zIndex: 900, width: "auto" };
     }
     let left = selectedPos.x + MARGIN;
     let top = selectedPos.y - PANEL_H / 2;
@@ -487,8 +488,8 @@ export default function MapClient({ locations = [], listingLocations = [] }: Map
       {/* Marşrut info paneli */}
       {routeInfo && (
         <div
-          style={{ position: "fixed", bottom: 24, left: "50%", transform: "translateX(-50%)", zIndex: 900, boxShadow: "0 8px 30px -5px rgba(45,74,51,0.2)" }}
-          className="bg-white rounded-2xl px-5 py-3 flex items-center gap-3"
+          style={{ position: "fixed", left: "50%", transform: "translateX(-50%)", zIndex: 900, boxShadow: "0 8px 30px -5px rgba(45,74,51,0.2)" }}
+          className="bg-white rounded-2xl px-5 py-3 flex items-center gap-3 bottom-[88px] md:bottom-6"
         >
           {routeInfo.loading ? (
             // Loading
