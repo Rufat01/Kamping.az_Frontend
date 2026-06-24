@@ -4,16 +4,16 @@ import { MapPin, Navigation, X, Star, Users } from "lucide-react";
 
 const TYPE_EMOJI = {
   tent_site: "⛺", glamping: "🏕️", bungalow: "🏡",
-  camp: "⛺", house: "🏠", water: "💧",
+  house: "🏠", water: "💧",
   parking: "🅿️", entrance: "🚪", other: "📍",
 };
 
 const FILTERS = [
   { value: "", label: "Hamısı" },
-  { value: "camp", label: "⛺ Kamp" },
+  // { value: "camp", label: "⛺ Kamp" },
   { value: "tent_site", label: "⛺ Çadır" },
-  { value: "glamping", label: "🏕️ Glamping" },
-  { value: "bungalow", label: "🏡 Bungalo" },
+  { value: "glamping", label: "🏕️ Qlampinq" },
+  { value: "bungalow", label: "🏡 Bunqalo" },
   { value: "house", label: "🏠 Ev" },
 ];
 
@@ -125,7 +125,7 @@ export default function MapClient({ locations = [], listingLocations = [] }: Map
 
       if (mapRef.current._leaflet_id) return;
 
-      const map = L.map(mapRef.current).setView([40.4093, 47.5769], 7);
+      const map = L.map(mapRef.current, { zoomControl: false }).setView([40.4093, 47.5769], 7);
 
       const createOfflineTileLayer = async () => {
         const localforage = (await import("localforage")).default;
@@ -391,8 +391,8 @@ export default function MapClient({ locations = [], listingLocations = [] }: Map
 
       {/* Filter bar */}
       <div
-        style={{ position: "fixed", top: 64, left: "50%", transform: "translateX(-50%)", zIndex: 900 }}
-        className="flex gap-1 bg-white/95 backdrop-blur-sm rounded-xl shadow-md px-1.5 py-1.5 border border-stone-200 max-w-[95vw] overflow-x-auto"
+        style={{ position: "fixed", left: "50%", transform: "translateX(-50%)", zIndex: 900 }}
+        className="flex gap-1 bg-white/95 backdrop-blur-sm rounded-xl shadow-md px-1.5 py-1.5 border border-stone-200 max-w-[95vw] overflow-x-auto top-16 md:top-[71px]"
       >
         {FILTERS.map((f) => (
           <button
@@ -408,8 +408,8 @@ export default function MapClient({ locations = [], listingLocations = [] }: Map
 
       {/* Məkan sayı */}
       <div
-        style={{ position: "fixed", top: 116, left: 12, zIndex: 900 }}
-        className="bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-sm border border-stone-200"
+        style={{ position: "fixed", left: 12, zIndex: 900 }}
+        className="bg-white/90 backdrop-blur-sm rounded-lg px-2.5 py-1.5 shadow-sm border border-stone-200 top-[116px] md:top-[71px]"
       >
         <span className="text-xs font-semibold text-stone-600">{filtered.length} məkan</span>
       </div>
