@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   User, Lock, LayoutList, Calendar, ChevronRight,
-  CheckCircle, AlertTriangle, Eye, EyeOff, Shield,
+  CheckCircle, AlertTriangle, Eye, EyeOff, Shield, LogOut,
 } from "lucide-react";
 import { auth } from "@/features/(auth)/services/auth.service";
 import { validatePhone } from "@/lib/validation";
@@ -519,21 +519,18 @@ export default function AccountPage() {
               </div>
             </div>
 
-            {/* Account info */}
-            <div
-              className="bg-white rounded-3xl border border-[#E8E5D8] p-6"
+            
+            {/* Logout */}
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="w-full flex items-center gap-3 px-6 py-4 bg-white rounded-3xl border border-[#E8E5D8] hover:bg-red-50 hover:border-red-200 transition-colors group"
               style={{ boxShadow: "0 4px 20px -4px rgba(45,74,51,0.08)" }}
             >
-              <h3 className="font-display text-sm font-bold text-[#1F2D24] mb-4">Hesab məlumatı</h3>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-[#4A6B4F]/60">Hesab tipi</span>
-                  <span className="text-xs font-semibold text-[#1F2D24]">
-                    {session?.user?.isGoogle ? "Google" : "Email"}
-                  </span>
-                </div>
+              <div className="w-9 h-9 rounded-xl bg-red-50 group-hover:bg-red-100 flex items-center justify-center shrink-0 transition-colors">
+                <LogOut className="w-4 h-4 text-red-500" />
               </div>
-            </div>
+              <span className="text-sm font-semibold text-red-500">Çıxış et</span>
+            </button>
           </div>
         </div>
       </div>

@@ -1,48 +1,54 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { MapPin, Star, Users, Heart, ArrowUpRight } from "lucide-react";
+import { getListings } from "@/features/(public)/listings/services/listings.service";
+import type { Listing } from "@/types";
 
-// Demo data — real data comes from API: GET /api/v1/listings/
-const LISTINGS = [
-  {
-    id: 1, title: "Goygol Mesasinda Glamping", city: "Goygol, Gence",
-    listing_type_display: "Glamping", price_per_night: 85, max_guests: 4,
-    rating: 4.9, review_count: 38,
-    cover_image: "https://images.unsplash.com/photo-1533873984035-25970ab07461?w=800&q=80",
-  },
-  {
-    id: 2, title: "Seki Baglarinda Bungalo", city: "Seki",
-    listing_type_display: "Bungalo", price_per_night: 60, max_guests: 6,
-    rating: 4.7, review_count: 24,
-    cover_image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=700&q=80",
-  },
-  {
-    id: 3, title: "Qebele Dag Cadiri", city: "Qebele",
-    listing_type_display: "Cadir yeri", price_per_night: 30, max_guests: 3,
-    rating: 4.8, review_count: 61,
-    cover_image: "https://images.unsplash.com/photo-1510312305653-8ed496efae75?w=700&q=80",
-  },
-  {
-    id: 4, title: "Lerik Mese Evi", city: "Lerik",
-    listing_type_display: "Ev", price_per_night: 110, max_guests: 8,
-    rating: 4.95, review_count: 17,
-    cover_image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=80",
-  },
-  {
-    id: 5, title: "Lenkaran Sahil Kampi", city: "Lenkaran",
-    listing_type_display: "Cadir yeri", price_per_night: 25, max_guests: 5,
-    rating: 4.6, review_count: 45,
-    cover_image: "https://images.unsplash.com/photo-1537905569824-f89f14cceb68?w=700&q=80",
-  },
-  {
-    id: 6, title: "Ismayilli Glamping Resort", city: "Ismayilli",
-    listing_type_display: "Glamping", price_per_night: 130, max_guests: 2,
-    rating: 5.0, review_count: 12,
-    cover_image: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=700&q=80",
-  },
-];
+const rotations = [-0.5, 0.8, -0.3, 0.5, -0.7, 0.4];
+
+function SkeletonCard({ rotate }: { rotate: number }) {
+  return (
+    <div
+      className="block"
+      style={{ transform: `rotate(${rotate}deg)` }}
+    >
+      <div
+        className="bg-white rounded-2xl overflow-hidden animate-pulse"
+        style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08), 0 12px 30px -6px rgba(45,74,51,0.12)" }}
+      >
+        <div className="bg-[#E8E5D8]" style={{ aspectRatio: "4/3" }} />
+        <div className="p-5 space-y-3">
+          <div className="h-5 bg-[#E8E5D8] rounded w-3/4" />
+          <div className="h-4 bg-[#E8E5D8] rounded w-1/2" />
+          <div className="h-px bg-[#E8E5D8] my-2" />
+          <div className="flex justify-between">
+            <div className="h-4 bg-[#E8E5D8] rounded w-16" />
+            <div className="h-4 bg-[#E8E5D8] rounded w-12" />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function FeaturedListings() {
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getListings({ listing_type: "house" })
+      .then((data: unknown) => {
+        if (Array.isArray(data)) {
+          setListings(data);
+        } else if (data && typeof data === "object" && "results" in data) {
+          setListings((data as { results: Listing[] }).results);
+        }
+      })
+      .catch(() => setListings([]))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <section className="relative py-20 lg:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ background: "#FAF6F0" }}>
 
@@ -75,80 +81,99 @@ export default function FeaturedListings() {
           </Link>
         </div>
 
-        {/* Grid — postcard scattered feel */}
+        {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
-          {LISTINGS.map((listing, i) => {
-            // Slight rotation variation — like scattered postcards
-            const rotations = [-0.5, 0.8, -0.3, 0.5, -0.7, 0.4];
-            const rotate = rotations[i % rotations.length];
+          {loading
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <SkeletonCard key={i} rotate={rotations[i % rotations.length]} />
+              ))
+            : listings.map((listing, i) => (
+                <Link
+                  key={listing.id}
+                  href={`/listings/${listing.id}`}
+                  className="group block transition-all duration-300 hover:!rotate-0 hover:-translate-y-2"
+                  style={{ transform: `rotate(${rotations[i % rotations.length]}deg)` }}
+                >
+                  <div className="bg-white rounded-2xl overflow-hidden"
+                    style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08), 0 12px 30px -6px rgba(45,74,51,0.12)" }}>
 
-            return (
-              <Link
-                key={listing.id}
-                href={`/listings/${listing.id}`}
-                className="group block transition-all duration-300 hover:!rotate-0 hover:-translate-y-2"
-                style={{ transform: `rotate(${rotate}deg)` }}
-              >
-                {/* Postcard wrapper */}
-                <div className="bg-white rounded-2xl overflow-hidden"
-                  style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08), 0 12px 30px -6px rgba(45,74,51,0.12)" }}>
+                    {/* Image */}
+                    <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
+                      {listing.cover_image ? (
+                        <img
+                          src={listing.cover_image}
+                          alt={listing.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-[#E8E5D8] flex items-center justify-center text-[#4A6B4F]/30 text-sm">
+                          Şəkil yoxdur
+                        </div>
+                      )}
 
-                  {/* Image */}
-                  <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
-                    <img src={listing.cover_image} alt={listing.title}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      {/* Badge */}
+                      <div className="absolute top-4 left-4 bg-[#FAF6F0]/95 backdrop-blur text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30">
+                        {listing.listing_type_display}
+                      </div>
 
-                    {/* Stamp-style badge */}
-                    <div className="absolute top-4 left-4 bg-[#FAF6F0]/95 backdrop-blur text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30">
-                      {listing.listing_type_display}
+                      {/* Heart */}
+                      <button
+                        onClick={e => e.preventDefault()}
+                        className="absolute top-4 right-4 w-9 h-9 bg-white/95 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm"
+                      >
+                        <Heart className="w-4 h-4 text-[#4A6B4F] hover:text-red-400 hover:fill-red-400 transition-colors" />
+                      </button>
+
+                      {/* Price */}
+                      <div className="absolute bottom-4 right-4 bg-[#2D4A33] text-[#FAF6F0] px-3 py-2 rounded-xl shadow-lg">
+                        <div className="flex items-baseline gap-1">
+                          <span className="font-display text-xl font-bold">
+                            {listing.is_free ? "Pulsuz" : (listing.price_per_night ?? listing.entry_fee ?? "—")}
+                          </span>
+                          {!listing.is_free && (
+                            <span className="text-[#D4A574] text-xs">₼/gece</span>
+                          )}
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Heart */}
-                    <button onClick={e => e.preventDefault()}
-                      className="absolute top-4 right-4 w-9 h-9 bg-white/95 rounded-full flex items-center justify-center hover:bg-white transition-colors shadow-sm">
-                      <Heart className="w-4 h-4 text-[#4A6B4F] hover:text-red-400 hover:fill-red-400 transition-colors" />
-                    </button>
+                    {/* Card body */}
+                    <div className="p-5">
+                      <div className="flex items-start justify-between gap-2 mb-2">
+                        <h3 className="font-display text-lg font-bold text-[#1F2D24] leading-tight line-clamp-2 flex-1">
+                          {listing.title}
+                        </h3>
+                        <ArrowUpRight className="w-4 h-4 text-[#4A6B4F] shrink-0 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                      </div>
 
-                    {/* Price tag — bottom right */}
-                    <div className="absolute bottom-4 right-4 bg-[#2D4A33] text-[#FAF6F0] px-3 py-2 rounded-xl shadow-lg">
-                      <div className="flex items-baseline gap-1">
-                        <span className="font-display text-xl font-bold">{listing.price_per_night}</span>
-                        <span className="text-[#D4A574] text-xs">₼/gece</span>
+                      <div className="flex items-center gap-1.5 text-[#4A6B4F]/70 text-sm mb-4">
+                        <MapPin className="w-3.5 h-3.5" />
+                        {listing.city}
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-dashed border-[#E8E5D8]">
+                        <div className="flex items-center gap-1.5">
+                          <Star className="w-3.5 h-3.5 fill-[#D4A574] text-[#D4A574]" />
+                          <span className="text-sm font-bold text-[#1F2D24]">{listing.rating}</span>
+                          <span className="text-[#4A6B4F]/50 text-xs">({listing.review_count})</span>
+                        </div>
+                        <div className="flex items-center gap-1 text-[#4A6B4F]/70 text-xs">
+                          <Users className="w-3.5 h-3.5" />
+                          {listing.max_guests} nəfər
+                        </div>
                       </div>
                     </div>
                   </div>
-
-                  {/* Card body */}
-                  <div className="p-5">
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <h3 className="font-display text-lg font-bold text-[#1F2D24] leading-tight line-clamp-2 flex-1">
-                        {listing.title}
-                      </h3>
-                      <ArrowUpRight className="w-4 h-4 text-[#4A6B4F] shrink-0 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-[#4A6B4F]/70 text-sm mb-4">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {listing.city}
-                    </div>
-
-                    <div className="flex items-center justify-between pt-4 border-t border-dashed border-[#E8E5D8]">
-                      <div className="flex items-center gap-1.5">
-                        <Star className="w-3.5 h-3.5 fill-[#D4A574] text-[#D4A574]" />
-                        <span className="text-sm font-bold text-[#1F2D24]">{listing.rating}</span>
-                        <span className="text-[#4A6B4F]/50 text-xs">({listing.review_count})</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-[#4A6B4F]/70 text-xs">
-                        <Users className="w-3.5 h-3.5" />
-                        {listing.max_guests} nefer
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            );
-          })}
+                </Link>
+              ))}
         </div>
+
+        {/* Empty state */}
+        {!loading && listings.length === 0 && (
+          <div className="text-center py-16 text-[#4A6B4F]/50 text-sm">
+            Hal-hazırda heç bir ev elanı mövcud deyil.
+          </div>
+        )}
       </div>
     </section>
   );

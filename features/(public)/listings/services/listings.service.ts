@@ -1,5 +1,5 @@
 import { apiFetch, API_URL } from "@/lib/api/client";
-import type { Listing, ListingImage, MapListing, Tour } from "@/types";
+import type { Listing, ListingImage, MapListing, PaginatedResponse, Tour } from "@/types";
 
 export async function getListings(searchParams: Record<string, string> = {}): Promise<Listing[]> {
   const query = new URLSearchParams(searchParams).toString();
@@ -8,7 +8,9 @@ export async function getListings(searchParams: Record<string, string> = {}): Pr
     { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Elanları yükləmək alınmadı");
-  return res.json() as Promise<Listing[]>;
+  const data = await res.json();
+  if (Array.isArray(data)) return data as Listing[];
+  return (data as PaginatedResponse<Listing>).results;
 }
 
 export async function getListing(id: number | string): Promise<Listing> {
