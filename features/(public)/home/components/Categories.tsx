@@ -1,29 +1,34 @@
 import Link from "next/link";
+import { getListingsCategoryCount } from "@/features/(public)/listings/services/listings.service";
 
 const CATEGORIES = [
   {
     type: "tent_site", label: "Çadır yeri", desc: "Klassik kamp təcrübəsi",
-    count: "84", emoji: "⛺",
+    emoji: "⛺",
     img: "https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=600&q=80",
   },
   {
     type: "glamping", label: "Qlampinq", desc: "Elit çadır macerası",
-    count: "42", emoji: "🏕️",
+    emoji: "🏕️",
     img: "https://images.unsplash.com/photo-1593053272490-e0ed6d6a42c5?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Z2xhbXBpbmd8ZW58MHx8MHx8fDA%3D",
   },
   {
     type: "bungalow", label: "Bunqalo", desc: "Meşə içərisində",
-    count: "53", emoji: "🏡",
+    emoji: "🏡",
     img: "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?w=600&q=80",
   },
   {
     type: "house", label: "Kənd Evi", desc: "Əşyalı tam ev",
-    count: "31", emoji: "🏠",
+    emoji: "🏠",
     img: "https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=600&q=80",
   },
 ];
 
-export default function Categories() {
+export default async function Categories() {
+  const counts = await Promise.all(
+    CATEGORIES.map((cat) => getListingsCategoryCount(cat.type))
+  );
+
   return (
     <section className="relative py-20 lg:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden" style={{ background: "#FAF6F0" }}>
 
@@ -84,8 +89,8 @@ export default function Categories() {
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/50" />
 
                 {/* Count badge */}
-                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#FAF6F0] text-[#2D4A33] text-xs font-bold px-3 py-1 rounded-full shadow">
-                  {cat.count} məkan
+                <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-[#FAF6F0] text-[#2D4A33] text-xs font-bold px-3 py-1 rounded-full shadow whitespace-nowrap">
+                  {counts[i]} məkan
                 </div>
 
                 {/* Emoji */}

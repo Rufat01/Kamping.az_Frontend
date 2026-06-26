@@ -347,60 +347,6 @@ export default function AboutPage() {
           <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#4A6B4F" />
         </svg>
 
-        <div className="relative max-w-7xl mx-auto">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-14">
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-px bg-[#D4A574]" />
-                <span className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                  Komanda
-                </span>
-              </div>
-              <h2 className="font-display font-bold text-[#1F2D24] leading-[0.95]"
-                style={{ fontSize: "clamp(2.5rem, 5vw, 4.5rem)" }}>
-                Bu yolu bərabər<br />
-                <em className="text-[#4A6B4F]">gedirik</em>
-              </h2>
-            </div>
-            <Link href="/contact"
-              className="text-[#4A6B4F] hover:text-[#2D4A33] text-sm font-bold transition-colors flex items-center gap-2 group whitespace-nowrap">
-              <span className="underline underline-offset-4 decoration-2 decoration-[#D4A574]">Bizə qoşul</span>
-              <span className="group-hover:translate-x-1 transition-transform">→</span>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {TEAM.map((person, i) => {
-              const rotations = [-1, 0.8, -0.6];
-              return (
-                <div key={i}
-                  className="bg-white rounded-3xl overflow-hidden transition-all duration-300 hover:!rotate-0 hover:-translate-y-2 group"
-                  style={{
-                    transform: `rotate(${rotations[i]}deg)`,
-                    boxShadow: "0 8px 30px -5px rgba(45,74,51,0.12)"
-                  }}>
-
-                  {/* Photo with sage frame */}
-                  <div className="relative aspect-square overflow-hidden">
-                    <img src={person.avatar} alt={person.name}
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-
-                    {/* Role badge */}
-                    <div className="absolute bottom-4 left-4 bg-[#FAF6F0]/95 backdrop-blur text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30">
-                      {person.role}
-                    </div>
-                  </div>
-
-                  <div className="p-6">
-                    <h3 className="font-display text-xl font-bold text-[#1F2D24] mb-2">{person.name}</h3>
-                    <p className="text-[#4A6B4F]/75 text-sm leading-relaxed italic">"{person.bio}"</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       </section>
 
       {/* ── CTA ── */}

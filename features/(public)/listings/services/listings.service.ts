@@ -13,6 +13,17 @@ export async function getListings(searchParams: Record<string, string> = {}): Pr
   return (data as PaginatedResponse<Listing>).results;
 }
 
+export async function getListingsCategoryCount(listing_type: string): Promise<number> {
+  const res = await fetch(
+    `${API_URL}/api/v1/listings/?listing_type=${listing_type}`,
+    { next: { revalidate: 300 } }
+  );
+  if (!res.ok) return 0;
+  const data = await res.json();
+  if (Array.isArray(data)) return data.length;
+  return (data as PaginatedResponse<Listing>).count ?? 0;
+}
+
 export async function getListing(id: number | string): Promise<Listing> {
   const res = await fetch(
     `${API_URL}/api/v1/listings/${id}/`,

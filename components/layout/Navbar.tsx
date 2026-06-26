@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import { Tent, ChevronDown, User, LogOut, Settings, LayoutList, Calendar } from "lucide-react";
 
@@ -48,12 +49,7 @@ useEffect(() => {
 
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2 group">
-          <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center group-hover:bg-amber-400 transition-colors">
-            <Tent className="w-4 h-4 text-forest-800" strokeWidth={2.5} />
-          </div>
-          <span className="font-display text-xl font-bold text-white tracking-tight">
-            Kamping<span className="text-amber-400">.az</span>
-          </span>
+          <Image src="/icons/logo1.png" alt="Kamping.az Logo" width={120} height={40} className="h-10 w-auto" />
         </Link>
 
         {/* Desktop Nav */}

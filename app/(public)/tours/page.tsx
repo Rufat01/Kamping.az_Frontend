@@ -70,18 +70,18 @@ export default function ToursPage() {
           <div className="relative max-w-7xl mx-auto">
             <nav className="flex items-center gap-2 mb-4 text-sm">
               <Compass className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
-              <Link href="/" className="text-[#D4A574]/80 hover:text-[#D4A574] font-semibold transition-colors">
-                Ana sehife
+              <Link href="/" className="text-[#D4A574]/80 hover:text-[#D4A574] text-xs font-semibold tracking-[0.25em] uppercase transition-colors">
+                Ana səhifə
               </Link>
               <span className="text-[#FAF6F0]/30">/</span>
-              <span className="text-[#FAF6F0]/60 font-semibold">Turlar</span>
+              <span className="text-[#FAF6F0]/60 text-xs font-semibold tracking-[0.25em] uppercase">Turlar</span>
             </nav>
 
             <h1
               className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-4"
               style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}
             >
-              <em className="text-[#D4A574]">Tur</em> paketleri
+              <em className="text-[#D4A574]">Tur</em> paketləri
             </h1>
 
             <p className="text-[#FAF6F0]/60 text-sm sm:text-base">

@@ -81,7 +81,7 @@ function LoginForm() {
             <Tent className="w-8 h-8 text-forest-900" strokeWidth={2} />
           </div>
           <h2 className="font-display text-4xl font-bold text-white mb-4 leading-tight">
-            Xoş gəldiniz,<br />
+            Xoş gəldin,<br />
             <span className="text-amber-400">macəraçı!</span>
           </h2>
           <p className="text-white/60 text-lg max-w-sm mx-auto">
