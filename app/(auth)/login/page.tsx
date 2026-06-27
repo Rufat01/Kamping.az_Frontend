@@ -1,13 +1,10 @@
 "use client";
 import { useState, Suspense } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Eye, EyeOff, Tent, ArrowRight, Phone } from "lucide-react";
+import { Eye, EyeOff, Tent, ArrowRight } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
-
-const PhoneAuthForm = dynamic(() => import("@/components/PhoneAuthForm"), { ssr: false });
 
 function LoginForm() {
   const router = useRouter();
@@ -18,7 +15,6 @@ function LoginForm() {
   const [status, setStatus] = useState("idle");
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [showPhoneForm, setShowPhoneForm] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -131,7 +127,7 @@ function LoginForm() {
           <button
             onClick={handleGoogle}
             type="button"
-            className="w-full flex items-center justify-center gap-3 border border-forest-200 bg-white hover:bg-forest-50 text-forest-800 font-medium py-3 rounded-xl transition-all mb-3 shadow-sm"
+            className="w-full flex items-center justify-center gap-3 border border-forest-200 bg-white hover:bg-forest-50 text-forest-800 font-medium py-3 rounded-xl transition-all mb-6 shadow-sm"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -142,42 +138,21 @@ function LoginForm() {
             Google ilə daxil ol
           </button>
 
-          {/* Telefon */}
-          <button
-            type="button"
-            onClick={() => setShowPhoneForm((v) => !v)}
-            className="w-full flex items-center justify-center gap-3 border border-forest-200 bg-white hover:bg-forest-50 text-forest-800 font-medium py-3 rounded-xl transition-all mb-6 shadow-sm"
-          >
-            <Phone className="w-5 h-5 text-forest-600" />
-            {showPhoneForm ? "Email ilə daxil ol" : "Telefon ilə daxil ol"}
-          </button>
+          {/* Ayırıcı */}
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex-1 h-px bg-forest-100" />
+            <span className="text-forest-400 text-xs font-medium">və ya email ilə</span>
+            <div className="flex-1 h-px bg-forest-100" />
+          </div>
 
-          {/* Phone form */}
-          {showPhoneForm && (
-            <div className="mb-6">
-              <PhoneAuthForm callbackUrl={callbackUrl} />
+          {/* Server xətası */}
+          {serverError && (
+            <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-4">
+              {serverError}
             </div>
           )}
 
-          {/* Ayırıcı */}
-          {!showPhoneForm && (
-            <>
-              <div className="flex items-center gap-3 mb-6">
-                <div className="flex-1 h-px bg-forest-100" />
-                <span className="text-forest-400 text-xs font-medium">və ya email ilə</span>
-                <div className="flex-1 h-px bg-forest-100" />
-              </div>
-
-              {/* Server xətası */}
-              {serverError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-4">
-                  {serverError}
-                </div>
-              )}
-            </>
-          )}
-
-          <form onSubmit={handleSubmit} noValidate className={`space-y-4 ${showPhoneForm ? "hidden" : ""}`}>
+          <form onSubmit={handleSubmit} noValidate className="space-y-4">
 
             {/* Email */}
             <div>
