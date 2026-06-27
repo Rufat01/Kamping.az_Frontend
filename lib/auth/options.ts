@@ -40,6 +40,37 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
     CredentialsProvider({
+      id: "phone",
+      name: "Phone",
+      credentials: {
+        idToken: { label: "Firebase ID Token", type: "text" },
+      },
+      async authorize(credentials) {
+        try {
+          const res = await fetch(`${API_URL}/api/users/phone/`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id_token: credentials?.idToken }),
+          });
+          if (!res.ok) return null;
+          const data = await res.json();
+          return {
+            id: String(data.user.id),
+            email: data.user.email,
+            name: data.user.full_name || null,
+            role: data.user.role,
+            phone: data.user.phone,
+            accessToken: data.access,
+            refreshToken: data.refresh,
+            profileCompleted: data.user.profile_completed,
+            isPhone: true,
+          };
+        } catch {
+          return null;
+        }
+      },
+    }),
+    CredentialsProvider({
       name: "credentials",
       credentials: {
         email: { label: "Email", type: "email" },
@@ -118,12 +149,15 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      if (user && account?.provider === "credentials") {
+      if (user && (account?.provider === "credentials" || account?.provider === "phone")) {
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
         token.role = user.role;
         token.id = user.id;
-        token.profileCompleted = user.profileCompleted ?? true;
+        token.phone = user.phone ?? null;
+        token.isPhone = (user as { isPhone?: boolean }).isPhone ?? false;
+        token.profileCompleted =
+          user.profileCompleted ?? (account?.provider === "credentials" ? true : false);
         token.accessTokenExpiry = user.accessToken
           ? decodeJwtExpiry(user.accessToken)
           : undefined;
@@ -163,6 +197,7 @@ export const authOptions: NextAuthOptions = {
       session.error = token.error;
       session.user.role = token.role;
       session.user.isGoogle = token.isGoogle;
+      session.user.isPhone = token.isPhone;
       session.user.image = token.picture ?? null;
       session.user.id = token.id;
       session.user.profile_completed = token.profileCompleted;

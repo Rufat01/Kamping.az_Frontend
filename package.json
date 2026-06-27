@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@yaga/leaflet-cached-tile-layer": "^1.0.0",
+    "firebase": "^12.15.0",
     "leaflet": "^1.9.4",
     "localforage": "^1.10.0",
     "lucide-react": "^0.383.0",

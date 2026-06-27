@@ -1,35 +1,41 @@
 "use client";
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Tent, ArrowRight, Tent as TentIcon, Users } from "lucide-react";
 import { auth } from "@/features/(auth)/services/auth.service";
-import { validatePhone } from "@/lib/validation";
+
+const PhoneVerifyField = dynamic(() => import("@/components/PhoneVerifyField"), { ssr: false });
 
 export default function CompleteProfilePage() {
   const router = useRouter();
   const { data: session, status, update } = useSession();
 
+  const isPhoneUser = session?.user?.isPhone === true;
+
   const [form, setForm] = useState({
     full_name: "",
-    phone: "+994",
     role: "" as "user" | "owner" | "",
   });
+  const [verifiedPhone, setVerifiedPhone] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // session yüklənəndə adı əvvəlcədən doldur
   useEffect(() => {
     if (session?.user?.name) {
       setForm((prev) => ({ ...prev, full_name: prev.full_name || session.user.name || "" }));
     }
-  }, [session]);
+    // Phone users have a verified phone already from Firebase login
+    if (isPhoneUser && session?.user?.phone) {
+      setVerifiedPhone(session.user.phone);
+    }
+  }, [session, isPhoneUser]);
 
   const validate = () => {
     const errs: Record<string, string> = {};
-    const phoneError = validatePhone(form.phone);
-    if (phoneError) errs.phone = phoneError;
+    if (!verifiedPhone) errs.phone = "Telefon nömrəsini doğrulayın.";
     if (!form.role) errs.role = "Zəhmət olmasa bir seçim edin.";
     return errs;
   };
@@ -47,30 +53,23 @@ export default function CompleteProfilePage() {
 
     try {
       const payload: { phone: string; role: string; full_name?: string } = {
-        phone: form.phone.trim(),
+        phone: verifiedPhone!,
         role: form.role as string,
       };
       if (form.full_name.trim()) payload.full_name = form.full_name.trim();
 
       await auth.completeProfile(payload, session?.accessToken ?? "");
 
-      // NextAuth session-u yenilə
       await update({
         profileCompleted: true,
         role: form.role,
-        phone: form.phone.trim(),
+        phone: verifiedPhone,
       });
 
-      if (form.role === "owner") {
-        router.push("/dashboard/listings");
-      } else {
-        router.push("/");
-      }
+      router.push(form.role === "owner" ? "/dashboard/listings" : "/");
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Xəta baş verdi. Yenidən cəhd edin.";
-
-      // Backend-dən gələn 400 xətaları
       if (message.includes("400")) {
         setServerError("Bu telefon nömrəsi artıq qeydiyyatdadır.");
       } else {
@@ -141,7 +140,6 @@ export default function CompleteProfilePage() {
             Təbiət səni çağırır. Başlamaq üçün profilini tamamla.
           </p>
 
-          {/* Xəta mesajı */}
           {serverError && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-4">
               {serverError}
@@ -169,21 +167,26 @@ export default function CompleteProfilePage() {
               <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">
                 Telefon nömrəsi <span className="text-red-400">*</span>
               </label>
-              <input
-                type="tel"
-                value={form.phone}
-                onChange={(e) => {
-                  const v = e.target.value;
-                  setForm((p) => ({ ...p, phone: v.startsWith("+994") ? v : "+994" }));
-                  if (errors.phone) setErrors((p) => ({ ...p, phone: "" }));
-                }}
-                placeholder="501234567"
-                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.phone
-                    ? "border-red-300 bg-red-50"
-                    : "border-forest-200 bg-white focus:border-forest-400"
-                }`}
-              />
+
+              {isPhoneUser && verifiedPhone ? (
+                /* Phone users: already verified from login */
+                <div className="flex items-center gap-2 border border-green-300 bg-green-50 rounded-xl px-4 py-3">
+                  <svg className="w-4 h-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span className="text-sm text-green-800 font-medium">{verifiedPhone}</span>
+                  <span className="text-xs text-green-600 ml-auto">Doğrulandı</span>
+                </div>
+              ) : (
+                /* Google (or other) users: must verify via OTP */
+                <PhoneVerifyField
+                  onVerified={(phone) => {
+                    setVerifiedPhone(phone);
+                    if (errors.phone) setErrors((p) => ({ ...p, phone: "" }));
+                  }}
+                />
+              )}
+
               {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
             </div>
 
@@ -193,7 +196,6 @@ export default function CompleteProfilePage() {
                 Siz kimsiniz? <span className="text-red-400">*</span>
               </label>
               <div className="grid grid-cols-2 gap-3">
-                {/* Kamp etməyə gəlirəm */}
                 <button
                   type="button"
                   onClick={() => {
@@ -213,7 +215,6 @@ export default function CompleteProfilePage() {
                   <span>Kamp etməyə gəlirəm</span>
                 </button>
 
-                {/* Kamp yerimi əlavə etmək istəyirəm */}
                 <button
                   type="button"
                   onClick={() => {
@@ -239,7 +240,7 @@ export default function CompleteProfilePage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={submitting}
+              disabled={submitting || !verifiedPhone}
               className="w-full flex items-center justify-center gap-2 bg-forest-800 hover:bg-forest-700 disabled:bg-forest-400 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 disabled:cursor-not-allowed mt-2"
             >
               {submitting ? (
