@@ -12,6 +12,7 @@ const nextConfig = {
       { protocol: "http", hostname: "localhost" },
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
       { protocol: "https", hostname: "api.kamping.az" },
+      { protocol: "http", hostname: "api.kamping.az" },
     ],
   },
   experimental: {
