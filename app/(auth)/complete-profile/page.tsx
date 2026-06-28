@@ -1,7 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Tent, ArrowRight, Tent as TentIcon, Users } from "lucide-react";
 import { auth } from "@/features/(auth)/services/auth.service";
@@ -9,7 +8,6 @@ import { auth } from "@/features/(auth)/services/auth.service";
 const PhoneVerifyField = dynamic(() => import("@/components/PhoneVerifyField"), { ssr: false });
 
 export default function CompleteProfilePage() {
-  const router = useRouter();
   const { data: session, status, update } = useSession();
 
   const isPhoneUser = session?.user?.isPhone === true;
@@ -66,7 +64,7 @@ export default function CompleteProfilePage() {
         phone: verifiedPhone,
       });
 
-      router.push(form.role === "owner" ? "/dashboard/listings" : "/");
+      window.location.href = form.role === "owner" ? "/dashboard/listings" : "/";
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Xəta baş verdi. Yenidən cəhd edin.";
