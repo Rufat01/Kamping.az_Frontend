@@ -3,10 +3,10 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-import { Eye, EyeOff, Tent, ArrowRight, Mail } from "lucide-react";
+import { Eye, EyeOff, Tent, ArrowRight } from "lucide-react";
 import { auth } from "@/features/(auth)/services/auth.service";
 import Navbar from "@/components/layout/Navbar";
-import { validatePhone } from "@/lib/validation";
+import PhoneVerifyField from "@/components/PhoneVerifyField";
 
 const INITIAL_FORM = {
   full_name: "",
@@ -23,8 +23,6 @@ function validate(form: typeof INITIAL_FORM): Record<string, string> {
     errors.full_name = "Ad ən azı 2 simvol olmalıdır.";
   if (!form.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
     errors.email = "Düzgün email daxil edin.";
-  const phoneError = validatePhone(form.phone);
-  if (phoneError) errors.phone = phoneError;
   if (!form.password || form.password.length < 8)
     errors.password = "Şifrə ən azı 8 simvol olmalıdır.";
   if (form.password !== form.password_confirm)
@@ -40,6 +38,7 @@ export default function RegisterPage() {
   const [serverError, setServerError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [phoneVerified, setPhoneVerified] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +52,10 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!phoneVerified) {
+      setErrors((prev) => ({ ...prev, phone: "Telefon nömrəsini doğrulayın." }));
+      return;
+    }
     const validationErrors = validate(form);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
@@ -239,19 +242,17 @@ export default function RegisterPage() {
               <label className="block text-xs font-semibold text-forest-700 uppercase tracking-wider mb-1.5">
                 Telefon <span className="text-red-400">*</span>
               </label>
-              <input
-                type="tel"
-                name="phone"
-                value={form.phone}
-                onChange={handleChange}
-                placeholder="501234567"
-                className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none transition-colors ${
-                  errors.phone
-                    ? "border-red-300 bg-red-50"
-                    : "border-forest-200 bg-white focus:border-forest-400"
-                }`}
+              <PhoneVerifyField
+                onVerified={(verifiedPhone) => {
+                  setForm((prev) => ({ ...prev, phone: verifiedPhone }));
+                  setPhoneVerified(true);
+                  setErrors((prev) => ({ ...prev, phone: "" }));
+                }}
+                defaultPhone={form.phone}
               />
-              {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
+              {errors.phone && !phoneVerified && (
+                <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+              )}
             </div>
 
             {/* Şifrə */}
@@ -342,7 +343,7 @@ export default function RegisterPage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={status === "loading"}
+              disabled={status === "loading" || !phoneVerified}
               className="w-full flex items-center justify-center gap-2 bg-forest-800 hover:bg-forest-700 disabled:bg-forest-400 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 hover:shadow-lg active:scale-95 disabled:cursor-not-allowed mt-2"
             >
               {status === "loading" ? (
