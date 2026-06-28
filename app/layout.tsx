@@ -60,6 +60,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="az" className={`${fraunces.variable} ${plusJakarta.variable}`}>
       <body className="font-body bg-cream antialiased">
+        <script dangerouslySetInnerHTML={{ __html: `if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>{for(let s of r)s.unregister();})}` }} />
         {/* <PageLoader /> */}
         <AuthSessionProvider>
           <RecaptchaProvider>
