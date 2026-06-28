@@ -1,4 +1,4 @@
-import { apiFetch, API_URL } from "@/lib/api/client";
+import { apiFetch, API_URL, normalizeUrls } from "@/lib/api/client";
 import type { Listing, ListingImage, MapListing, PaginatedResponse, Tour } from "@/types";
 
 export async function getListings(searchParams: Record<string, string> = {}): Promise<Listing[]> {
@@ -8,7 +8,7 @@ export async function getListings(searchParams: Record<string, string> = {}): Pr
     { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Elanları yükləmək alınmadı");
-  const data = await res.json();
+  const data = normalizeUrls(await res.json());
   if (Array.isArray(data)) return data as Listing[];
   return (data as PaginatedResponse<Listing>).results;
 }
@@ -30,13 +30,13 @@ export async function getListing(id: number | string): Promise<Listing> {
     { next: { revalidate: 60 } }
   );
   if (!res.ok) throw new Error("Elan tapılmadı");
-  return res.json() as Promise<Listing>;
+  return normalizeUrls(await res.json()) as Listing;
 }
 
 export async function getListingsMap(): Promise<MapListing[]> {
   const res = await fetch(`${API_URL}/api/v1/listings/map/`, { cache: "no-store" });
   if (!res.ok) throw new Error("Xəritə elanlarını yükləmək alınmadı");
-  return res.json() as Promise<MapListing[]>;
+  return normalizeUrls(await res.json()) as MapListing[];
 }
 
 export const ownerListings = {

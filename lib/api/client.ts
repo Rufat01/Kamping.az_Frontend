@@ -2,7 +2,7 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export { API_URL };
 
-function normalizeUrls<T>(data: T): T {
+export function normalizeUrls<T>(data: T): T {
   if (typeof data === "string") {
     return data.replace(/^http:\/\/(?!localhost)/g, "https://") as unknown as T;
   }
