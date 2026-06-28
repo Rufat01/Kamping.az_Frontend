@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs, Zoom, Keyboard } from "swiper/modules";
 
@@ -55,13 +54,10 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
                     {sorted.map((img, i) => (
                         <SwiperSlide key={img.id}>
                             <div className="relative h-full w-full">
-                                <Image
+                                <img
                                     src={img.image || "/placeholder.jpg"}
                                     alt={`${title} — ${i + 1}`}
-                                    fill
-                                    sizes="(max-width: 1024px) 100vw, 66vw"
-                                    className="object-cover"
-                                    priority={i === 0}
+                                    className="absolute inset-0 w-full h-full object-cover"
                                 />
                             </div>
                         </SwiperSlide>
@@ -92,12 +88,10 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
                                         setActiveIndex(i);
                                     }}
                                 >
-                                    <Image
+                                    <img
                                         src={img.image || "/placeholder.jpg"}
                                         alt={`${title} — ${i + 1}`}
-                                        fill
-                                        sizes="25vw"
-                                        className="object-cover"
+                                        className="absolute inset-0 w-full h-full object-cover"
                                     />
                                 </div>
                             </SwiperSlide>
@@ -141,13 +135,10 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
                                 <SwiperSlide key={img.id}>
                                     <div className="swiper-zoom-container">
                                         <div className="relative h-[80vh] w-full">
-                                            <Image
+                                            <img
                                                 src={img.image || "/placeholder.jpg"}
                                                 alt={`${title} — ${i + 1}`}
-                                                fill
-                                                sizes="100vw"
-                                                className="object-contain"
-                                                priority={i === activeIndex}
+                                                className="absolute inset-0 w-full h-full object-contain"
                                             />
                                         </div>
                                     </div>
