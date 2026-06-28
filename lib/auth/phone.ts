@@ -18,7 +18,7 @@ export function initRecaptcha(containerId: string): void {
     recaptchaVerifier = null;
   }
   recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
-    size: process.env.NODE_ENV === "production" ? "invisible" : "normal",
+    size: "invisible",
   });
 }
 

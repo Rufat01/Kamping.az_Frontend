@@ -5,8 +5,9 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Tent, ArrowRight } from "lucide-react";
 import { auth } from "@/features/(auth)/services/auth.service";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
-import PhoneVerifyField from "@/components/PhoneVerifyField";
+const PhoneVerifyField = dynamic(() => import("@/components/PhoneVerifyField"), { ssr: false });
 
 const INITIAL_FORM = {
   full_name: "",

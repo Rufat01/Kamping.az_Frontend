@@ -9,6 +9,7 @@ type Status = "idle" | "sending" | "sent" | "verifying";
 interface Props {
   onVerified: (phone: string) => void;
   defaultPhone?: string;
+  containerId?: string;
 }
 
 const FIREBASE_ERRORS: Record<string, string> = {
@@ -28,7 +29,7 @@ function getErrorMessage(err: unknown): string {
   return "Şəbəkə xətası";
 }
 
-export default function PhoneVerifyField({ onVerified, defaultPhone = "+994" }: Props) {
+export default function PhoneVerifyField({ onVerified, defaultPhone = "+994", containerId = "phone-recaptcha-container" }: Props) {
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState(defaultPhone);
   const [otp, setOtp] = useState("");
@@ -38,11 +39,11 @@ export default function PhoneVerifyField({ onVerified, defaultPhone = "+994" }: 
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
-    initRecaptcha("profile-recaptcha-container");
+    initRecaptcha(containerId);
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, []);
+  }, [containerId]);
 
   function startCountdown() {
     setCountdown(60);
@@ -72,7 +73,7 @@ export default function PhoneVerifyField({ onVerified, defaultPhone = "+994" }: 
     } catch (err) {
       setStatus("idle");
       setError(getErrorMessage(err));
-      initRecaptcha("profile-recaptcha-container");
+      initRecaptcha(containerId);
     }
   }
 
@@ -81,7 +82,7 @@ export default function PhoneVerifyField({ onVerified, defaultPhone = "+994" }: 
     setError("");
     setOtp("");
     setStatus("sending");
-    initRecaptcha("profile-recaptcha-container");
+    initRecaptcha(containerId);
     try {
       await sendOtp(phone);
       setStatus("sent");
@@ -89,7 +90,7 @@ export default function PhoneVerifyField({ onVerified, defaultPhone = "+994" }: 
     } catch (err) {
       setStatus("sent");
       setError(getErrorMessage(err));
-      initRecaptcha("profile-recaptcha-container");
+      initRecaptcha(containerId);
     }
   }
 
@@ -124,7 +125,7 @@ export default function PhoneVerifyField({ onVerified, defaultPhone = "+994" }: 
 
   return (
     <div className="space-y-3">
-      <div id="profile-recaptcha-container" />
+      <div id={containerId} />
 
       {/* Phone input row */}
       <div className="flex gap-2">
@@ -170,7 +171,7 @@ export default function PhoneVerifyField({ onVerified, defaultPhone = "+994" }: 
               setStatus("idle");
               if (timerRef.current) clearInterval(timerRef.current);
               setCountdown(0);
-              initRecaptcha("profile-recaptcha-container");
+              initRecaptcha(containerId);
             }}
             className="text-xs text-forest-500 hover:text-forest-800 px-3 whitespace-nowrap transition-colors"
           >
