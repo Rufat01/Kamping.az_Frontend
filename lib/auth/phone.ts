@@ -28,6 +28,7 @@ export function initRecaptcha(containerId: string): void {
 
 export async function sendOtp(phone: string): Promise<void> {
   if (!recaptchaVerifier) throw new Error("reCAPTCHA başlatılmayıb");
+  await recaptchaVerifier.render();
   confirmationResult = await signInWithPhoneNumber(auth, phone, recaptchaVerifier);
 }
 
