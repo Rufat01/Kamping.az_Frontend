@@ -17,6 +17,10 @@ export function initRecaptcha(containerId: string): void {
     }
     recaptchaVerifier = null;
   }
+
+  const container = document.getElementById(containerId);
+  if (container) container.innerHTML = "";
+
   recaptchaVerifier = new RecaptchaVerifier(auth, containerId, {
     size: "invisible",
   });
