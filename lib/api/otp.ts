@@ -25,6 +25,14 @@ async function request<T>(path: string, init: RequestInit): Promise<OTPResponse<
     headers: { "Content-Type": "application/json" },
     ...init,
   });
+  if (!res.ok) {
+    const text = await res.text();
+    try {
+      return JSON.parse(text) as OTPResponse<T>;
+    } catch {
+      return { success: false, message: `Server xətası: ${res.status}`, code: "server_error" };
+    }
+  }
   return res.json() as Promise<OTPResponse<T>>;
 }
 
