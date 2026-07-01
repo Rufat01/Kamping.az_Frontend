@@ -20,6 +20,9 @@ export default function PhoneAuthForm({ callbackUrl = "/" }: Props) {
   const [authError, setAuthError] = useState("");
   const [authing, setAuthing] = useState(false);
   const autoSubmitRef = useRef(false);
+  const isBusyRef = useRef(false);
+  const authingRef = useRef(false);
+  const verifyOTPRef = useRef<((otp: string) => Promise<void>) | null>(null);
 
   const {
     step,
@@ -64,16 +67,21 @@ export default function PhoneAuthForm({ callbackUrl = "/" }: Props) {
     },
   });
 
-  // Auto-submit when 6 digits entered
+  isBusyRef.current = isBusy;
+  authingRef.current = authing;
+  verifyOTPRef.current = verifyOTP;
+
+  // Auto-submit when 6 digits entered — deps yalnız [otpValue]:
+  // isBusy/authing/verifyOTP dəyişəndə effect yenidən işləməsin
   useEffect(() => {
-    if (otpValue.length === 6 && !isBusy && !authing && !autoSubmitRef.current) {
+    if (otpValue.length === 6 && !isBusyRef.current && !authingRef.current && !autoSubmitRef.current) {
       autoSubmitRef.current = true;
-      verifyOTP(otpValue).finally(() => {
+      verifyOTPRef.current?.(otpValue).finally(() => {
         autoSubmitRef.current = false;
       });
     }
     if (otpValue.length < 6) autoSubmitRef.current = false;
-  }, [otpValue, isBusy, authing, verifyOTP]);
+  }, [otpValue]);
 
   function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
     const v = e.target.value;
