@@ -71,14 +71,17 @@ export default function PhoneAuthForm({ callbackUrl = "/" }: Props) {
   authingRef.current = authing;
   verifyOTPRef.current = verifyOTP;
 
-  // Auto-submit when 6 digits entered — deps yalnız [otpValue]:
-  // isBusy/authing/verifyOTP dəyişəndə effect yenidən işləməsin
+  // Auto-submit when 6 digits entered.
+  // deps yalnız [otpValue] — isBusy/authing/verifyOTP dəyişəndə effect yenidən işləməsin
   useEffect(() => {
     if (otpValue.length === 6 && !isBusyRef.current && !authingRef.current && !autoSubmitRef.current) {
-      autoSubmitRef.current = true;
-      verifyOTPRef.current?.(otpValue).finally(() => {
-        autoSubmitRef.current = false;
-      });
+      const fn = verifyOTPRef.current;
+      if (fn) {
+        autoSubmitRef.current = true;
+        fn(otpValue).finally(() => {
+          autoSubmitRef.current = false;
+        });
+      }
     }
     if (otpValue.length < 6) autoSubmitRef.current = false;
   }, [otpValue]);

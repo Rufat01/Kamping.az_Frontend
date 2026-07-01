@@ -20,6 +20,8 @@ export default function PhoneVerifyField({
   const [phoneError, setPhoneError] = useState("");
   const [otpValue, setOtpValue] = useState("");
   const autoSubmitRef = useRef(false);
+  const isBusyRef = useRef(false);
+  const verifyOTPRef = useRef<((otp: string) => Promise<void>) | null>(null);
 
   const {
     step,
@@ -44,16 +46,23 @@ export default function PhoneVerifyField({
     },
   });
 
-  // Auto-submit when 6 digits entered
+  isBusyRef.current = isBusy;
+  verifyOTPRef.current = verifyOTP;
+
+  // Auto-submit when 6 digits entered.
+  // deps yalnız [otpValue] — isBusy/verifyOTP dəyişəndə effect yenidən işləməsin
   useEffect(() => {
-    if (otpValue.length === 6 && !isBusy && !autoSubmitRef.current) {
-      autoSubmitRef.current = true;
-      verifyOTP(otpValue).finally(() => {
-        autoSubmitRef.current = false;
-      });
+    if (otpValue.length === 6 && !isBusyRef.current && !autoSubmitRef.current) {
+      const fn = verifyOTPRef.current;
+      if (fn) {
+        autoSubmitRef.current = true;
+        fn(otpValue).finally(() => {
+          autoSubmitRef.current = false;
+        });
+      }
     }
     if (otpValue.length < 6) autoSubmitRef.current = false;
-  }, [otpValue, isBusy, verifyOTP]);
+  }, [otpValue]);
 
   function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
     const v = e.target.value;
