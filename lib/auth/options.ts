@@ -43,14 +43,18 @@ export const authOptions: NextAuthOptions = {
       id: "phone",
       name: "Phone",
       credentials: {
-        idToken: { label: "Firebase ID Token", type: "text" },
+        phone: { label: "Telefon", type: "text" },
+        requestId: { label: "Request ID", type: "text" },
       },
       async authorize(credentials) {
         try {
-          const res = await fetch(`${API_URL}/api/users/phone/`, {
+          const res = await fetch(`${API_URL}/api/v1/auth/phone-login/`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id_token: credentials?.idToken }),
+            body: JSON.stringify({
+              phone: credentials?.phone,
+              request_id: credentials?.requestId,
+            }),
           });
           if (!res.ok) return null;
           const data = await res.json();

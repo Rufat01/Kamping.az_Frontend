@@ -1,10 +1,8 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import { Phone, ArrowRight, RotateCcw, CheckCircle2 } from "lucide-react";
-import { initRecaptcha, sendOtp, verifyOtp } from "@/lib/auth/phone";
 
-type Step = "phone" | "otp" | "verified";
-type Status = "idle" | "sending" | "sent" | "verifying";
+import { useState, useEffect, useRef } from "react";
+import { Phone, ArrowRight, RotateCcw, CheckCircle2, Clock, AlertCircle } from "lucide-react";
+import { useOTP } from "@/hooks/useOTP";
 
 interface Props {
   onVerified: (phone: string) => void;
@@ -12,112 +10,96 @@ interface Props {
   containerId?: string;
 }
 
-const FIREBASE_ERRORS: Record<string, string> = {
-  "auth/invalid-verification-code": "Yanlış OTP kodu",
-  "auth/code-expired": "Token müddəti bitib",
-  "auth/too-many-requests": "Çox sayda cəhd. Sonra yenidən cəhd edin",
-  "auth/invalid-phone-number": "Yanlış telefon nömrəsi formatı",
-  "auth/network-request-failed": "Şəbəkə xətası",
-  "auth/captcha-check-failed": "reCAPTCHA xətası. Yenidən cəhd edin",
-};
+const PHONE_RE = /^\+994(50|51|55|60|70|77)\d{7}$/;
 
-function getErrorMessage(err: unknown): string {
-  if (err instanceof Error) {
-    const code = (err as { code?: string }).code ?? "";
-    return FIREBASE_ERRORS[code] ?? err.message ?? "Naməlum xəta";
-  }
-  return "Şəbəkə xətası";
-}
+export default function PhoneVerifyField({
+  onVerified,
+  defaultPhone = "+994",
+}: Props) {
+  const [phoneInput, setPhoneInput] = useState(defaultPhone);
+  const [phoneError, setPhoneError] = useState("");
+  const [otpValue, setOtpValue] = useState("");
+  const autoSubmitRef = useRef(false);
 
-export default function PhoneVerifyField({ onVerified, defaultPhone = "+994", containerId = "phone-recaptcha-container" }: Props) {
-  const [step, setStep] = useState<Step>("phone");
-  const [phone, setPhone] = useState(defaultPhone);
-  const [otp, setOtp] = useState("");
-  const [status, setStatus] = useState<Status>("idle");
-  const [error, setError] = useState("");
-  const [countdown, setCountdown] = useState(0);
-  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    initRecaptcha(containerId);
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, [containerId]);
-
-  function startCountdown() {
-    setCountdown(60);
-    timerRef.current = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-  }
-
-  async function handleSendOtp() {
-    setError("");
-    if (!/^\+994[0-9]{9}$/.test(phone)) {
-      setError("+994XXXXXXXXX formatında daxil edin (9 rəqəm)");
-      return;
-    }
-    setStatus("sending");
-    try {
-      await sendOtp(phone);
-      setStep("otp");
-      setStatus("sent");
-      startCountdown();
-    } catch (err) {
-      setStatus("idle");
-      setError(getErrorMessage(err));
-      initRecaptcha(containerId);
-    }
-  }
-
-  async function handleResend() {
-    if (countdown > 0) return;
-    setError("");
-    setOtp("");
-    setStatus("sending");
-    initRecaptcha(containerId);
-    try {
-      await sendOtp(phone);
-      setStatus("sent");
-      startCountdown();
-    } catch (err) {
-      setStatus("sent");
-      setError(getErrorMessage(err));
-      initRecaptcha(containerId);
-    }
-  }
-
-  async function handleVerifyOtp() {
-    if (otp.length !== 6) {
-      setError("6 rəqəmli kodu daxil edin");
-      return;
-    }
-    setError("");
-    setStatus("verifying");
-    try {
-      await verifyOtp(otp);
-      setStep("verified");
+  const {
+    step,
+    maskedPhone,
+    attemptsLeft,
+    loading,
+    error,
+    timeToExpiry,
+    cooldownLeft,
+    canResend,
+    isExpired,
+    isBusy,
+    formattedExpiry,
+    sendOTP,
+    resendOTP,
+    verifyOTP,
+    backToPhone,
+    clearError,
+  } = useOTP({
+    onVerified: (phone) => {
       onVerified(phone);
-    } catch (err) {
-      setStatus("sent");
-      setError(getErrorMessage(err));
+    },
+  });
+
+  // Auto-submit when 6 digits entered
+  useEffect(() => {
+    if (otpValue.length === 6 && !isBusy && !autoSubmitRef.current) {
+      autoSubmitRef.current = true;
+      verifyOTP(otpValue).finally(() => {
+        autoSubmitRef.current = false;
+      });
     }
+    if (otpValue.length < 6) autoSubmitRef.current = false;
+  }, [otpValue, isBusy, verifyOTP]);
+
+  function handlePhoneChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const v = e.target.value;
+    if (!v.startsWith("+994")) return;
+    setPhoneInput(v);
+    if (phoneError) setPhoneError("");
+    if (error) clearError();
   }
 
-  const isBusy = status === "sending" || status === "verifying";
+  function handleOtpChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const digits = e.target.value.replace(/\D/g, "").slice(0, 6);
+    setOtpValue(digits);
+    if (error) clearError();
+  }
+
+  function handleOtpPaste(e: React.ClipboardEvent<HTMLInputElement>) {
+    e.preventDefault();
+    const digits = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6);
+    setOtpValue(digits);
+    if (error) clearError();
+  }
+
+  async function handleSend() {
+    if (!PHONE_RE.test(phoneInput)) {
+      setPhoneError("Telefon nömrəsi düzgün deyil. Format: +994XXXXXXXXX");
+      return;
+    }
+    setPhoneError("");
+    await sendOTP(phoneInput);
+  }
+
+  async function handleManualVerify() {
+    if (otpValue.length !== 6 || isBusy) return;
+    await verifyOTP(otpValue);
+  }
+
+  function handleBack() {
+    setOtpValue("");
+    backToPhone();
+  }
 
   if (step === "verified") {
     return (
       <div className="flex items-center gap-2 border border-green-300 bg-green-50 rounded-xl px-4 py-3">
         <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0" />
-        <span className="text-sm text-green-800 font-medium">{phone}</span>
+        <span className="text-sm text-green-800 font-medium">{phoneInput}</span>
         <span className="text-xs text-green-600 ml-auto">Doğrulandı</span>
       </div>
     );
@@ -125,112 +107,141 @@ export default function PhoneVerifyField({ onVerified, defaultPhone = "+994", co
 
   return (
     <div className="space-y-3">
-      <div id={containerId} />
-
-      {/* Phone input row */}
+      {/* Phone row */}
       <div className="flex gap-2">
         <div className="relative flex-1">
           <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-forest-400" />
           <input
             type="tel"
-            value={phone}
-            onChange={(e) => {
-              const v = e.target.value;
-              if (!v.startsWith("+994")) return;
-              setPhone(v);
-              if (error) setError("");
-            }}
+            value={phoneInput}
+            onChange={handlePhoneChange}
             placeholder="+994501234567"
             maxLength={13}
             disabled={step === "otp"}
             className={`w-full border rounded-xl pl-9 pr-3 py-3 text-sm focus:outline-none transition-colors disabled:bg-forest-50 disabled:text-forest-400 ${
-              error && step === "phone"
+              phoneError
                 ? "border-red-300 bg-red-50"
                 : "border-forest-200 bg-white focus:border-forest-400"
             }`}
           />
         </div>
+
         {step === "phone" && (
           <button
             type="button"
-            onClick={handleSendOtp}
+            onClick={handleSend}
             disabled={isBusy}
             className="flex items-center gap-1.5 bg-forest-800 hover:bg-forest-700 disabled:bg-forest-400 text-white text-sm font-semibold px-4 rounded-xl transition-all whitespace-nowrap disabled:cursor-not-allowed"
           >
-            {status === "sending" ? <Spinner /> : <ArrowRight className="w-3.5 h-3.5" />}
-            {status === "sending" ? "Göndərilir..." : "Doğrula"}
+            {loading === "sending" ? <Spinner /> : <ArrowRight className="w-3.5 h-3.5" />}
+            {loading === "sending" ? "Göndərilir..." : "Doğrula"}
           </button>
         )}
+
         {step === "otp" && (
           <button
             type="button"
-            onClick={() => {
-              setStep("phone");
-              setOtp("");
-              setError("");
-              setStatus("idle");
-              if (timerRef.current) clearInterval(timerRef.current);
-              setCountdown(0);
-              initRecaptcha(containerId);
-            }}
-            className="text-xs text-forest-500 hover:text-forest-800 px-3 whitespace-nowrap transition-colors"
+            onClick={handleBack}
+            disabled={isBusy}
+            className="text-xs text-forest-500 hover:text-forest-800 disabled:text-forest-300 px-3 whitespace-nowrap transition-colors"
           >
             Dəyiş
           </button>
         )}
       </div>
 
-      {/* OTP row */}
+      {phoneError && <p className="text-red-500 text-xs">{phoneError}</p>}
+
+      {/* OTP section */}
       {step === "otp" && (
         <>
           <p className="text-xs text-forest-500">
-            <span className="font-medium text-forest-800">{phone}</span> nömrəsinə SMS göndərildi.
+            <span className="font-medium text-forest-800">{maskedPhone}</span> nömrəsinə SMS göndərildi.
           </p>
-          <div className="flex gap-2">
-            <input
-              type="text"
-              inputMode="numeric"
-              pattern="[0-9]*"
-              maxLength={6}
-              value={otp}
-              onChange={(e) => {
-                setOtp(e.target.value.replace(/\D/g, ""));
-                if (error) setError("");
-              }}
-              placeholder="000000"
-              autoFocus
-              className={`flex-1 border rounded-xl px-4 py-3 text-base text-center tracking-[0.5em] font-mono focus:outline-none transition-colors ${
-                error
-                  ? "border-red-300 bg-red-50"
-                  : "border-forest-200 bg-white focus:border-forest-400"
-              }`}
-            />
-            <button
-              type="button"
-              onClick={handleVerifyOtp}
-              disabled={otp.length !== 6 || isBusy}
-              className="flex items-center gap-1.5 bg-forest-800 hover:bg-forest-700 disabled:bg-forest-400 text-white text-sm font-semibold px-4 rounded-xl transition-all disabled:cursor-not-allowed"
-            >
-              {status === "verifying" ? <Spinner /> : null}
-              {status === "verifying" ? "Yoxlanılır..." : "Təsdiqlə"}
-            </button>
-          </div>
 
-          <div className="flex items-center justify-end">
-            <button
-              type="button"
-              onClick={handleResend}
-              disabled={countdown > 0 || isBusy}
-              className="flex items-center gap-1 text-xs text-forest-500 hover:text-forest-800 disabled:text-forest-300 disabled:cursor-not-allowed transition-colors"
-            >
-              <RotateCcw className="w-3 h-3" />
-              {countdown > 0 ? `Yenidən göndər (${countdown}s)` : "Yenidən göndər"}
-            </button>
-          </div>
+          {/* Expiry indicator */}
+          {!isExpired && timeToExpiry > 0 && (
+            <div className="flex items-center gap-1 text-xs text-forest-400">
+              <Clock className="w-3 h-3" />
+              <span>Kodun vaxtı: {formattedExpiry}</span>
+            </div>
+          )}
+
+          {/* OTP input row */}
+          {!isExpired ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                inputMode="numeric"
+                pattern="[0-9]*"
+                maxLength={6}
+                value={otpValue}
+                onChange={handleOtpChange}
+                onPaste={handleOtpPaste}
+                placeholder="000000"
+                autoFocus
+                disabled={isBusy}
+                className={`flex-1 border rounded-xl px-4 py-3 text-base text-center tracking-[0.5em] font-mono focus:outline-none transition-colors disabled:bg-forest-50 ${
+                  error
+                    ? "border-red-300 bg-red-50"
+                    : "border-forest-200 bg-white focus:border-forest-400"
+                }`}
+              />
+              <button
+                type="button"
+                onClick={handleManualVerify}
+                disabled={otpValue.length !== 6 || isBusy}
+                className="flex items-center gap-1.5 bg-forest-800 hover:bg-forest-700 disabled:bg-forest-400 text-white text-sm font-semibold px-4 rounded-xl transition-all disabled:cursor-not-allowed"
+              >
+                {loading === "verifying" ? <Spinner /> : null}
+                {loading === "verifying" ? "Yoxlanılır..." : "Təsdiqlə"}
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
+              <span className="text-sm text-amber-700">Kodun vaxtı bitdi</span>
+              <button
+                type="button"
+                onClick={() => resendOTP()}
+                className="text-xs font-semibold text-amber-700 hover:text-amber-900 transition-colors"
+              >
+                Yeni kod al
+              </button>
+            </div>
+          )}
+
+          {/* Attempt count hint */}
+          {attemptsLeft < 5 && attemptsLeft > 0 && !isExpired && (
+            <p className="text-xs text-amber-600 flex items-center gap-1">
+              <AlertCircle className="w-3 h-3" />
+              {attemptsLeft} cəhd qalıb
+            </p>
+          )}
+
+          {/* Resend */}
+          {!isExpired && (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => resendOTP()}
+                disabled={!canResend || isBusy}
+                className="flex items-center gap-1 text-xs text-forest-500 hover:text-forest-800 disabled:text-forest-300 disabled:cursor-not-allowed transition-colors"
+              >
+                <RotateCcw className="w-3 h-3" />
+                {cooldownLeft > 0 ? `Yenidən göndər (${cooldownLeft}s)` : "Yenidən göndər"}
+              </button>
+            </div>
+          )}
         </>
       )}
 
-      {error && <p className="text-red-500 text-xs">{error}</p>}
+      {/* Error */}
+      {error && (
+        <p className="text-red-500 text-xs flex items-center gap-1">
+          <AlertCircle className="w-3 h-3 shrink-0" />
+          {error.message}
+        </p>
+      )}
     </div>
   );
 }
