@@ -124,7 +124,7 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
 
                     {/* Slider — kənara klik keçməsin */}
                     <div
-                        className="relative w-full max-w-5xl px-16"
+                        className="relative w-full max-w-5xl px-0 sm:px-16"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <Swiper
@@ -139,7 +139,7 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
                             {sorted.map((img, i) => (
                                 <SwiperSlide key={img.id}>
                                     <div className="swiper-zoom-container">
-                                        <div className="relative h-[80vh] w-full">
+                                        <div className="relative h-[90vh] w-full sm:h-[80vh]">
                                             <Image
                                                 src={img.image || "/placeholder.jpg"}
                                                 alt={`${title} — ${i + 1}`}
@@ -235,6 +235,13 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
         .gallery-main .swiper-button-next::after,
         .gallery-main .swiper-button-prev::after {
           font-size: 14px;
+        }
+
+        @media (max-width: 639px) {
+          .lightbox-swiper .swiper-button-next,
+          .lightbox-swiper .swiper-button-prev {
+            display: none !important;
+          }
         }
       `}</style>
         </>
