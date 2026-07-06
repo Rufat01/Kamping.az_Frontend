@@ -48,27 +48,6 @@ const TIMELINE = [
   },
 ];
 
-const TEAM = [
-  {
-    name: "Rufat Mammadov",
-    role: "Banı / CEO",
-    bio: "10+ il IT və 15 il kamp təcrübəsi. Lerikin meşelərini avucu kimi tani.",
-    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=400&q=80",
-  },
-  {
-    name: "Aysel Quliyeva",
-    role: "Məhsul Direktoru",
-    bio: "Dizayn və tebiet arasinda korpu. UX/UI mutexessisi, fotoqraf.",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&q=80",
-  },
-  {
-    name: "Murad Aliyev",
-    role: "Texnoloji Direktor",
-    bio: "Backend ekspertı. Code yazmaq qədər mese cigirlarini da sevir.",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&q=80",
-  },
-];
-
 export default function AboutPage() {
   return (
      <>
@@ -117,7 +96,7 @@ export default function AboutPage() {
           <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-6"
             style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}>
             Təbiət bizim<br />
-            <em className="text-[#D4A574]">ev</em>imizdir
+            <span className="text-[#D4A574]">ev</span>imizdir
           </h1>
 
           <p className="text-[#FAF6F0]/65 text-base sm:text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed font-light">
@@ -338,15 +317,6 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* ── TEAM ── */}
-      <section className="py-20 lg:py-28 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-
-        <svg className="absolute bottom-20 right-10 w-16 h-16 opacity-[0.08] animate-float-slow" viewBox="0 0 64 64" fill="none">
-          <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#4A6B4F" />
-        </svg>
-
       </section>
 
       {/* ── CTA ── */}

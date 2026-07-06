@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   MapPin, Clock, Compass, ChevronRight,
-  Users, CheckCircle2, XCircle, Calendar,
+  Users, CheckCircle2, XCircle, Calendar, Eye,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import ImageGallery from "@/features/(public)/listings/components/ImageGallery";
@@ -41,10 +41,16 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
     notFound();
   }
 
+  const isFullyFree = !tour.price;
+
+  const mobileCtaPriceLabel = tour.price
+    ? <>₼{Number(tour.price).toLocaleString()}<span className="text-[#4A6B4F]/60 text-xs font-normal"> /nəfər</span></>
+    : <span className="text-[#D4A574]">Pulsuz</span>;
+
   return (
     <>
       <Navbar forceScrolled />
-      <main style={{ background: "#FAF6F0" }} className="relative overflow-hidden">
+      <main style={{ background: "#FAF6F0" }} className="relative overflow-x-clip">
 
         {/* Decorative leaves */}
         <svg className="absolute top-32 right-8 w-12 h-12 opacity-[0.12] animate-float-slow pointer-events-none" viewBox="0 0 64 64" fill="none">
@@ -54,7 +60,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
           <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#4A6B4F" />
         </svg>
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 ${tour.owner_phone ? "pb-28 md:pb-16" : "pb-16"}`}>
 
           {/* Breadcrumb */}
           <nav aria-label="Naviqasiya" className="mb-6 flex items-center gap-2 text-sm">
@@ -66,23 +72,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
             <Link href="/tours" className="text-[#4A6B4F]/70 hover:text-[#2D4A33] transition-colors font-semibold">
               Turlar
             </Link>
-            <ChevronRight className="w-3 h-3 text-[#4A6B4F]/40" />
-            <span className="text-[#2D4A33] font-bold truncate">{tour.title}</span>
           </nav>
-
-          {/* Image Gallery */}
-          {(tour.images?.length || tour.cover_image) && (
-            <section aria-label="Şəkillər" className="mb-10">
-              <ImageGallery
-                images={
-                  tour.images?.length
-                    ? tour.images
-                    : [{ id: 0, image: tour.cover_image!, is_cover: true }]
-                }
-                title={tour.title}
-              />
-            </section>
-          )}
 
           {/* Main content + sidebar */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
@@ -90,16 +80,27 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
             {/* Left — main content */}
             <div className="lg:col-span-2 space-y-10">
 
+              {/* Image Gallery */}
+              {(tour.images?.length || tour.cover_image) && (
+                <section aria-label="Şəkillər">
+                  <ImageGallery
+                    images={
+                      tour.images?.length
+                        ? tour.images
+                        : [{ id: 0, image: tour.cover_image!, is_cover: true }]
+                    }
+                    title={tour.title}
+                  />
+                </section>
+              )}
+
               {/* Title section */}
               <section>
                 <div className="flex items-start justify-between gap-6 mb-4">
                   <div className="flex-1">
-                    <div className="inline-block bg-white text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30 mb-4">
-                      Tur paketi
-                    </div>
 
                     <h1 className="font-display font-bold text-[#1F2D24] leading-[0.95] mb-3"
-                      style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)" }}>
+                      style={{ fontSize: "24px" }}>
                       {tour.title}
                     </h1>
 
@@ -111,15 +112,7 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
                     )}
                   </div>
 
-                  {/* Desktop quick price */}
-                  {tour.price && (
-                    <div className="hidden sm:block text-right shrink-0">
-                      <p className="font-display text-3xl font-bold text-[#1F2D24]">
-                        ₼{Number(tour.price).toLocaleString()}
-                      </p>
-                      <p className="text-xs text-[#4A6B4F]/60 mt-1">nəfər başına</p>
-                    </div>
-                  )}
+                  
                 </div>
 
                 {/* Stats bar */}
@@ -252,77 +245,53 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
             {/* Right — sticky sidebar */}
             <aside className="lg:sticky lg:top-24 h-fit space-y-5">
 
-              {/* Owner / Guide card */}
-              {tour.owner_name && (
+              {/* Rezervasiya kartı — rəhbər, qiymət və detallar bir bölmədə */}
+              {(tour.owner_name || tour.price || tour.owner_phone) && (
                 <div className="bg-white rounded-3xl overflow-hidden"
                   style={{ boxShadow: "0 8px 30px -5px rgba(45,74,51,0.12)" }}>
 
                   <div className="px-6 py-3 border-b border-dashed border-[#E8E5D8]"
                     style={{ background: "#FAF6F0" }}>
                     <p className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                      Tur rəhbəri
+                      Rezervasiya
                     </p>
                   </div>
 
                   <div className="p-6 space-y-5">
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full text-[#FAF6F0] text-lg font-bold font-display"
-                          style={{ background: "#2D4A33" }}>
-                          {tour.owner_name?.charAt(0).toUpperCase()}
+                    {tour.owner_name && (
+                      <div className="flex items-center gap-3 pb-5 border-b border-dashed border-[#E8E5D8]">
+                        <div className="relative">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-full text-[#FAF6F0] text-lg font-bold font-display"
+                            style={{ background: "#2D4A33" }}>
+                            {tour.owner_name.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white"
+                            style={{ background: "#D4A574" }} />
                         </div>
-                        <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white"
-                          style={{ background: "#D4A574" }} />
+                        <div>
+                          <p className="font-display text-lg font-bold text-[#1F2D24]">{tour.owner_name}</p>
+                          <p className="text-xs text-[#4A6B4F]/60">Doğrulanmış rehber</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="font-display text-lg font-bold text-[#1F2D24]">{tour.owner_name}</p>
-                        <p className="text-xs text-[#4A6B4F]/60">Doğrulanmış rehber</p>
-                      </div>
-                    </div>
-
-                    {tour.owner_phone && (
-                      <RevealPhoneButton
-                        phone={tour.owner_phone}
-                        tourId={tour.id}
-                        isLoggedIn={!!session}
-                        autoReveal={autoReveal}
-                      />
                     )}
-                  </div>
-                </div>
-              )}
 
-              {/* Owner phone (no name) */}
-              {!tour.owner_name && tour.owner_phone && (
-                <RevealPhoneButton
-                  phone={tour.owner_phone}
-                  tourId={tour.id}
-                  isLoggedIn={!!session}
-                  autoReveal={autoReveal}
-                />
-              )}
-
-              {/* Price card — paid */}
-              {tour.price && (
-                <div className="bg-white rounded-3xl overflow-hidden"
-                  style={{ boxShadow: "0 8px 30px -5px rgba(45,74,51,0.12)" }}>
-
-                  <div className="px-6 py-3 border-b border-dashed border-[#E8E5D8]"
-                    style={{ background: "#FAF6F0" }}>
-                    <p className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                      Qiymət
-                    </p>
-                  </div>
-
-                  <div className="p-6 space-y-4">
-                    <div className="text-center pb-4 border-b border-dashed border-[#E8E5D8]">
-                      <div className="flex items-baseline justify-center gap-1">
-                        <span className="font-display text-4xl font-bold text-[#1F2D24]">
-                          ₼{Number(tour.price).toLocaleString()}
-                        </span>
-                        <span className="text-[#4A6B4F]/60 text-sm">/nəfər</span>
+                    {tour.price ? (
+                      <div className="text-center pb-4 border-b border-dashed border-[#E8E5D8]">
+                        <div className="flex items-baseline justify-center gap-1">
+                          <span className="font-display text-4xl font-bold text-[#1F2D24]">
+                            ₼{Number(tour.price).toLocaleString()}
+                          </span>
+                          <span className="text-[#4A6B4F]/60 text-sm">/nəfər</span>
+                        </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="text-center py-4 rounded-2xl border border-dashed border-[#D4A574]/40"
+                        style={{ background: "#FAF6F0" }}>
+                        <span className="font-display text-2xl font-bold text-[#A0613B]">
+                          Tamamilə Pulsuz
+                        </span>
+                      </div>
+                    )}
 
                     <div className="space-y-3 text-sm">
                       {tour.duration && (
@@ -349,6 +318,14 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
                           <span className="font-bold text-[#1F2D24]">maks. {tour.max_participants} nəfər</span>
                         </div>
                       )}
+                      {typeof tour.view_count === "number" && (
+                        <div className="flex justify-between items-center">
+                          <span className="text-[#4A6B4F]/70 flex items-center gap-2">
+                            <Eye className="w-3.5 h-3.5" /> Baxış sayı
+                          </span>
+                          <span className="font-bold text-[#1F2D24]">{tour.view_count}</span>
+                        </div>
+                      )}
                     </div>
 
                     {tour.owner_phone && (
@@ -357,56 +334,9 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
                         tourId={tour.id}
                         isLoggedIn={!!session}
                         autoReveal={autoReveal}
-                        label="Rezervasiya et"
-                        whatsapp
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
-
-              {/* Free tour card */}
-              {!tour.price && (
-                <div className="rounded-3xl overflow-hidden relative"
-                  style={{
-                    background: "#1A3A2E",
-                    boxShadow: "0 8px 30px -5px rgba(26,58,46,0.3)"
-                  }}>
-
-                  <svg className="absolute top-4 right-4 w-12 h-12 opacity-30" viewBox="0 0 64 64" fill="none">
-                    <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#D4A574" />
-                  </svg>
-
-                  <div className="p-7 space-y-5 relative z-10">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl"
-                        style={{ background: "#D4A574" }}>
-                        🌿
-                      </div>
-                      <div>
-                        <p className="text-[#D4A574] text-xs font-bold uppercase tracking-widest">
-                          Pulsuz Tur
-                        </p>
-                        <h3 className="font-display text-lg font-bold text-[#FAF6F0]">
-                          Ödəniş tələb olunmur
-                        </h3>
-                      </div>
-                    </div>
-
-                    <div className="text-center py-4 rounded-2xl bg-[#FAF6F0]/5 border border-dashed border-[#D4A574]/30">
-                      <span className="font-display text-2xl font-bold text-[#D4A574]">
-                        Tamamilə Pulsuz
-                      </span>
-                    </div>
-
-                    {tour.owner_phone && (
-                      <RevealPhoneButton
-                        phone={tour.owner_phone}
-                        tourId={tour.id}
-                        isLoggedIn={!!session}
-                        autoReveal={autoReveal}
-                        variant="gold"
-                        label="Əlaqə"
+                        label={tour.price ? "Rezervasiya et" : "Əlaqə"}
+                        variant={tour.price ? "dark" : "gold"}
+                        whatsapp={!!tour.price}
                       />
                     )}
                   </div>
@@ -426,6 +356,29 @@ export default async function TourDetailPage({ params, searchParams }: PageProps
             </aside>
           </div>
         </div>
+
+        {/* Mobile — aşağıda sabit rezervasiya zolağı (bottom tab nav-ın üstündə) */}
+        {tour.owner_phone && (
+          <div className="md:hidden fixed inset-x-0 z-[1100] bg-white/95 backdrop-blur-md border-t border-[#E8E5D8]"
+            style={{ bottom: "4rem", boxShadow: "0 -4px 20px -4px rgba(45,74,51,0.15)" }}>
+            <div className="flex items-center gap-4 px-4 py-3">
+              <div className="font-display text-xl font-bold text-[#1F2D24] shrink-0">
+                {mobileCtaPriceLabel}
+              </div>
+              <div className="flex-1 min-w-0">
+                <RevealPhoneButton
+                  phone={tour.owner_phone}
+                  tourId={tour.id}
+                  isLoggedIn={!!session}
+                  autoReveal={false}
+                  variant={isFullyFree ? "gold" : "dark"}
+                  label={isFullyFree ? "Əlaqə" : "Rezervasiya et"}
+                  whatsapp={!isFullyFree}
+                />
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </>
   );

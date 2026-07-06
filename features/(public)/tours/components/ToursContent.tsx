@@ -3,88 +3,67 @@
 import { useEffect } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
-import { MapPin, Eye, Clock, ArrowUpRight } from "lucide-react";
+import { MapPin, Eye, Clock } from "lucide-react";
 import { usePagination } from "@/hooks/usePagination";
 import Pagination from "@/components/ui/Pagination";
 import type { Tour } from "@/types";
 
 const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts/`;
 
-const CARD_ROTATIONS = [-0.5, 0.4, -0.3, 0.6, -0.4, 0.3];
-
-function TourCard({ tour, index }: { tour: Tour; index: number }) {
-  const rotate = CARD_ROTATIONS[index % CARD_ROTATIONS.length];
-
+function TourCard({ tour }: { tour: Tour }) {
   return (
     <Link
       href={`/tours/${tour.id}`}
-      className="group block transition-all duration-300 hover:!rotate-0 hover:-translate-y-2"
-      style={{ transform: `rotate(${rotate}deg)` }}
+      className="tour-card bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-forest-100 block group"
     >
-      <div
-        className="bg-white rounded-2xl overflow-hidden"
-        style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08), 0 12px 30px -6px rgba(45,74,51,0.12)" }}
-      >
-        <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
-          {tour.cover_image ? (
-            <img
-              src={tour.cover_image}
-              alt={tour.title}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-5xl" style={{ background: "#E8E5D8" }}>
-              🏔️
-            </div>
-          )}
-
-          {tour.duration && (
-            <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-[#FAF6F0]/95 backdrop-blur text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30">
-              <Clock className="w-3 h-3" />
-              {tour.duration}
-            </div>
-          )}
-
-          <div className="absolute top-3 right-3 flex items-center gap-1 bg-black/40 backdrop-blur text-white text-xs font-semibold px-2.5 py-1.5 rounded-full">
-            <Eye className="w-3 h-3" />
-            {tour.view_count}
+      <div className="relative aspect-[4/3] sm:aspect-[16/9] overflow-hidden">
+        {tour.cover_image ? (
+          <img
+            src={tour.cover_image}
+            alt={tour.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full bg-forest-100 flex items-center justify-center">
+            <span className="text-4xl">🏔️</span>
           </div>
+        )}
+
+        {tour.duration && (
+          <div className="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 flex items-center gap-1 bg-white/90 backdrop-blur-sm text-forest-800 text-[10px] sm:text-xs font-semibold px-2 py-1 sm:px-3 sm:py-1.5 rounded-full max-w-[75%]">
+            <Clock className="w-3 h-3 shrink-0" />
+            <span className="truncate">{tour.duration}</span>
+          </div>
+        )}
+
+        <div className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 flex items-center gap-1 bg-black/40 backdrop-blur text-white text-[10px] sm:text-xs font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 rounded-full">
+          <Eye className="w-3 h-3" />
+          {tour.view_count}
+        </div>
+      </div>
+
+      <div className="p-2.5 sm:p-5">
+        <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-2">
+          {tour.price ? (
+            <div className="min-w-0">
+              <span className="font-display text-base sm:text-xl font-bold text-forest-900">
+                ₼{Number(tour.price).toLocaleString()}
+              </span>
+              <span className="text-forest-400 text-[10px] sm:text-xs"> / nəfər</span>
+            </div>
+          ) : (
+            <span className="font-display text-base sm:text-xl font-bold text-green-600">Pulsuz</span>
+          )}
         </div>
 
-        <div className="p-5">
-          <div className="flex items-start justify-between gap-2 mb-2">
-            <h3 className="font-display text-lg font-bold text-[#1F2D24] leading-tight flex-1 line-clamp-2">
-              {tour.title}
-            </h3>
-            <ArrowUpRight className="w-4 h-4 text-[#4A6B4F] shrink-0 opacity-50 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-          </div>
+        <h2 className="font-display text-xs sm:text-lg font-bold text-forest-900 leading-tight truncate mb-1.5 sm:mb-2">
+          {tour.title}
+        </h2>
 
-          {tour.location && (
-            <div className="flex items-center gap-1.5 text-[#4A6B4F]/70 text-sm mb-3">
-              <MapPin className="w-3.5 h-3.5" />
-              {tour.location}
-            </div>
-          )}
-
-          <p className="text-[#4A6B4F]/70 text-sm leading-relaxed line-clamp-3 mb-4 font-light">
-            {tour.description}
-          </p>
-
-          <div className="flex items-center justify-between pt-4 border-t border-dashed border-[#E8E5D8]">
-            <div className="ml-auto">
-              {tour.price ? (
-                <div>
-                  <span className="font-display text-xl font-bold text-[#1F2D24]">
-                    ₼{Number(tour.price).toLocaleString()}
-                  </span>
-                  <span className="text-[#4A6B4F]/60 text-xs ml-1">/ nəfər</span>
-                </div>
-              ) : (
-                <span className="inline-block bg-[#4A6B4F]/10 text-[#4A6B4F] text-xs font-bold px-3 py-1.5 rounded-full">
-                  🌿 Pulsuz
-                </span>
-              )}
-            </div>
+        <div className="flex items-center justify-between gap-2 pt-1.5 sm:pt-3 border-t border-forest-100">
+          <div className="flex items-center gap-1 text-forest-500 text-[11px] sm:text-sm min-w-0">
+            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+            <span className="truncate">{tour.location || "Azərbaycan"}</span>
           </div>
         </div>
       </div>
@@ -94,24 +73,20 @@ function TourCard({ tour, index }: { tour: Tour; index: number }) {
 
 function ToursGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-7">
       {Array.from({ length: 9 }).map((_, i) => (
         <div
           key={i}
-          className="bg-white rounded-2xl overflow-hidden animate-pulse"
+          className="bg-white rounded-xl sm:rounded-2xl overflow-hidden animate-pulse"
           style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08), 0 12px 30px -6px rgba(45,74,51,0.12)" }}
         >
-          <div className="bg-[#E8E5D8]" style={{ aspectRatio: "16/9" }} />
-          <div className="p-5 space-y-3">
+          <div className="bg-[#E8E5D8]" style={{ aspectRatio: "4/3" }} />
+          <div className="p-2.5 sm:p-5 space-y-2 sm:space-y-3">
             <div className="h-5 bg-[#E8E5D8] rounded-lg w-full" />
-            <div className="h-3.5 bg-[#E8E5D8] rounded-lg w-1/2" />
-            <div className="space-y-2">
-              <div className="h-3 bg-[#E8E5D8] rounded-lg w-full" />
-              <div className="h-3 bg-[#E8E5D8] rounded-lg w-5/6" />
-              <div className="h-3 bg-[#E8E5D8] rounded-lg w-3/4" />
-            </div>
-            <div className="pt-4 border-t border-dashed border-[#E8E5D8] flex justify-end">
-              <div className="h-6 w-24 bg-[#E8E5D8] rounded-lg" />
+            <div className="h-3.5 bg-[#E8E5D8] rounded-lg w-2/3" />
+            <div className="pt-2 sm:pt-4 border-t border-dashed border-[#E8E5D8] flex items-center justify-between">
+              <div className="h-3 bg-[#E8E5D8] rounded-lg w-16" />
+              <div className="h-3 bg-[#E8E5D8] rounded-lg w-20" />
             </div>
           </div>
         </div>
@@ -208,9 +183,9 @@ export default function ToursContent() {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-7">
-        {data.results.map((tour, i) => (
-          <TourCard key={tour.id} tour={tour} index={i} />
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-7">
+        {data.results.map((tour) => (
+          <TourCard key={tour.id} tour={tour} />
         ))}
       </div>
       <Pagination

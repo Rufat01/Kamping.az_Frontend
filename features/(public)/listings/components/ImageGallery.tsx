@@ -41,7 +41,7 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
     return (
         <>
             {/* ── Əsas qalereya ── */}
-            <div className="overflow-hidden rounded-2xl">
+            <div className="overflow-hidden -mx-4 sm:mx-0 rounded-none sm:rounded-2xl">
                 <Swiper
                     modules={[Navigation, Thumbs, Keyboard]}
                     navigation
@@ -49,7 +49,7 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
                     thumbs={{ swiper: thumbsSwiper }}
                     onSwiper={setMainSwiper}
                     onSlideChange={(s) => setActiveIndex(s.activeIndex)}
-                    className="gallery-main aspect-[16/9] w-full cursor-zoom-in"
+                    className="gallery-main h-[320px] sm:h-auto sm:aspect-[16/9] w-full cursor-zoom-in"
                     onClick={() => openLightbox(activeIndex)}
                 >
                     {sorted.map((img, i) => (
@@ -72,37 +72,39 @@ export default function ImageGallery({ images, title }: { images: ListingImage[]
                     </div>
                 </Swiper>
 
-                {/* Thumbnails */}
-                {sorted.length > 1 && (
-                    <Swiper
-                        modules={[Thumbs]}
-                        onSwiper={setThumbsSwiper}
-                        slidesPerView={4}
-                        spaceBetween={8}
-                        watchSlidesProgress
-                        className="gallery-thumbs mt-3"
-                    >
-                        {sorted.map((img, i) => (
-                            <SwiperSlide key={img.id}>
-                                <div
-                                    className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
-                                    onClick={() => {
-                                        mainSwiper?.slideTo(i);
-                                        setActiveIndex(i);
-                                    }}
-                                >
-                                    <Image
-                                        src={img.image || "/placeholder.jpg"}
-                                        alt={`${title} — ${i + 1}`}
-                                        fill
-                                        className="object-cover"
-                                        sizes="160px"
-                                    />
-                                </div>
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
-                )}
+                {/* Thumbnails — yalnız desktop/tablet, mobildə gizli */}
+                {/* {sorted.length > 1 && (
+                    <div className="hidden sm:block mt-3">
+                        <Swiper
+                            modules={[Thumbs]}
+                            onSwiper={setThumbsSwiper}
+                            slidesPerView="auto"
+                            spaceBetween={8}
+                            watchSlidesProgress
+                            className="gallery-thumbs"
+                        >
+                            {sorted.map((img, i) => (
+                                <SwiperSlide key={img.id} style={{ width: 120 }}>
+                                    <div
+                                        className="relative aspect-square cursor-pointer overflow-hidden rounded-lg"
+                                        onClick={() => {
+                                            mainSwiper?.slideTo(i);
+                                            setActiveIndex(i);
+                                        }}
+                                    >
+                                        <Image
+                                            src={img.image || "/placeholder.jpg"}
+                                            alt={`${title} — ${i + 1}`}
+                                            fill
+                                            className="object-cover"
+                                            sizes="120px"
+                                        />
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+                )} */}
             </div>
 
             {/* ── Lightbox ── */}

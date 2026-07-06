@@ -12,11 +12,11 @@ const BASE_URL = `${process.env.NEXT_PUBLIC_API_URL}/api/v1/listings/`;
 
 function ListingsGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-7">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 lg:gap-7">
       {Array.from({ length: 12 }).map((_, i) => (
         <div
           key={i}
-          className="bg-white rounded-2xl overflow-hidden animate-pulse"
+          className="bg-white rounded-xl sm:rounded-2xl overflow-hidden animate-pulse"
           style={{ boxShadow: "0 4px 20px -2px rgba(45,74,51,0.08), 0 12px 30px -6px rgba(45,74,51,0.12)" }}
         >
           <div className="bg-[#E8E5D8]" style={{ aspectRatio: "4/3" }} />
@@ -123,7 +123,7 @@ export default function ListingsContent() {
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-7">
+      <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 lg:gap-7">
         {data.results.map((listing) => (
           <ListingCard key={listing.id} listing={listing} />
         ))}

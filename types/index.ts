@@ -133,8 +133,11 @@ export interface ReservationIntent {
   user_full_name: string;
   user_email: string;
   user_phone: string;
-  tour_title: string;
-  tour_id: number;
+  kind: "tour" | "listing";
+  tour_title: string | null;
+  tour_id: number | null;
+  listing_title: string | null;
+  listing_id: number | null;
   status: "pending" | "confirmed" | "cancelled";
   notes: string;
   created_at: string;

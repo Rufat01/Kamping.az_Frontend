@@ -108,7 +108,7 @@ export default function ContactPage() {
 
           <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-6"
             style={{ fontSize: "clamp(3rem, 8vw, 7rem)" }}>
-            Bizimlə <em className="text-[#D4A574]">danış</em>
+            Bizimlə <span className="text-[#D4A574]">danış</span>
           </h1>
 
           <p className="text-[#FAF6F0]/65 text-base sm:text-lg max-w-xl mx-auto leading-relaxed font-light">
@@ -153,7 +153,7 @@ export default function ContactPage() {
               {/* Contact cards — stamps style */}
               {[
                 { icon: Mail, label: "Email", value: "info@kamping.az", href: "mailto:info@kamping.az", color: "#4A6B4F" },
-                { icon: Phone, label: "Telefon", value: "+994 50 123 45 67", href: "tel:+994501234567", color: "#A0613B" },
+                { icon: Phone, label: "Telefon", value: "+994 50 836 43 15", href: "tel:+994508364315", color: "#A0613B" },
                 { icon: MapPin, label: "Ünvan", value: "Bakı, Azərbaycan", href: null, color: "#2D4A33" },
               ].map(({ icon: Icon, label, value, href, color }) => {
                 const Wrapper = href ? "a" : "div";
@@ -190,10 +190,7 @@ export default function ContactPage() {
                 </p>
                 <div className="flex gap-3">
                   {[
-                    { icon: Instagram, href: "#" },
-                    { icon: Facebook, href: "#" },
-                    { icon: Youtube, href: "#" },
-                    { icon: MessageCircle, href: "#" },
+                    { icon: Instagram, href: "https://www.instagram.com/kampinq.az/" },
                   ].map(({ icon: Icon, href }, i) => (
                     <a key={i} href={href}
                       className="w-11 h-11 rounded-2xl bg-white border-2 border-dashed border-[#4A6B4F]/30 flex items-center justify-center hover:border-[#2D4A33] hover:bg-[#2D4A33] group transition-all">

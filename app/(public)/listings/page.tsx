@@ -7,7 +7,7 @@ import Navbar from "@/components/layout/Navbar";
 
 export const metadata = {
   title: "Kamp Yerleri — Kamping.az",
-  description: "Azerbaycanda en gozal kamp yerleri, glamping, bungalo ve cadir yerlerini kesf edin.",
+  description: "Azerbaycanda en gozel kamp yerleri, glamping, bungalo ve cadir yerlerini kesf edin.",
 };
 
 function ListingsGridSkeleton() {
@@ -37,11 +37,11 @@ function ListingsGridSkeleton() {
 export default function ListingsPage() {
   return (
     <>
-      <Navbar />
-      <main style={{ background: "#FAF6F0" }}>
+      <Navbar forceScrolledMobile/>
+      <main className="pt-16 sm:pt-0" style={{ background: "#FAF6F0" }}>
 
         {/* Hero */}
-        <section className="relative overflow-hidden pt-28 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8" style={{ background: "#1A3A2E" }}>
+        <section className="hidden sm:block relative overflow-hidden pt-28 pb-16 sm:pb-20 px-4 sm:px-6 lg:px-8" style={{ background: "#1A3A2E" }}>
           <div className="absolute inset-0">
             <img
               src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1800&q=85"
@@ -77,7 +77,7 @@ export default function ListingsPage() {
 
             <h1 className="font-display font-bold text-[#FAF6F0] leading-[0.95] tracking-tight mb-5"
               style={{ fontSize: "clamp(2.5rem, 6vw, 5.5rem)" }}>
-              <em className="text-[#D4A574]">Məkanlar</em><br />
+              <span className="text-[#D4A574]">Məkanlar </span>
               kataloqu
             </h1>
           </div>
@@ -93,7 +93,7 @@ export default function ListingsPage() {
         </Suspense>
 
         {/* Listings grid + pagination */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-16">
           <Suspense fallback={<ListingsGridSkeleton />}>
             <ListingsContent />
           </Suspense>

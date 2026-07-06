@@ -23,11 +23,11 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata = {
   title: "Kamping.az",
-  description: "Azerbaycanda en gozal kamp, glamping, bungalo ve cadir yerlerini kesf edin.",
-  keywords: "kamp, camping, glamping, Azerbaijan, cadir, bungalo, tebit, istirahет, kamp yeri",
+  description: "Azerbaycanda en gozel kamp, glamping, bungalo ve cadir yerlerini kesf edin.",
+  keywords: "kamp, camping, glamping, Azerbaijan, cadir, bungalo, tebiet, istirahet, kamp yeri",
   openGraph: {
     title: "Kamping.az",
-    description: "Azerbaycanda en gozal kamp yerlerini kesf edin.",
+    description: "Azerbaycanda en gozel kamp yerlerini kesf edin.",
     url: "https://kamping.az",
     siteName: "Kamping.az",
     locale: "az_AZ",

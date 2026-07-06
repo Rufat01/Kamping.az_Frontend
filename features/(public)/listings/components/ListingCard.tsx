@@ -8,7 +8,7 @@ function ListingCard({ listing }: { listing: Listing }) {
   return (
     <Link
       href={`/listings/${listing.id}`}
-      className="listing-card bg-white rounded-2xl overflow-hidden border border-forest-100 block group"
+      className="listing-card bg-white rounded-xl sm:rounded-2xl overflow-hidden border border-forest-100 block group"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         {listing.cover_image ? (
@@ -22,60 +22,55 @@ function ListingCard({ listing }: { listing: Listing }) {
             <span className="text-4xl">⛺</span>
           </div>
         )}
-        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-forest-800 text-xs font-semibold px-3 py-1.5 rounded-full">
+        <div className="absolute top-1.5 left-1.5 sm:top-3 sm:left-3 bg-white/90 backdrop-blur-sm text-forest-800 text-[10px] sm:text-xs font-semibold px-2 py-1 sm:px-3 sm:py-1.5 rounded-full max-w-[75%] truncate">
           {listing.listing_type_display}
         </div>
         {listing.is_free && (
-          <div className="absolute top-3 right-3 bg-green-500 text-white text-xs font-semibold px-3 py-1.5 rounded-full">
+          <div className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 bg-green-500 text-white text-[10px] sm:text-xs font-semibold px-2 py-1 sm:px-3 sm:py-1.5 rounded-full">
             Pulsuz
           </div>
         )}
       </div>
 
-      <div className="p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h2 className="font-display text-lg font-bold text-forest-900 leading-tight line-clamp-2">
-            {listing.title}
-          </h2>
+      <div className="p-2.5 sm:p-5">
+        <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-2">
+          {listing.is_free ? (
+            <span className="font-display text-base sm:text-xl font-bold text-green-600">Pulsuz</span>
+          ) : listing.entry_fee ? (
+            <div className="min-w-0">
+              <span className="font-display text-base sm:text-xl font-bold text-forest-900">
+                ₼{listing.entry_fee}
+              </span>
+              <span className="text-forest-400 text-[10px] sm:text-xs"> / giriş</span>
+            </div>
+          ) : (
+            <div className="min-w-0">
+              <span className="font-display text-base sm:text-xl font-bold text-forest-900">
+                ₼{listing.price_per_night}
+              </span>
+              <span className="text-forest-400 text-[10px] sm:text-xs"> / gecə</span>
+            </div>
+          )}
           {listing.rating > 0 && (
-            <div className="flex items-center gap-1 shrink-0">
-              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="text-sm font-semibold text-forest-800">{listing.rating}</span>
-              {listing.review_count > 0 && (
-                <span className="text-xs text-forest-400">({listing.review_count})</span>
-              )}
+            <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+              <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-amber-400 text-amber-400" />
+              <span className="text-xs sm:text-sm font-semibold text-forest-800">{listing.rating}</span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center gap-1 text-forest-500 text-sm mb-4">
-          <MapPin className="w-3.5 h-3.5 shrink-0" />
-          <span>{listing.city}</span>
-        </div>
+        <h2 className="font-display text-xs sm:text-lg font-bold text-forest-900 leading-tight truncate mb-1.5 sm:mb-2">
+          {listing.title}
+        </h2>
 
-        <div className="flex items-center justify-between pt-3 border-t border-forest-100">
-          <div className="flex items-center gap-1 text-forest-400 text-sm">
-            <Users className="w-3.5 h-3.5" />
-            <span>Maks. {listing.max_guests} nəfər</span>
+        <div className="flex items-center justify-between gap-2 pt-1.5 sm:pt-3 border-t border-forest-100">
+          <div className="flex items-center gap-1 text-forest-500 text-[11px] sm:text-sm min-w-0">
+            <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+            <span className="truncate">{listing.city}</span>
           </div>
-          <div className="text-right">
-            {listing.is_free ? (
-              <span className="font-display text-lg font-bold text-green-600">Pulsuz</span>
-            ) : listing.entry_fee ? (
-              <div>
-                <span className="font-display text-xl font-bold text-forest-900">
-                  ₼{listing.entry_fee}
-                </span>
-                <span className="text-forest-400 text-xs"> giriş</span>
-              </div>
-            ) : (
-              <div>
-                <span className="font-display text-xl font-bold text-forest-900">
-                  ₼{listing.price_per_night}
-                </span>
-                <span className="text-forest-400 text-xs"> / gecə</span>
-              </div>
-            )}
+          <div className="flex items-center gap-1 text-forest-400 text-[11px] sm:text-sm shrink-0">
+            <Users className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            <span>{listing.max_guests}</span>
           </div>
         </div>
       </div>

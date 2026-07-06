@@ -50,6 +50,9 @@ function IntentCard({
 }) {
   const [loading, setLoading] = useState<"confirmed" | "cancelled" | null>(null);
   const badge = STATUS_BADGE[intent.status];
+  const isListing = intent.kind === "listing";
+  const targetHref = isListing ? `/listings/${intent.listing_id}` : `/tours/${intent.tour_id}`;
+  const targetTitle = isListing ? intent.listing_title : intent.tour_title;
 
   async function handleAction(status: "confirmed" | "cancelled") {
     setLoading(status);
@@ -63,11 +66,14 @@ function IntentCard({
 
       <div className="flex items-start justify-between gap-4 mb-4">
         <div className="min-w-0">
+          <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#A0613B] bg-[#F0EDE6] rounded-full px-2 py-0.5 mb-1.5">
+            {isListing ? "Ev Kirayəsi" : "Tur"}
+          </span>
           <Link
-            href={`/tours/${intent.tour_id}`}
-            className="font-display font-bold text-[#1F2D24] hover:text-[#2D4A33] transition-colors line-clamp-1"
+            href={targetHref}
+            className="block font-display font-bold text-[#1F2D24] hover:text-[#2D4A33] transition-colors line-clamp-1"
           >
-            {intent.tour_title}
+            {targetTitle}
           </Link>
           <p className="text-xs text-[#4A6B4F]/60 mt-1">
             {(() => {

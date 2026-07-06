@@ -177,10 +177,11 @@ body {
   body {
     padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
+}
 
-  .grecaptcha-badge {
-    bottom: calc(4rem + 14px + env(safe-area-inset-bottom, 0px)) !important;
-  }
+/* Hide reCAPTCHA badge visually while keeping it functional */
+.grecaptcha-badge {
+  visibility: hidden !important;
 }
 
 /* Subtle grain texture */

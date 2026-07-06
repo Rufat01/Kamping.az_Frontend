@@ -167,7 +167,7 @@ export default function ListingsFilterBar() {
 
   return (
     <div className="sticky top-16 z-40 border-b" style={{ background: "#FAF6F0", borderColor: "#E8E5D8" }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 lg:py-4">
 
         {/* Search row */}
         <div className="flex gap-2 mb-3">

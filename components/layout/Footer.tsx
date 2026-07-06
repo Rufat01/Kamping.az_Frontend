@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Tent, Instagram, Facebook, Youtube, Mail, Phone } from "lucide-react";
+import Image from "next/image";
 
 const FOOTER_LINKS = {
   "Kəşf et": [
@@ -31,12 +32,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="lg:col-span-2">
             <Link href="/" className="flex items-center gap-2 mb-5">
-              <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
-                <Tent className="w-4 h-4 text-forest-900" strokeWidth={2.5} />
-              </div>
-              <span className="font-display text-xl font-bold text-white">
-                Kamping<span className="text-amber-400">.az</span>
-              </span>
+              <Image src="/icons/logo1.png" alt="Kamping.az Logo" width={120} height={40} className="h-10 w-auto" />
             </Link>
             <p className="text-white/50 text-sm leading-relaxed max-w-xs mb-6">
               Azərbaycanda ən gözəl kamp yerlərini kəşf edin. 
@@ -45,9 +41,7 @@ export default function Footer() {
             {/* Socials */}
             <div className="flex gap-3">
               {[
-                { icon: Instagram, href: "#", label: "Instagram" },
-                { icon: Facebook, href: "#", label: "Facebook" },
-                { icon: Youtube, href: "#", label: "YouTube" },
+                { icon: Instagram, href: "https://www.instagram.com/kampinq.az/", label: "Instagram" },
               ].map(({ icon: Icon, href, label }) => (
                 <a
                   key={label}
@@ -91,11 +85,11 @@ export default function Footer() {
             info@kamping.az
           </a>
           <a
-            href="tel:+994501234567"
+            href="tel:+994508364315"
             className="flex items-center gap-2 text-white/45 hover:text-white text-sm transition-colors"
           >
             <Phone className="w-4 h-4" />
-            +994 50 123 45 67
+            +994 50 836 43 15
           </a>
         </div>
 

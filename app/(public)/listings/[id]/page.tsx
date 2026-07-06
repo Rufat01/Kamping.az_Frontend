@@ -6,7 +6,7 @@ import Link from "next/link";
 import ImageGallery from "@/features/(public)/listings/components/ImageGallery";
 import RevealPhoneButton from "@/features/(public)/listings/components/RevealPhoneButton";
 import WazeButton from "@/features/(public)/listings/components/WazeButton";
-import { MapPin, Star, Users, Compass, ArrowUpRight, Calendar, ChevronRight } from "lucide-react";
+import { MapPin, Star, Users, Compass, ArrowUpRight, Calendar, ChevronRight, Eye } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 
 type PageProps = { params: { id: string }; searchParams?: { reveal_phone?: string } };
@@ -38,10 +38,21 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
         notFound();
     }
 
+    const isHouse = listing.listing_type === "house";
+    const isStandardPaid = !listing.is_free && !listing.entry_fee && listing.price_per_night;
+    const isEntryFee = !!listing.entry_fee;
+    const isFullyFree = listing.is_free && !listing.entry_fee;
+
+    const mobileCtaPriceLabel = isStandardPaid
+        ? <>₼{Number(listing.price_per_night).toLocaleString()}<span className="text-[#4A6B4F]/60 text-xs font-normal"> /gecə</span></>
+        : isEntryFee
+            ? <>₼{Number(listing.entry_fee).toLocaleString()}<span className="text-[#4A6B4F]/60 text-xs font-normal"> giriş</span></>
+            : <span className="text-[#D4A574]">Pulsuz</span>;
+
     return (
         <>
         <Navbar forceScrolled />
-        <main style={{ background: "#FAF6F0" }} className="relative overflow-hidden">
+        <main style={{ background: "#FAF6F0" }} className="relative overflow-x-clip">
 
             {/* Decorative floating leaves — global background */}
             <svg className="absolute top-32 right-8 w-12 h-12 opacity-[0.12] animate-float-slow pointer-events-none" viewBox="0 0 64 64" fill="none">
@@ -51,10 +62,10 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                 <path d="M32 8 C40 16, 48 28, 32 56 C16 28, 24 16, 32 8 Z" fill="#4A6B4F" />
             </svg>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+            <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 ${isHouse && listing.owner_phone ? "pb-28 md:pb-16" : "pb-16"}`}>
 
                 {/* Breadcrumb — compass style */}
-                <nav aria-label="Naviqasiya" className="mb-6 flex items-center gap-2 text-sm">
+                <nav aria-label="Naviqasiya" className="mb-6 flex lg:flex items-center gap-2 text-sm">
                     <Compass className="w-4 h-4 text-[#D4A574]" strokeWidth={1.5} />
                     <Link href="/" className="text-[#4A6B4F]/70 hover:text-[#2D4A33] transition-colors font-semibold">
                         Ana səhifə
@@ -63,14 +74,7 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                     <Link href="/listings" className="text-[#4A6B4F]/70 hover:text-[#2D4A33] transition-colors font-semibold">
                         Məkanlar
                     </Link>
-                    <ChevronRight className="w-3 h-3 text-[#4A6B4F]/40" />
-                    <span className="text-[#2D4A33] font-bold truncate">{listing.title}</span>
                 </nav>
-
-                {/* Image Gallery — toxunulmur */}
-                <section aria-label="Şəkillər" className="mb-10">
-                    <ImageGallery images={listing.images} title={listing.title} />
-                </section>
 
                 {/* Main content + sidebar */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 lg:gap-12">
@@ -78,17 +82,19 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                     {/* Sol — main content */}
                     <div className="lg:col-span-2 space-y-10">
 
+                        {/* Image Gallery — toxunulmur */}
+                        <section aria-label="Şəkillər">
+                            <ImageGallery images={listing.images} title={listing.title} />
+                        </section>
+
                         {/* Title section */}
                         <section>
                             <div className="flex items-start justify-between gap-6 mb-4">
                                 <div className="flex-1">
                                     {/* Type stamp */}
-                                    <div className="inline-block bg-white text-[#2D4A33] text-xs font-bold px-3 py-1.5 rounded-md border-2 border-dashed border-[#4A6B4F]/30 mb-4">
-                                        {listing.listing_type_display}
-                                    </div>
-
+                                  
                                     <h1 className="font-display font-bold text-[#1F2D24] leading-[0.95] mb-3"
-                                        style={{ fontSize: "clamp(2rem, 4.5vw, 3.5rem)" }}>
+                                        style={{ fontSize: "24px" }}>
                                         {listing.title}
                                     </h1>
 
@@ -100,15 +106,6 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                                     </div>
                                 </div>
 
-                                {/* Desktop quick price — only for normal listings */}
-                                {!listing.is_free && !listing.entry_fee && listing.price_per_night && (
-                                    <div className="hidden sm:block text-right shrink-0">
-                                        <p className="font-display text-3xl font-bold text-[#1F2D24]">
-                                            ₼{Number(listing.price_per_night).toLocaleString()}
-                                        </p>
-                                        <p className="text-xs text-[#4A6B4F]/60 mt-1">gecəlik</p>
-                                    </div>
-                                )}
                             </div>
 
                             {/* Stats bar */}
@@ -182,8 +179,8 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                     {/* Sag — sticky sidebar */}
                     <aside className="lg:sticky lg:top-24 h-fit space-y-5">
 
-                        {/* Owner — yalnız adi elan */}
-                        {!listing.is_free && !listing.entry_fee && listing.owner_name && (
+                        {/* Rezervasiya kartı — sahibkar, qiymət və detallar bir bölmədə (yalnız adi elan) */}
+                        {!listing.is_free && !listing.entry_fee && (listing.owner_name || listing.price_per_night) && (
                             <div className="bg-white rounded-3xl overflow-hidden"
                                 style={{ boxShadow: "0 8px 30px -5px rgba(45,74,51,0.12)" }}>
 
@@ -191,74 +188,80 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                                 <div className="px-6 py-3 border-b border-dashed border-[#E8E5D8]"
                                     style={{ background: "#FAF6F0" }}>
                                     <p className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                                        Sahibkar
+                                        Rezervasiya
                                     </p>
                                 </div>
 
                                 <div className="p-6 space-y-5">
-                                    <div className="flex items-center gap-3">
-                                        <div className="relative">
-                                            <div className="flex h-14 w-14 items-center justify-center rounded-full text-[#FAF6F0] text-lg font-bold font-display"
-                                                style={{ background: "#2D4A33" }}>
-                                                {listing.owner_name?.charAt(0).toUpperCase()}
+                                    {listing.owner_name && (
+                                        <div className="flex items-center gap-3 pb-5 border-b border-dashed border-[#E8E5D8]">
+                                            <div className="relative">
+                                                <div className="flex h-14 w-14 items-center justify-center rounded-full text-[#FAF6F0] text-lg font-bold font-display"
+                                                    style={{ background: "#2D4A33" }}>
+                                                    {listing.owner_name.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white"
+                                                    style={{ background: "#D4A574" }} />
                                             </div>
-                                            <div className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full border-2 border-white"
-                                                style={{ background: "#D4A574" }} />
+                                            <div>
+                                                <p className="font-display text-lg font-bold text-[#1F2D24]">{listing.owner_name}</p>
+                                                <p className="text-xs text-[#4A6B4F]/60">Doğrulanmış sahibkar</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p className="font-display text-lg font-bold text-[#1F2D24]">{listing.owner_name}</p>
-                                            <p className="text-xs text-[#4A6B4F]/60">Doğrulanmış sahibkar</p>
-                                        </div>
-                                    </div>
-
-                                    {listing.owner_phone && (
-                                        <RevealPhoneButton
-                                            phone={listing.owner_phone}
-                                            listingId={listing.id}
-                                            isLoggedIn={!!session}
-                                            autoReveal={autoReveal}
-                                        />
                                     )}
-                                </div>
-                            </div>
-                        )}
 
-                        {/* KART 1 — Adi: gecəlik qiymət */}
-                        {!listing.is_free && !listing.entry_fee && listing.price_per_night && (
-                            <div className="bg-white rounded-3xl overflow-hidden"
-                                style={{ boxShadow: "0 8px 30px -5px rgba(45,74,51,0.12)" }}>
-
-                                <div className="px-6 py-3 border-b border-dashed border-[#E8E5D8]"
-                                    style={{ background: "#FAF6F0" }}>
-                                    <p className="text-[#A0613B] text-xs font-bold uppercase tracking-[0.25em]">
-                                        Qiymət detalları
-                                    </p>
-                                </div>
-
-                                <div className="p-6 space-y-4">
-                                    <div className="text-center pb-4 border-b border-dashed border-[#E8E5D8]">
-                                        <div className="flex items-baseline justify-center gap-1">
-                                            <span className="font-display text-4xl font-bold text-[#1F2D24]">
-                                                ₼{Number(listing.price_per_night).toLocaleString()}
-                                            </span>
-                                            <span className="text-[#4A6B4F]/60 text-sm">/gecə</span>
+                                    {listing.price_per_night && (
+                                        <div className="text-center pb-4 border-b border-dashed border-[#E8E5D8]">
+                                            <div className="flex items-baseline justify-center gap-1">
+                                                <span className="font-display text-4xl font-bold text-[#1F2D24]">
+                                                    ₼{Number(listing.price_per_night).toLocaleString()}
+                                                </span>
+                                                <span className="text-[#4A6B4F]/60 text-sm">/gecə</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    )}
 
                                     <div className="space-y-3 text-sm">
                                         <div className="flex justify-between items-center">
                                             <span className="text-[#4A6B4F]/70 flex items-center gap-2">
                                                 <Users className="w-3.5 h-3.5" /> Maksimum qonaq
                                             </span>
-                                            <span className="font-bold text-[#1F2D24]">{listing.max_guests} nefer</span>
+                                            <span className="font-bold text-[#1F2D24]">{listing.max_guests} nəfər</span>
                                         </div>
                                         <div className="flex justify-between items-center">
                                             <span className="text-[#4A6B4F]/70 flex items-center gap-2">
-                                                <MapPin className="w-3.5 h-3.5" /> Səhər
+                                                <MapPin className="w-3.5 h-3.5" /> Şəhər
                                             </span>
                                             <span className="font-bold text-[#1F2D24]">{listing.city}</span>
                                         </div>
+                                        {listing.rating > 0 && (
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[#4A6B4F]/70 flex items-center gap-2">
+                                                    <Star className="w-3.5 h-3.5" /> Reytinq
+                                                </span>
+                                                <span className="font-bold text-[#1F2D24]">{Number(listing.rating).toFixed(1)} ({listing.review_count})</span>
+                                            </div>
+                                        )}
+                                        {typeof listing.view_count === "number" && (
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-[#4A6B4F]/70 flex items-center gap-2">
+                                                    <Eye className="w-3.5 h-3.5" /> Baxış sayı
+                                                </span>
+                                                <span className="font-bold text-[#1F2D24]">{listing.view_count}</span>
+                                            </div>
+                                        )}
                                     </div>
+
+                                    {isHouse && listing.owner_phone && (
+                                        <RevealPhoneButton
+                                            phone={listing.owner_phone}
+                                            listingId={listing.id}
+                                            isLoggedIn={!!session}
+                                            autoReveal={autoReveal}
+                                            label="Rezervasiya et"
+                                            whatsapp
+                                        />
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -316,6 +319,17 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                                             <span className="font-bold text-[#1F2D24]">{listing.city}</span>
                                         </div>
                                     </div>
+
+                                    {isHouse && listing.owner_phone && (
+                                        <RevealPhoneButton
+                                            phone={listing.owner_phone}
+                                            listingId={listing.id}
+                                            isLoggedIn={!!session}
+                                            autoReveal={autoReveal}
+                                            label="Rezervasiya et"
+                                            whatsapp
+                                        />
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -374,6 +388,17 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                                             <span className="font-bold text-[#FAF6F0]">{listing.city}</span>
                                         </div>
                                     </div>
+
+                                    {isHouse && listing.owner_phone && (
+                                        <RevealPhoneButton
+                                            phone={listing.owner_phone}
+                                            listingId={listing.id}
+                                            isLoggedIn={!!session}
+                                            autoReveal={autoReveal}
+                                            variant="gold"
+                                            label="Əlaqə"
+                                        />
+                                    )}
                                 </div>
                             </div>
                         )}
@@ -396,6 +421,29 @@ export default async function ListingDetailPage({ params, searchParams }: PagePr
                     </aside>
                 </div>
             </div>
+
+            {/* Mobile — aşağıda sabit rezervasiya zolağı (bottom tab nav-ın üstündə) */}
+            {isHouse && listing.owner_phone && (
+                <div className="md:hidden fixed inset-x-0 z-[1100] bg-white/95 backdrop-blur-md border-t border-[#E8E5D8]"
+                    style={{ bottom: "4rem", boxShadow: "0 -4px 20px -4px rgba(45,74,51,0.15)" }}>
+                    <div className="flex items-center gap-4 px-4 py-3">
+                        <div className="font-display text-xl font-bold text-[#1F2D24] shrink-0">
+                            {mobileCtaPriceLabel}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                            <RevealPhoneButton
+                                phone={listing.owner_phone}
+                                listingId={listing.id}
+                                isLoggedIn={!!session}
+                                autoReveal={false}
+                                variant={isFullyFree ? "gold" : "dark"}
+                                label={isFullyFree ? "Əlaqə" : "Rezervasiya et"}
+                                whatsapp={!isFullyFree}
+                            />
+                        </div>
+                    </div>
+                </div>
+            )}
         </main>
         </>
     );

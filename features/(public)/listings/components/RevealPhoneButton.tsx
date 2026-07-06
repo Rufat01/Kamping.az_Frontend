@@ -11,6 +11,7 @@ interface Props {
   autoReveal?: boolean;
   label?: string;
   variant?: "dark" | "gold";
+  whatsapp?: boolean;
 }
 
 function maskPhone(phone: string): string {
@@ -24,6 +25,11 @@ function maskPhone(phone: string): string {
   return "*** *** **";
 }
 
+function buildWhatsAppUrl(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  return `https://wa.me/${digits}`;
+}
+
 export default function RevealPhoneButton({
   phone,
   listingId,
@@ -31,6 +37,7 @@ export default function RevealPhoneButton({
   autoReveal = false,
   label,
   variant = "dark",
+  whatsapp = false,
 }: Props) {
   const router = useRouter();
   const [revealed, setRevealed] = useState(false);
@@ -39,7 +46,17 @@ export default function RevealPhoneButton({
     if (autoReveal && isLoggedIn && !revealed) {
       setRevealed(true);
       fetch(`/api/listings/${listingId}/phone-reveal`, { method: "POST" }).catch(() => {});
-      router.replace(`/listings/${listingId}`, { scroll: false });
+      if (whatsapp) {
+        fetch(`/api/listings/${listingId}/reservation-intent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ notes: "" }),
+        }).catch((err) => console.error("reservation-intent error:", err));
+        router.replace(`/listings/${listingId}`, { scroll: false });
+        window.location.href = buildWhatsAppUrl(phone);
+      } else {
+        router.replace(`/listings/${listingId}`, { scroll: false });
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -62,9 +79,18 @@ export default function RevealPhoneButton({
       setRevealed(true);
       fetch(`/api/listings/${listingId}/phone-reveal`, { method: "POST" }).catch(() => {});
     }
+    if (whatsapp) {
+      fetch(`/api/listings/${listingId}/reservation-intent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ notes: "" }),
+      }).catch((err) => console.error("reservation-intent error:", err));
+      window.location.href = buildWhatsAppUrl(phone);
+      return;
+    }
   }
 
-  if (revealed) {
+  if (revealed && !whatsapp) {
     return (
       <a href={`tel:${phone}`} className={baseClass} style={colorStyle}>
         <Phone className="w-4 h-4" />
