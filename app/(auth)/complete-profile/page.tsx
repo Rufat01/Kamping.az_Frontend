@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import { Tent, ArrowRight, Tent as TentIcon, Users } from "lucide-react";
 import { auth } from "@/features/(auth)/services/auth.service";
+import Image from "next/image";
 
 const PhoneVerifyField = dynamic(() => import("@/components/PhoneVerifyField"), { ssr: false });
 
@@ -104,8 +105,8 @@ export default function CompleteProfilePage() {
           style={{ background: "radial-gradient(circle at 30% 50%, #f59e0b22 0%, transparent 60%)" }}
         />
         <div className="relative z-10 text-center">
-          <div className="w-16 h-16 bg-amber-500 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-            <Tent className="w-8 h-8 text-forest-900" strokeWidth={2} />
+          <div className="w-16 h-16 bg-[#1B4332] rounded-2xl flex items-center justify-center mx-auto mb-6">
+                      <Image src="/icons/logo_icon_white.png" alt="Kamping.az Logo" width={60} height={60} />
           </div>
           <h2 className="font-display text-4xl font-bold text-white mb-4 leading-tight">
             Az qaldı,<br />
@@ -120,16 +121,6 @@ export default function CompleteProfilePage() {
       {/* Sağ — form */}
       <div className="flex-1 flex items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-md">
-
-          {/* Logo — mobile */}
-          <div className="flex items-center gap-2 mb-8 lg:hidden">
-            <div className="w-8 h-8 bg-amber-500 rounded-lg flex items-center justify-center">
-              <Tent className="w-4 h-4 text-forest-900" strokeWidth={2.5} />
-            </div>
-            <span className="font-display text-xl font-bold text-forest-900">
-              Kamping<span className="text-amber-500">.az</span>
-            </span>
-          </div>
 
           <h1 className="font-display text-3xl font-bold text-forest-900 mb-1">
             Profili tamamla
