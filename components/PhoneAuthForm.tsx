@@ -10,7 +10,7 @@ interface Props {
   callbackUrl?: string;
 }
 
-const PHONE_RE = /^\+994(50|51|55|60|70|77)\d{7}$/;
+const PHONE_RE = /^\+994(50|51|55|60|70|77|99)\d{7}$/;
 
 export default function PhoneAuthForm({ callbackUrl = "/" }: Props) {
   const router = useRouter();
